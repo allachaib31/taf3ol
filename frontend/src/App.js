@@ -5,7 +5,7 @@ import { AdminInformations } from "./components/admin";
 
 function App() {
   return (
-    <div id='fullScreen' data-theme={window.localStorage.getItem("theme")}>
+    <div id='fullScreen' data-theme={"myTheme"}>
       <Router>
         <Routes>
           <Route exact path="/" element={<AdminScreen />}>

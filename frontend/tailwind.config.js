@@ -23,7 +23,7 @@ module.exports = {
         "neutral": "#E8E8E8",
         "base-100": "#E8E8E8",
       }
-    },"light", "forest",], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+    }], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
     darkTheme: "myTheme", // name of one of the included themes for dark mode
     base: true, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components
