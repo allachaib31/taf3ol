@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faGear, faMoon, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
+import { Outlet } from 'react-router-dom';
 function HomeAdmin() {
   const [theme, setTheme] = useState(
     !window.localStorage.getItem("theme")
@@ -121,6 +122,9 @@ function HomeAdmin() {
             </ul>
           </details>
         </div>
+      </div>
+      <div className='container mx-auto py-[2rem]'>
+        <Outlet />
       </div>
     </div>
   )

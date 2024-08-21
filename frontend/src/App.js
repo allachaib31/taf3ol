@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
 import { AuthAdmin, HomeAdmin } from "./screens/admin";
+import { AdminInformations } from "./components/admin";
 
 function App() {
   return (
@@ -11,7 +12,9 @@ function App() {
             <Route path="/admin/auth" element={<AuthAdmin />}/>
           </Route>
           <Route path="/admin">
-            <Route path="/admin" element={<HomeAdmin />}/>
+            <Route path="/admin" element={<HomeAdmin />}>
+              <Route path="/admin/" element={<AdminInformations />}/>
+            </Route>
           </Route>
         </Routes>
       </Router>
