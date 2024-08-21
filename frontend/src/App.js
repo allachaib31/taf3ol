@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
-import { AuthAdmin, HomeAdmin } from "./screens/admin";
+import { AdminScreen, AuthAdmin, HomeAdmin } from "./screens/admin";
 import { AdminInformations } from "./components/admin";
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <div id='fullScreen' data-theme={window.localStorage.getItem("theme")}>
       <Router>
         <Routes>
-          <Route path="/">
+          <Route exact path="/" element={<AdminScreen />}>
             <Route path="/admin/auth">
               <Route path="/admin/auth" element={<AuthAdmin />} />
             </Route>
