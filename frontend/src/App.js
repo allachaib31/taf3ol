@@ -8,12 +8,14 @@ function App() {
     <div id='fullScreen' data-theme={window.localStorage.getItem("theme")}>
       <Router>
         <Routes>
-          <Route path="/admin/auth">
-            <Route path="/admin/auth" element={<AuthAdmin />}/>
-          </Route>
-          <Route path="/admin">
-            <Route path="/admin" element={<HomeAdmin />}>
-              <Route path="/admin/" element={<AdminInformations />}/>
+          <Route path="/">
+            <Route path="/admin/auth">
+              <Route path="/admin/auth" element={<AuthAdmin />} />
+            </Route>
+            <Route path="/admin">
+              <Route path="/admin" element={<HomeAdmin />}>
+                <Route path="/admin/" element={<AdminInformations />} />
+              </Route>
             </Route>
           </Route>
         </Routes>
