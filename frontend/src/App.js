@@ -11,15 +11,13 @@ function App() {
         <Routes>
           <Route path="/" element={<AppWeb />}>
             <Route path="/admin" element={<AdminScreen />}>
-              <Route path="/admin/">
-                <Route path="/admin/" element={<HomeAdmin />}>
-                  <Route path="/admin/" element={<AdminInformations />} />
-                </Route>
+              <Route path="/admin/" element={<HomeAdmin />}>
+                <Route path="/admin/" element={<AdminInformations />} />
               </Route>
               <Route path="/admin/landingPage" element={<LandingPageAdmin />} >
-                <Route path="/admin/landingPage" element={<LandingPage />}/>
-                <Route path="/admin/landingPage/conditionService" element={<ConditionsService />}/>
-                <Route path="/admin/landingPage/commonQuestions" element={<CommonQuestions />}/>
+                <Route path="/admin/landingPage" element={<LandingPage />} />
+                <Route path="/admin/landingPage/conditionService" element={<ConditionsService />} />
+                <Route path="/admin/landingPage/commonQuestions" element={<CommonQuestions />} />
               </Route>
               <Route path="/admin/auth">
                 <Route path="/admin/auth" element={<AuthAdmin />} />
