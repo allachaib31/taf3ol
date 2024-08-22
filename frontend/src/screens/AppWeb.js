@@ -1,12 +1,12 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-function AdminScreen() {
+function AppWeb() {
   return (
-    <div dir="rtl" lang="ar" className='fontCairo min-h-screen'>
+    <div>
         <Outlet />
     </div>
   )
 }
 
-export default AdminScreen
+export default AppWeb

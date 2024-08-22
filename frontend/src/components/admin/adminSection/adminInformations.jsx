@@ -7,11 +7,12 @@ function AdminInformations() {
   return (
     <div>
       <div className='flex sm:flex-row flex-col gap-[1rem] justify-between'>
-        <button className='btn btn-primary shadow-md shadow-slate-700' onClick={()=>document.getElementById('addAdmin').showModal()}>إضافة مسؤول</button>
+        <button className='btn btn-primary shadow-md
+         shadow-slate-700' onClick={()=>document.getElementById('addAdmin').showModal()}>إضافة مسؤول</button>
         <div className="join">
           <div>
             <div>
-              <input className="input bg-black input-bordered join-item" placeholder="أبحث عن اعضاء" />
+              <input className="input bg-black text-white input-bordered join-item" placeholder="أبحث عن اعضاء" />
             </div>
           </div>
           <div className="indicator">
