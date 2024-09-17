@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faInstagram, faTiktok, faTwitter, faWhatsapp, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import { faQuoteRight } from '@fortawesome/free-solid-svg-icons';
 import largeLogo from "../../images/largeLogo.svg";
 import paymentProtectionIcon from "../../images/paymentProtectionIcon.png";
 import supportIcon from "../../images/supportIcon.png";
@@ -160,8 +161,9 @@ function Home() {
                 <div className="carousel h-[250px] w-full gap-[2rem]">
                     <div className="carousel-item w-96 h-[200px]">
                         <div className="card bg-base-100 w-96 border shadow-md">
-                            <div className="card-body justify-center items-center">
-                                <h1 className="text-center">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
+                            <div className="card-body relative justify-center items-center">
+                                <FontAwesomeIcon icon={faQuoteRight} className='absolute text-primary text-3xl font-[900] top-[16%] right-[10%] z-[1]'/>
+                                <h1 className="text-center z-[999]">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
                                 <div className="rating">
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" disabled />
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" defaultChecked disabled />
@@ -175,8 +177,9 @@ function Home() {
                     </div>
                     <div className="carousel-item w-96 h-[200px]">
                         <div className="card bg-base-100 w-96 border shadow-md">
-                            <div className="card-body justify-center items-center">
-                                <h1 className="text-center">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
+                            <div className="card-body relative justify-center items-center">
+                                <FontAwesomeIcon icon={faQuoteRight} className='absolute text-primary text-3xl font-[900] top-[16%] right-[10%] z-[1]'/>
+                                <h1 className="text-center z-[999]">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
                                 <div className="rating">
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" disabled />
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" defaultChecked disabled />
@@ -190,8 +193,9 @@ function Home() {
                     </div>
                     <div className="carousel-item w-96 h-[200px]">
                         <div className="card bg-base-100 w-96 border shadow-md">
-                            <div className="card-body justify-center items-center">
-                                <h1 className="text-center">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
+                            <div className="card-body relative justify-center items-center">
+                                <FontAwesomeIcon icon={faQuoteRight} className='absolute text-primary text-3xl font-[900] top-[16%] right-[10%] z-[1]'/>
+                                <h1 className="text-center z-[999]">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
                                 <div className="rating">
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" disabled />
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" defaultChecked disabled />
@@ -205,8 +209,9 @@ function Home() {
                     </div>
                     <div className="carousel-item w-96 h-[200px]">
                         <div className="card bg-base-100 w-96 border shadow-md">
-                            <div className="card-body justify-center items-center">
-                                <h1 className="text-center">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
+                            <div className="card-body relative justify-center items-center">
+                                <FontAwesomeIcon icon={faQuoteRight} className='absolute text-primary text-3xl font-[900] top-[16%] right-[10%] z-[1]'/>
+                                <h1 className="text-center z-[999]">استخدمت موقع تفاعل لشراء متابعين لحسابي على إنستغرام. الخدمة كانت سريعة جدًا...</h1>
                                 <div className="rating">
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" disabled />
                                     <input type="radio" name="rating-2" className="mask mask-star-2 bg-primary" defaultChecked disabled />

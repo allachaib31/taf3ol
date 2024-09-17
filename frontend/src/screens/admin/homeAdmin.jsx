@@ -10,15 +10,15 @@ function HomeAdmin() {
   const [active, setActive] = useState(location.pathname);
   const [title, setTitle] = useState("");
   useEffect(() => {
-    switch(active){
-      case ("/admin" || "/admin/"): setTitle("المشرفين");break; 
-      case ("/admin/users" || "/admin/users/"): setTitle("المستخدمين");break; 
-      case ("/admin/orders" || "/admin/orders/"): setTitle("الطلبات");break; 
-      case ("/admin/services" || "/admin/services/"): setTitle("الخدمات");break;
-      case ("/admin/payments" || "/admin/payments/"): setTitle("المدفوعات");break;
-      case ("/admin/tickets" || "/admin/tickets/"): setTitle("التذاكر");break;
-      case ("/admin/reports" || "/admin/reports/"): setTitle("التقارير");break;
-      case ("/admin/settings" || "/admin/settings/"): setTitle("الإعدادات");break;
+    switch (active) {
+      case ("/admin" || "/admin/"): setTitle("المشرفين"); break;
+      case ("/admin/users" || "/admin/users/"): setTitle("المستخدمين"); break;
+      case ("/admin/orders" || "/admin/orders/"): setTitle("الطلبات"); break;
+      case ("/admin/services" || "/admin/services/"): setTitle("الخدمات"); break;
+      case ("/admin/payments" || "/admin/payments/"): setTitle("المدفوعات"); break;
+      case ("/admin/tickets" || "/admin/tickets/"): setTitle("التذاكر"); break;
+      case ("/admin/reports" || "/admin/reports/"): setTitle("التقارير"); break;
+      case ("/admin/settings" || "/admin/settings/"): setTitle("الإعدادات"); break;
     }
   }, [active]);
   return (
@@ -49,16 +49,16 @@ function HomeAdmin() {
               </div>
               <ul
                 tabIndex={0}
-                className="menu menu-sm w-[100vw] dropdown-content bg-white font-bold text-black z-[999] rounded-box mt-3 p-2 shadow">
-                <li><a><FontAwesomeIcon icon={faUserTie} /> المشرفين</a></li>
-                <li><a><FontAwesomeIcon icon={faUsers} /> المستخدمين</a></li>
-                <li><a><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</a> </li>
-                <li><a><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</a></li>
-                <li><a><FontAwesomeIcon icon={faMoneyCheckDollar} /> الدفع </a></li>
-                <li><a><FontAwesomeIcon icon={faHeadset} /> تذاكر</a></li>
-                <li><a><FontAwesomeIcon icon={faChartLine} /> التقارير</a></li>
-                {/*<li><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
-                <li><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
+                className="menu menu-sm w-[95vw] dropdown-content bg-base-100 font-bold text-black z-[999] rounded-box mt-3 p-2 shadow">
+                <li onClick={() => setActive("/admin")} className={`hover:text-primary ${active == "/admin" || active == "/admin/" ? "text-primary" : "text-black"}`}><Link to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
+                <li onClick={() => setActive("/admin/users")} className={`hover:text-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-primary" : "text-black"}`}><Link to="/admin/users"><FontAwesomeIcon icon={faUsers} /> المستخدمين</Link></li>
+                <li onClick={() => setActive("/admin/orders")} className={`hover:text-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-primary" : "text-black"}`}><Link to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
+                <li onClick={() => setActive("/admin/services")} className={`hover:text-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-primary" : "text-black"}`}><Link to="/admin/services"><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</Link></li>
+                <li onClick={() => setActive("/admin/payments")} className={`hover:text-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-primary" : "text-black"}`}><Link to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
+                <li onClick={() => setActive("/admin/tickets")} className={`hover:text-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-primary" : "text-black"}`}><Link to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
+                <li onClick={() => setActive("/admin/reports")} className={`hover:text-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-primary" : "text-black"}`}><Link to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>
+                {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
+                <li onClick={() => setActive("/admin/settings")} className={`hover:text-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-primary" : "text-black"}`}><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
               </ul>
             </div>
             <a className="btn btn-ghost text-xl"><img className='h-[50px]' src={logo} alt="" /></a>
@@ -72,7 +72,7 @@ function HomeAdmin() {
               <li onClick={() => setActive("/admin/users")} className={`hover:text-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-primary" : "text-white"}`}><Link to="/admin/users"><FontAwesomeIcon icon={faUsers} /> المستخدمين</Link></li>
               <li onClick={() => setActive("/admin/orders")} className={`hover:text-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-primary" : "text-white"}`}><Link to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
               <li onClick={() => setActive("/admin/services")} className={`hover:text-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-primary" : "text-white"}`}><Link to="/admin/services"><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</Link></li>
-              <li onClick={() => setActive("/admin/payments")} className={`hover:text-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-primary" : "text-white"}`}><Link to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> الدفع </Link></li>
+              <li onClick={() => setActive("/admin/payments")} className={`hover:text-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-primary" : "text-white"}`}><Link to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
               <li onClick={() => setActive("/admin/tickets")} className={`hover:text-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-primary" : "text-white"}`}><Link to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
               <li onClick={() => setActive("/admin/reports")} className={`hover:text-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-primary" : "text-white"}`}><Link to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>
               {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
