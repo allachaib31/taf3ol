@@ -1,5 +1,9 @@
 export { default as LoginAdmin } from "./loginAdmin";
-export { default as AdminInformations } from "./adminSection/adminInformations";
-export { default as LandingPage } from "./adminSection/landingPage";
-export { default as ConditionsService } from "./adminSection/conditionsService"; 
-export { default as CommonQuestions } from "./adminSection/commonQuestions";
+export { default as AdminsInformations } from "./adminSection/adminsInformations";
+export { default as UsersInformations } from "./adminSection/usersInformations";
+export { default as OrdersInformations } from "./adminSection/ordersInformations";
+export { default as ServicesInformations } from "./adminSection/servicesInformations";
+export { default as PaymentsInformations } from "./adminSection/paymentsInformations";
+export { default as TicketsInformations } from "./adminSection/ticketsInformations";
+export { default as ReportsInformations } from "./adminSection/reportsInformations";
+export { default as SettingsInformations } from "./adminSection/settingsInformations";

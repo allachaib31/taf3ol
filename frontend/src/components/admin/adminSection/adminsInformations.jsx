@@ -1,14 +1,14 @@
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { faCaretDown, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
-import AddAdmin from './addAdmin'
+import { AddAdmin } from './modal/index'
 
-function AdminInformations() {
+function AdminsInformations() {
   return (
     <div>
       <div className='flex sm:flex-row flex-col gap-[1rem] justify-between'>
-        <button className='btn btn-primary shadow-md
-         shadow-slate-700' onClick={()=>document.getElementById('addAdmin').showModal()}>إضافة مسؤول</button>
+        <button className='btn btn-primary shadow-sm
+         shadow-gray-400' onClick={()=>document.getElementById('addAdmin').showModal()}>إضافة مسؤول</button>
         <div className="join">
           <div>
             <div>
@@ -21,25 +21,25 @@ function AdminInformations() {
         </div>
       </div>
       <div className="overflow-x-auto mt-[1rem]">
-        <table className="table bg-white">
+        <table className="table bg-white xl:w-full w-[1900px]">
           {/* head */}
           <thead>
-            <tr>
+            <tr className='text-[1rem]'>
               <th>
                 <label>
                   <input type="checkbox" className="checkbox" />
                 </label>
               </th>
-              <th>المعرف</th>
+              <th>المعرف <FontAwesomeIcon icon={faCaretDown} /></th>
               <th>الاسم</th>
               <th>اسم المستخدم</th>
-              <th>بريد إلكتروني</th>
+              <th>البريد الالكتروني</th>
               <th>تم إنشاؤه</th>
               <th>اخر تسجيل دخول</th>
               <th>تم إنشاؤه بواسطة</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='text-[1rem]'>
             {/* row 1 */}
             <tr>
               <th>
@@ -208,4 +208,4 @@ function AdminInformations() {
   )
 }
 
-export default AdminInformations
+export default AdminsInformations

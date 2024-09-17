@@ -1,8 +1,48 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.fontCairo {
-    font-family: "Cairo", sans-serif;
+.fontZain {
+    font-family: "Zain", sans-serif;
+    font-style: normal;
+}
+#titleSignUp{
+    position: relative;
+}
+#titleSignUp::after{
+    content: "";
+    z-index: -1;
+    position: absolute;
+    top: 30%;
+    left: 1%;
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    background-color: #FDF001;
+}
+#titleSignUp::before{
+    content: "";
+    z-index: -1;
+    position: absolute;
+    right: -8%;
+    width: 80px;
+    height: 80px;
+    border-radius: 100%;
+    background-color: #FDF001;
+}
+@media (max-width: 36rem) {
+    #titleSignUp::after {
+        top: 10%;  /* Adjust the top position */
+        left: 2%;  /* Move it a little more to the right */
+        width: 60px;  /* Make the circle smaller */
+        height: 60px; 
+    }
+
+    #titleSignUp::before {
+        top: -7%;
+        right: -10%;  /* Adjust the position */
+        width: 60px;  /* Make the circle smaller */
+        height: 60px;
+    }
 }

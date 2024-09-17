@@ -18,10 +18,10 @@ module.exports = {
     themes: [{
       myTheme: {
         "primary": "#FDF001",
-        "secondary": "#000000",
+        "secondary": "#fffccc",
         "accent": "#D9D9D9",
         "neutral": "#E8E8E8",
-        "base-100": "#E8E8E8",
+        "base-100": "#ffffff",
       }
     }], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
     darkTheme: "myTheme", // name of one of the included themes for dark mode

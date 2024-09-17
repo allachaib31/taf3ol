@@ -1,28 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faChartLine, faFileCirclePlus, faGear, faGears, faHandHoldingDollar, faHeadset, faMoneyCheckDollar, faMoon, faNewspaper, faRightFromBracket, faUser, faUserTie, faUsers } from "@fortawesome/free-solid-svg-icons";
-import headerBackground from "../../images/headerBackground.svg";
+import headerWave from "../../images/headerWave.svg";
 import logo from "../../images/Logo.svg";
-import { Outlet } from 'react-router-dom';
-import Footer from './footer';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import Footer from '../client/footer';
 function HomeAdmin() {
-
-  /*const [theme, setTheme] = useState(
-    !window.localStorage.getItem("theme")
-      ? "light"
-      : window.localStorage.getItem("theme")
-  );*/
-  const [theme, setTheme] = useState("myTheme");
-  /*useEffect(() => {
-    try {
-      const screen = document.getElementById("fullScreen");
-      screen.setAttribute("data-theme", theme);
-    } catch (error) { }
-  }, [theme]);*/
+  const location = useLocation();
+  const [active, setActive] = useState(location.pathname);
+  const [title, setTitle] = useState("");
+  useEffect(() => {
+    switch(active){
+      case ("/admin" || "/admin/"): setTitle("المشرفين");break; 
+      case ("/admin/users" || "/admin/users/"): setTitle("المستخدمين");break; 
+      case ("/admin/orders" || "/admin/orders/"): setTitle("الطلبات");break; 
+      case ("/admin/services" || "/admin/services/"): setTitle("الخدمات");break;
+      case ("/admin/payments" || "/admin/payments/"): setTitle("المدفوعات");break;
+      case ("/admin/tickets" || "/admin/tickets/"): setTitle("التذاكر");break;
+      case ("/admin/reports" || "/admin/reports/"): setTitle("التقارير");break;
+      case ("/admin/settings" || "/admin/settings/"): setTitle("الإعدادات");break;
+    }
+  }, [active]);
   return (
     <div>
       <div className="w-full m-0 p-0" style={{
-        backgroundImage: `url(${headerBackground})`,
+        backgroundImage: `url(${headerWave})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -55,7 +57,7 @@ function HomeAdmin() {
                 <li><a><FontAwesomeIcon icon={faMoneyCheckDollar} /> الدفع </a></li>
                 <li><a><FontAwesomeIcon icon={faHeadset} /> تذاكر</a></li>
                 <li><a><FontAwesomeIcon icon={faChartLine} /> التقارير</a></li>
-                <li><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>
+                {/*<li><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
                 <li><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
               </ul>
             </div>
@@ -66,15 +68,15 @@ function HomeAdmin() {
           </div>
           <div className="navbar-center hidden xxl:flex">
             <ul className="menu font-bold text-[1.1rem] w-full menu-horizontal px-1">
-              <li><a><FontAwesomeIcon icon={faUserTie} /> المشرفين</a></li>
-              <li className='text-primary'><a><FontAwesomeIcon icon={faUsers} /> المستخدمين</a></li>
-              <li><a><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</a> </li>
-              <li><a><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</a></li>
-              <li><a><FontAwesomeIcon icon={faMoneyCheckDollar} /> الدفع </a></li>
-              <li><a><FontAwesomeIcon icon={faHeadset} /> تذاكر</a></li>
-              <li><a><FontAwesomeIcon icon={faChartLine} /> التقارير</a></li>
-              <li><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>
-              <li><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
+              <li onClick={() => setActive("/admin")} className={`hover:text-primary ${active == "/admin" || active == "/admin/" ? "text-primary" : "text-white"}`}><Link to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
+              <li onClick={() => setActive("/admin/users")} className={`hover:text-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-primary" : "text-white"}`}><Link to="/admin/users"><FontAwesomeIcon icon={faUsers} /> المستخدمين</Link></li>
+              <li onClick={() => setActive("/admin/orders")} className={`hover:text-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-primary" : "text-white"}`}><Link to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
+              <li onClick={() => setActive("/admin/services")} className={`hover:text-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-primary" : "text-white"}`}><Link to="/admin/services"><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</Link></li>
+              <li onClick={() => setActive("/admin/payments")} className={`hover:text-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-primary" : "text-white"}`}><Link to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> الدفع </Link></li>
+              <li onClick={() => setActive("/admin/tickets")} className={`hover:text-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-primary" : "text-white"}`}><Link to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
+              <li onClick={() => setActive("/admin/reports")} className={`hover:text-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-primary" : "text-white"}`}><Link to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>
+              {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
+              <li onClick={() => setActive("/admin/settings")} className={`hover:text-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-primary" : "text-white"}`}><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
             </ul>
           </div>
           <div className="flex navbar-end w-auto">
@@ -105,12 +107,6 @@ function HomeAdmin() {
                   <h1 className='font-bold'>لا يوجد إشعارات حتى الآن</h1>
                   <h1>ستظهر الإشعارات الجديدة هنا.</h1>
                 </div>
-                {
-                  /**
-                   *               <li><a>Item 1</a></li>
-                <li><a>Item 2</a></li>
-                   */
-                }
               </ul>
             </details>
             <details className="dropdown">
@@ -118,19 +114,6 @@ function HomeAdmin() {
                 <FontAwesomeIcon icon={faUser} className="h-5 w-5" />
               </summary>
               <ul className="menu bg-white text-black left-[6px] dropdown-content rounded-box z-[1] w-52 p-2 shadow">
-                {/*<li><div>
-                <div>
-                  <FontAwesomeIcon className='rotate-[200deg]' icon={faMoon} /> الوضع المظلم
-                </div>
-                <input type="checkbox" className="toggle" checked={theme == "light" ? false : true}
-                  onChange={(e) => {
-                    window.localStorage.setItem(
-                      "theme",
-                      theme == "forest" ? "light" : "forest"
-                    );
-                    setTheme((value) => (value == "forest" ? "light" : "forest"));
-                  }} />
-              </div></li>*/}
                 <li>
                   <div>
                     <FontAwesomeIcon icon={faGear} /> حساب
@@ -146,10 +129,10 @@ function HomeAdmin() {
           </div>
         </div>
         <div className='flex justify-center items-center h-[50%]'>
-          <h1 className='text-white font-bold text-[3rem]'>المستخدمين</h1>
+          <h1 className='text-white font-bold text-[3rem]'>{title}</h1>
         </div>
       </div>
-      <div className='container mx-auto py-[2rem]'>
+      <div className='py-[2rem] sm:px-[2rem] px-[0.5rem]'>
         <Outlet />
       </div>
       <Footer />
