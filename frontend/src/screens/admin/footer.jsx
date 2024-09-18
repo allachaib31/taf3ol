@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react'
 import footer from "../../images/footer.svg";
 import logo from "../../images/Logo.svg";
 import { Link } from 'react-router-dom';
-import { useTranslation, Trans } from 'react-i18next';
 
 function Footer() {
-    const { t, i18n} = useTranslation();
+    /*const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 776);
 
+    useEffect(() => {
+        const handleResize = () => setIsLargeScreen(window.innerWidth >= 776);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);*/
     return (
         <div data-aos="fade-up" >
             <div className={`h-screen md:h-[45vh] flex justify-center items-center w-full m-0 p-0 bg-cover bg-center bg-no-repeat`}
@@ -16,22 +20,22 @@ function Footer() {
                 <footer className="footer justify-around bg-transparent text-white pt-[5rem] px-10">
                     <aside>
                         <img src={logo} alt="" />
-                        <p className='sm:block hidden text-[1.2rem] font-bold'>
-                            <Trans i18nKey="footer_subtitle_web" />    
+                        <p className='sm:block hidden text-[1.1rem]'>
+                            المنصة الارخص والاسرع لجميع خدمات التسويق الالكتروني <br /> وزيادة المتابعين التي تخدم العملاء من جميع انحاء العالم.
                         </p>
-                        <p className='sm:hidden block text-[1.2rem] font-bold'>
-                            {t('footer_subtitle_phone')}
+                        <p className='sm:hidden block text-[1rem]'>
+                            المنصة الارخص والاسرع لجميع خدمات التسويق الالكتروني  وزيادة المتابعين التي تخدم العملاء من جميع انحاء العالم.
                         </p>
                     </aside>
                     <nav>
-                        <h6 className="footer-title text-[1.2rem] font-bold">{t('quick_links_title')}</h6>
-                        <a className="link link-hover text-[1rem]">{t('how_to_use_title')}</a>
-                        <Link to="/commonQuestions" className="link link-hover text-[1rem]">{t('frequently_asked_question_title')}</Link>
-                        <Link to="/conditionService" className="link link-hover text-[1rem]">{t('terms_title')}</Link>
+                        <h6 className="footer-title text-[1.2rem]">روابط سريعة</h6>
+                        <a className="link link-hover text-[1rem]">كيفية الاستخدام</a>
+                        <Link to="/commonQuestions" className="link link-hover text-[1rem]">الاسئلة الشائعة</Link>
+                        <Link to="/conditionService" className="link link-hover text-[1rem]">الشروط</Link>
                     </nav>
                     <nav>
-                        <h6 className="footer-title text-[1.2rem]">تواصل معنا</h6>
-                        <p className="link link-hover text-[1rem] font-bold">Email: <span>info@gmail.com</span></p>
+                        <h6 className="footer-title text-[1.2rem]">روابط سريعة</h6>
+                        <p className="link link-hover text-[1rem]">Email: <span>info@gmail.com</span></p>
                         <div className="grid grid-flow-col gap-4 mt-[1rem]">
                             <a className='hover:text-blue-400 cursor-pointer'>
                                 <svg
@@ -72,7 +76,7 @@ function Footer() {
             </div>
             <footer className="footer footer-center text-base-content p-4">
                 <aside>
-                    <p className='font-bold text-[1rem]'>{t('copyright_title')}</p>
+                    <p className='font-bold text-[1rem]'>حقوق النشر © {new Date().getFullYear()} Tafa3ol - جميع الحقوق محفوظة صمم بإتقان من طرف KaizeNova</p>
                 </aside>
             </footer>
         </div>

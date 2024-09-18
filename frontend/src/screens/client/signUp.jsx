@@ -8,7 +8,7 @@ function SignUp() {
         <div dir="rtl" lang="ar" className='fontZain'>
             <header className="navbar h-[100px] text-white bg-black">
                 <div className="flex-1">
-                    <Link to="/" className="btn btn-ghost "><img className='w-[214px] h-[68px]' src={logo} alt="" /></Link>
+                    <Link to="/" className="btn btn-ghost mb-[1.5rem]"><img className='w-[214px] h-[68px]' src={logo} alt="" /></Link>
                 </div>
                 <div className="flex-none">
                     <div className="menu menu-horizontal px-1">

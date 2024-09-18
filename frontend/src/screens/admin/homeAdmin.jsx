@@ -4,7 +4,7 @@ import { faBell, faChartLine, faFileCirclePlus, faGear, faGears, faHandHoldingDo
 import headerWave from "../../images/headerWave.svg";
 import logo from "../../images/Logo.svg";
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import Footer from '../client/footer';
+import Footer from './footer';
 function HomeAdmin() {
   const location = useLocation();
   const [active, setActive] = useState(location.pathname);
