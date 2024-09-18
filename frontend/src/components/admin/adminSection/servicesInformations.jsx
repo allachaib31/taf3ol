@@ -99,16 +99,16 @@ function ServicesInformations() {
             </div>
 
             {/* Category Table */}
-            <div className="overflow-x-auto mt-[1rem]">
-                <table className="table bg-white xl:w-screen w-[1900px]">
+            <div className="overflow-x-auto  mt-[1rem]">
+                <table className="table w-[1840px] bg-white">
                     <thead>
                         <tr className='text-[1rem]'>
-                            <th className='w-[6.25%] flex items-center gap-[1rem]'>
+                            <th className='w-[10%] flex items-center gap-[1rem]'>
                                 <input type="checkbox" className="checkbox" /> المعرف
                             </th>
-                            <th className='w-[50%]'>الخدمات</th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'>الأنواع</th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'>
+                            <th className='w-[30%]'>الخدمات</th>
+                            <th className='w-[10%] py-[12px] px-[16px]'>الأنواع</th>
+                            <th className='w-[10%] py-[12px] px-[16px]'>
                                 <details className='relative'>
                                     <summary>مزود الخدمة</summary>
                                     <div className='overflow-x-auto absolute bg-white shadow-md w-[200px] flex flex-col'>
@@ -132,10 +132,10 @@ function ServicesInformations() {
                                     </div>
                                 </details>
                             </th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'>المعدل</th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'>الحد الأدنى</th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'>الحد الأقصى</th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'>
+                            <th className='w-[10%] py-[12px] px-[16px]'>المعدل</th>
+                            <th className='w-[10%] py-[12px] px-[16px]'>الحد الأدنى</th>
+                            <th className='w-[10%] py-[12px] px-[16px]'>الحد الأقصى</th>
+                            <th className='w-[10%] py-[12px] px-[16px]'>
                                 <details className='relative'>
                                     <summary>الحالة</summary>
                                     <div className='overflow-x-auto absolute bg-white shadow-md w-[100px] flex flex-col'>
@@ -147,18 +147,18 @@ function ServicesInformations() {
                                     </div>
                                 </details>
                             </th>
-                            <th className='w-[7.25%] py-[12px] px-[16px]'></th>
+                            <th className='w-[10%] py-[12px] px-[16px]'></th>
                         </tr>
                     </thead>
                 </table>
                 <ReactSortable
-                    className='xl:w-screen w-[1900px]'
+                    className='w-[1840px]'
                     list={categories}
                     setList={(currentCategories) => setCategories(currentCategories)}
                     {...sortableOptions}
                 >
                     {categories.map((category, catIndex) => (
-                        <div key={category.id} className="xl:w-screen w-[1900px] text-[1rem]">
+                        <div key={category.id} className=" text-[1rem]">
                             <div className="bg-[#F1F1F1] cursor-move py-[12px] px-[16px]">
                                 <div>
                                     <div className='flex items-center w-full gap-[1rem]'>
@@ -189,15 +189,15 @@ function ServicesInformations() {
                             >
                                 {category.items.map(item => (
                                     <div className='flex' key={item.id}>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap flex items-center gap-[1rem]"><input type="checkbox" className="checkbox" /> {item.id}</div>
-                                        <div className="w-[50%] py-[12px] px-[16px]  whitespace-wrap">{item.service}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">{item.type}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">{item.provider}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">{item.rate}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">{item.min}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">{item.max}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">{item.status}</div>
-                                        <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap">
+                                        <div className="w-[6%] py-[12px] px-[16px]  whitespace-wrap flex items-center gap-[1rem]"><input type="checkbox" className="checkbox" /> {item.id}</div>
+                                        <div className="w-[28%] py-[12px] px-[16px]  whitespace-wrap">{item.service}</div>
+                                        <div className="w-[10%] py-[12px] px-[16px]  whitespace-wrap">{item.type}</div>
+                                        <div className="w-[9%] py-[12px] px-[16px]  whitespace-wrap">{item.provider}</div>
+                                        <div className="w-[10%] py-[12px] px-[16px]  whitespace-wrap">{item.rate}</div>
+                                        <div className="w-[10%] py-[12px] px-[16px]  whitespace-wrap">{item.min}</div>
+                                        <div className="w-[9%] py-[12px] px-[16px]  whitespace-wrap">{item.max}</div>
+                                        <div className="w-[9%] py-[12px] px-[16px]  whitespace-wrap">{item.status}</div>
+                                        <div className="py-[12px] px-[16px]  whitespace-wrap">
                                             <details className='relative'>
                                                 <summary className='btn'>الأفعال <FontAwesomeIcon icon={faCaretDown} /></summary>
                                                 <ul className='z-[999] absolute bg-white shadow-md w-[170px] flex flex-col'>
