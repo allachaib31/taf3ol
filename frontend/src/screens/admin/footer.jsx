@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import footer from "../../images/footer.svg";
-import logo from "../../images/Logo.svg";
+import logo from "../../images/Logo.png";
 import { Link } from 'react-router-dom';
 
 function Footer() {

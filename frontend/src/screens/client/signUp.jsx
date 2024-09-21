@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import logo from "../../images/Logo.svg";
+import logo from "../../images/Logo.png";
 import signUpImage from "../../images/signUp.png";
 import googleIcon from "../../images/googleIcon.png";
 import { useTranslation } from 'react-i18next';
@@ -29,9 +29,9 @@ function SignUp() {
     }, [i18n.language]);
     return (
         <div id='signUp' className='fontZain'>
-            <header className="navbar h-[100px] text-white bg-black">
+            <header className="navbar sm:h-[100px] text-white bg-black">
                 <div className="flex-1">
-                    <Link to="/" className="btn btn-ghost mb-[1.5rem]"><img className='w-[214px] h-[68px]' src={logo} alt="" /></Link>
+                    <Link to="/" className="btn btn-ghost sm:mb-[1.5rem]"><img className='w-[107px] sm:w-[168px] sm:h-auto h-[50px]' src={logo} alt="" /></Link>
                 </div>
                 <div className="flex-none">
                     <div className="menu menu-horizontal px-1">
@@ -41,7 +41,7 @@ function SignUp() {
                                 <option className='bg-black' value="ar" selected={i18n.language === 'ar'}>عربي</option>
                                 <option className='bg-black' value="en" selected={i18n.language === 'en'}>english</option>
                             </select>
-                        <Link to="/" className='btn text-[1rem] btn-primary'>{t('login_button')}</Link>
+                        <Link to="/" className='btn btn-sm sm:btn-md py-[0.5rem] h-auto text-[1rem] btn-primary'>{t('login_button')}</Link>
                     </div>
                 </div>
             </header>

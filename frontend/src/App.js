@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
 import { AdminScreen, AuthAdmin, HomeAdmin } from "./screens/admin";
-import { LandingPage } from "./screens/client"
+import { LandingPage, ClientPage } from "./screens/client"
 import { AdminsInformations, OrdersInformations, PaymentsInformations, ReportsInformations, ServicesInformations, SettingsInformations, TicketsInformations, UsersInformations} from "./components/admin";
-import {CommonQuestions, ConditionsService, Home } from "./components/client";
+import {CommonQuestions, ConditionsService, Home, PrincipalPage } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
 
@@ -19,6 +19,9 @@ function App() {
               <Route path="/commonQuestions" element={<CommonQuestions />} />
             </Route>
             <Route path="/signUp" element={<SignUp />}/>
+            <Route path="/client" element={<ClientPage />}>
+                <Route path="/client" element={<PrincipalPage />}/>
+            </Route>
             <Route path="/admin" element={<AdminScreen />}>
               <Route path="/admin/" element={<HomeAdmin />}>
                 <Route path="/admin/" element={<AdminsInformations />} />

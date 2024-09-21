@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function CommonQuestions() {
+    const { t, i18n} = useTranslation();
     const [activeIndex, setActiveIndex] = useState(null);
 
     const handleClick = (index) => {
@@ -13,7 +15,7 @@ function CommonQuestions() {
     return (
         <div data-aos="fade-up" className="px-[1rem] my-[3rem] container mx-auto">
             <div className="flex gap-[2rem] flex-col justify-center items-center">
-                <h1 className="text-[40px] md:text-[72px] font-bold">أسئلة شائعة</h1>
+                <h1 className="text-[30px] text-center md:text-[72px] font-bold">{t('frequently_asked_question_title')}</h1>
 
                 {[0, 1, 2].map((index) => (
                     <div

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import headerWave from "../../images/headerWave.svg";
-import logo from "../../images/Logo.svg";
+import logo from "../../images/Logo.png";
 import emoger from "../../images/emoger.png";
 import Footer from './footer';
 import { Link, Outlet } from 'react-router-dom';
@@ -40,7 +40,7 @@ function LandingPageAdmin() {
             }}>
                 <div className="navbar container mx-auto text-white bg-transparent">
                     <div className="flex-1">
-                        <Link to="/" className="btn btn-ghost mb-[1rem]"><img className='sm:h-auto h-[50px]' src={logo} alt="" /></Link>
+                        <Link to="/" className="btn btn-ghost mb-[1rem]"><img className='w-[107px] sm:w-[168px] sm:h-auto h-[50px]' src={logo} alt="" /></Link>
                     </div>
                     <div className="flex-none">
                         <div className="menu menu-horizontal px-1">
@@ -50,7 +50,7 @@ function LandingPageAdmin() {
                                 <option className='bg-black' value="ar" selected={i18n.language === 'ar'}>عربي</option>
                                 <option className='bg-black' value="en" selected={i18n.language === 'en'}>english</option>
                             </select>
-                            <Link to="/" className='btn text-[1rem] btn-primary'>{t('login_button')}</Link>
+                            <Link to="/" className='btn btn-sm sm:btn-md py-[0.5rem] h-auto text-[1rem] btn-primary'>{t('login_button')}</Link>
                         </div>
                     </div>
                 </div>

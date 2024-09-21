@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faChartLine, faFileCirclePlus, faGear, faGears, faHandHoldingDollar, faHeadset, faMoneyCheckDollar, faMoon, faNewspaper, faRightFromBracket, faUser, faUserTie, faUsers } from "@fortawesome/free-solid-svg-icons";
 import headerWave from "../../images/headerWave.svg";
-import logo from "../../images/Logo.svg";
+import logo from "../../images/Logo.png";
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import Footer from './footer';
 function HomeAdmin() {
@@ -31,9 +31,9 @@ function HomeAdmin() {
         height: "64vh"
       }}>
         <div className="navbar flex text-white justify-between items-center bg-transparent z-[999]">
-          <div className="navbar-start xxl:hidden">
+          <div className="navbar-start xl:hidden">
             <div className="dropdown ">
-              <div tabIndex={0} role="button" className="btn btn-ghost xxl:hidden">
+              <div tabIndex={0} role="button" className="btn btn-ghost xl:hidden">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -64,9 +64,9 @@ function HomeAdmin() {
             <a className="btn btn-ghost text-xl"><img className='h-[50px]' src={logo} alt="" /></a>
           </div>
           <div>
-            <a className="btn btn-ghost xxl:block hidden text-xl"><img src={logo} alt="" /></a>
+            <a className="xl:block hidden w-[107px] sm:w-[168px] sm:h-auto h-[50px]"><img src={logo} alt="" /></a>
           </div>
-          <div className="navbar-center hidden xxl:flex">
+          <div className="navbar-center hidden xl:flex">
             <ul className="menu font-bold text-[1.1rem] w-full menu-horizontal px-1">
               <li onClick={() => setActive("/admin")} className={`hover:text-primary ${active == "/admin" || active == "/admin/" ? "text-primary" : "text-white"}`}><Link to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
               <li onClick={() => setActive("/admin/users")} className={`hover:text-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-primary" : "text-white"}`}><Link to="/admin/users"><FontAwesomeIcon icon={faUsers} /> المستخدمين</Link></li>

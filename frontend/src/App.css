@@ -46,3 +46,11 @@
         height: 60px;
     }
 }
+.progress-circle {
+    transform: rotate(-90deg);
+}
+.progress-ring {
+    fill: none;
+    stroke-width: 15;
+    stroke-linecap: round;
+}
