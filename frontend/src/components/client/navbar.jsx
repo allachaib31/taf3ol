@@ -1,6 +1,3 @@
-import { faCartShopping } from '@fortawesome/free-regular-svg-icons/faCartShopping'
-import { faNewHome } from '@fortawesome/free-regular-svg-icons/faNewHome'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
 
 function Navbar() {
