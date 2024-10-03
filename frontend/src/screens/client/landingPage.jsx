@@ -32,7 +32,7 @@ function LandingPageAdmin() {
 
     return (
         <div id='landingPage' className='fontZain overflow-hidden min-h-screen'>
-            <div data-aos="zoom-in" className="w-full m-0 p-0 sm:h-[80vh] h-[60vh]" style={{
+            <div data-aos="zoom-out" className="w-full m-0 p-0 sm:h-[80vh] h-[60vh]" style={{
                 backgroundImage: `url(${headerWave})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

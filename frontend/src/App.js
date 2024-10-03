@@ -3,9 +3,10 @@ import './App.css';
 import { AdminScreen, AuthAdmin, HomeAdmin } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
 import { AdminsInformations, OrdersInformations, PaymentsInformations, ReportsInformations, ServicesInformations, SettingsInformations, TicketsInformations, UsersInformations} from "./components/admin";
-import {CommonQuestions, ConditionsService, Home, PrincipalPage } from "./components/client";
+import {AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, ProfitMoney, Services, Settings, Support } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
+import NewOrder from "./components/client/newOrder/newOrder";
 
 function App() {
   return (
@@ -21,6 +22,13 @@ function App() {
             <Route path="/signUp" element={<SignUp />}/>
             <Route path="/client" element={<ClientPage />}>
                 <Route path="/client" element={<PrincipalPage />}/>
+                <Route path="/client/newOrder" element={<NewOrder />}/>
+                <Route path="/client/orders" element={<Orders />}/>
+                <Route path="/client/addMoney" element={<AddMoney />}/>
+                <Route path="/client/support" element={<Support />}/>
+                <Route path="/client/services" element={<Services />}/>
+                <Route path="/client/profitMoney" element={<ProfitMoney />}/>
+                <Route path="/client/settings" element={<Settings />}/>
             </Route>
             <Route path="/admin" element={<AdminScreen />}>
               <Route path="/admin/" element={<HomeAdmin />}>
