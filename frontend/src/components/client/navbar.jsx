@@ -6,7 +6,7 @@ function Navbar() {
     const [active, setActive] = useState(location.pathname);
     const [zIndex, setZIndex] = useState(0);
     return (
-        <div className={`drawer h-screen  fixed xl:z-[0] z-[${zIndex}] xl:drawer-open`}>
+        <div className={`mt-[6.2rem] drawer h-screen  fixed top-0 xl:z-[0] z-[${zIndex}] xl:drawer-open`}>
             <input id="my-drawer-2" type="checkbox" className="drawer-toggle" onChange={(event) => {
                 if(event.target.checked){
                     return setZIndex(999)

@@ -46,8 +46,8 @@ function Orders() {
           <tbody>
             {/* row 1 */}
             <tr>
-              <th>1</th>
-              <td></td>
+              <th><input type="checkbox" className="checkbox" /></th>
+              <td>1</td>
               <td></td>
               <td></td>
               <td></td>
@@ -60,8 +60,8 @@ function Orders() {
             </tr>
             {/* row 2 */}
             <tr>
-              <th>2</th>
-              <td></td>
+              <th><input type="checkbox" className="checkbox" /></th>
+              <td>2</td>
               <td></td>
               <td></td>
               <td></td>
@@ -74,21 +74,8 @@ function Orders() {
             </tr>
             {/* row 3 */}
             <tr>
-              <th>3</th>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <th>4</th>
-              <td></td>
+              <th><input type="checkbox" className="checkbox" /></th>
+              <td>3</td>
               <td></td>
               <td></td>
               <td></td>
@@ -100,8 +87,21 @@ function Orders() {
               <td></td>
             </tr>
             <tr>
-              <th>5</th>
+              <th><input type="checkbox" className="checkbox" /></th>
+              <td>4</td>
               <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th><input type="checkbox" className="checkbox" /></th>
+              <td>5</td>
               <td></td>
               <td></td>
               <td></td>

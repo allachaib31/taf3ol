@@ -6,7 +6,7 @@ import { faDollarSign, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
 function Header() {
     return (
-        <header className='bg-black relative z-[999] h-[100px]'>
+        <header className='top-0 bg-black fixed w-full z-[999] h-[100px]'>
             <div className="navbar px-[0.5rem] sm:px-[2rem]">
                 <div className="flex-1 gap-[1rem]">
                     <a className="w-[107px] sm:w-[168px] sm:h-auto h-[50px]"><img src={logo} alt="" /></a>

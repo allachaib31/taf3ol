@@ -7,6 +7,7 @@ import {AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPag
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
 import NewOrder from "./components/client/newOrder/newOrder";
+import OpenTickets from "./components/client/support/openTickets";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/client/orders" element={<Orders />}/>
                 <Route path="/client/addMoney" element={<AddMoney />}/>
                 <Route path="/client/support" element={<Support />}/>
+                <Route path="/client/openTickets" element={<OpenTickets />}/>
                 <Route path="/client/services" element={<Services />}/>
                 <Route path="/client/profitMoney" element={<ProfitMoney />}/>
                 <Route path="/client/settings" element={<Settings />}/>

@@ -7,7 +7,7 @@ function ClientPage() {
     <div lang='ar' dir='rtl' className='fontZain'>
         <Header />
         <Navbar />
-        <div className='p-[1rem] xl:mr-[20rem]'>
+        <div className='p-[1rem] xl:mr-[20rem] mt-[6.2rem]'>
           <Outlet />
         </div>
     </div>
