@@ -10,4 +10,6 @@ export { default as Orders } from "./orders/orders";
 export { default as ProfitMoney } from "./profitMoney/profitMoney";
 export { default as Services } from "./services/services";
 export { default as Settings } from "./settings/settings";
+export { default as Profile } from "./settings/profile";
+export { default as UpdatePassword } from "./settings/updatePassword";
 export { default as Support } from "./support/support";

@@ -1,8 +1,11 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom'
 
 function Settings() {
   return (
-    <div>Settings</div>
+    <div>
+      <Outlet />
+    </div>
   )
 }
 

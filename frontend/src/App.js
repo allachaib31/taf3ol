@@ -3,11 +3,13 @@ import './App.css';
 import { AdminScreen, AuthAdmin, HomeAdmin } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
 import { AdminsInformations, OrdersInformations, PaymentsInformations, ReportsInformations, ServicesInformations, SettingsInformations, TicketsInformations, UsersInformations} from "./components/admin";
-import {AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, ProfitMoney, Services, Settings, Support } from "./components/client";
+import {AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, Profile, ProfitMoney, Services, Settings, Support, UpdatePassword } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
 import NewOrder from "./components/client/newOrder/newOrder";
 import OpenTickets from "./components/client/support/openTickets";
+import ManageStore from "./components/client/profitMoney/manageStore";
+import Gifts from "./components/client/profitMoney/gifts";
 
 function App() {
   return (
@@ -29,8 +31,13 @@ function App() {
                 <Route path="/client/support" element={<Support />}/>
                 <Route path="/client/openTickets" element={<OpenTickets />}/>
                 <Route path="/client/services" element={<Services />}/>
-                <Route path="/client/profitMoney" element={<ProfitMoney />}/>
-                <Route path="/client/settings" element={<Settings />}/>
+                <Route path="/client/profitMoney/affiliateMarketing" element={<ProfitMoney />}/>
+                <Route path="/client/profitMoney/manageStore" element={<ManageStore />}/>
+                <Route path="/client/profitMoney/gifts" element={<Gifts />}/>
+                <Route path="/client/settings" element={<Settings />}>
+                  <Route path="/client/settings" element={<Profile />}/>
+                  <Route path="/client/settings/updatePassword" element={<UpdatePassword />}/>
+                </Route>
             </Route>
             <Route path="/admin" element={<AdminScreen />}>
               <Route path="/admin/" element={<HomeAdmin />}>
