@@ -1,6 +1,12 @@
-import { faCoins, faMoneyBill1Wave, faSackDollar } from '@fortawesome/free-solid-svg-icons'
+import { faCircleXmark, faCoins, faMoneyBill1Wave, faSackDollar, faSquareCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
+import level1Image from "../../images/level1.png";
+import level2Image from "../../images/level2.png";
+import level3Image from "../../images/level3.png";
+import level4Image from "../../images/level4.png";
+import level5Image from "../../images/level5.png";
+import level6Image from "../../images/level6.png";
 
 function PrincipalPage() {
     return (
@@ -112,23 +118,89 @@ function PrincipalPage() {
                 </div>
             </div>
             <dialog id="my_modal_1" className="modal">
-                <div className="modal-box">
-                    <table className='w-[1900px]'>
-                        <thead>
+                <div className="modal-box max-w-[70rem]">
+                    <div className='overflow-x-auto'>
+                    <table className='table '>
+                        <thead className='text-xl'>
                             <tr>
-                                <th>جديد</th>
-                                <th>مبتدئ</th>
-                                <th>نشيط</th>
-                                <th>مميز</th>
-                                <th>VIP</th>
-                                <th>ملكي</th>
+                                <th>مستوى الحساب</th>
+                                <th className='text-center text-xl sm:text-3xl'><span>جديد</span><br /><div className='inline-block bg-primary rounded-full p-[0.5rem]'><img src={level1Image} alt="" /></div></th>
+                                <th className='text-center text-xl sm:text-3xl'><span>مبتدئ</span><br /><div className='inline-block bg-primary rounded-full p-[0.5rem]'><img src={level2Image} alt="" /></div></th>
+                                <th className='text-center text-xl sm:text-3xl'><span>نشيط</span><br /><div className='inline-block bg-primary rounded-full p-[0.5rem]'><img src={level3Image} alt="" /></div></th>
+                                <th className='text-center text-xl sm:text-3xl'><span>مميز</span><br /><div className='inline-block bg-primary rounded-full p-[0.5rem]'><img src={level4Image} alt="" /></div></th>
+                                <th className='text-center text-xl sm:text-3xl'><span>VIP</span><br /><div className='inline-block bg-primary rounded-full p-[0.5rem]'><img src={level5Image} alt="" /></div></th>
+                                <th className='text-center text-xl sm:text-3xl'><span>ملكي</span><br /><div className='inline-block bg-primary rounded-full p-[0.5rem]'><img src={level6Image} alt="" /></div></th>
                             </tr>
                         </thead>
+                        <tbody>
+                            <tr>
+                                <th>متاح</th>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                            </tr>
+                            <tr>
+                                <th>يمكن تحويل {">="} 500 نقطة</th>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                            </tr>
+                            <tr>
+                                <th>يمكن تحويل {">="} 250 نقطة</th>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                            </tr>
+                            <tr>
+                                <th>يمكن تحويل {">="} 100 نقطة</th>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                            </tr>
+                            <tr>
+                                <th>تحويل النقاط باقل من 4 ايام</th>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-error' icon={faCircleXmark} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                                <td className='text-center text-xl sm:text-3xl'><FontAwesomeIcon className='text-primary' icon={faSquareCheck} /></td>
+                            </tr>
+                            <tr>
+                                <th>كل 100 نقطة ~</th>
+                                <td className='text-center text-xl sm:text-3xl'>-</td>
+                                <td className='text-center text-xl sm:text-3xl'>1.00$</td>
+                                <td className='text-center text-xl sm:text-3xl'>1.25$</td>
+                                <td className='text-center text-xl sm:text-3xl'>1.50$</td>
+                                <td className='text-center text-xl sm:text-3xl'>1.75$</td>
+                                <td className='text-center text-xl sm:text-3xl'>2.00$</td>
+                            </tr>
+                        </tbody>
                     </table>
+                    <h1>ملاحظات :</h1>
+                    <ul className='list-disc'>
+                        <li>سوف تحصل على نقاط كلما طلبت, كل 1 دولار يتم انفاقه = 1 نقطة</li>
+                        <li>كل 100 نقطة = 1-2 دولار حسب مستوى الحساب</li>
+                        <li>لا يمكنك تحويل اقل من 100 نقطة الى رصيدك</li>
+                        <li>لتحويل النقاط الى رصيد , يرجى التواصل معنا على التذاكر واختيار الموضوع : النقاط واكتب بالرسالة : يرجى تحويل النقاط جميعها الى رصيد</li>
+                    </ul>
+                    </div>
                     <div className="modal-action">
                         <form method="dialog">
                             {/* if there is a button in form, it will close the modal */}
-                            <button className="btn">Close</button>
+                            <button className="btn">اغلاق</button>
                         </form>
                     </div>
                 </div>
