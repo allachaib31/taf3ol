@@ -4,15 +4,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell } from '@fortawesome/free-regular-svg-icons';
 import { faDollarSign, faSortDown } from '@fortawesome/free-solid-svg-icons';
 
-function Header() {
+function Header({ changeLanguage, i18n, t }) {
     return (
         <header className='top-0 bg-black fixed w-full z-[999] h-[100px]'>
             <div className="navbar px-[0.5rem] sm:px-[2rem]">
                 <div className="flex-1 gap-[1rem]">
                     <a className="w-[107px] sm:w-[168px] sm:h-auto h-[50px]"><img src={logo} alt="" /></a>
-                    <select className='bg-transparent text-[1rem] border-none text-white'>
-                        <option className='bg-black' value="ar" >عربي</option>
-                        <option className='bg-black' value="en" >english</option>
+                    <select onChange={(event) => {
+                        changeLanguage(event.target.value)
+                    }} className='bg-transparent text-[1rem] border-none text-white'>
+                        <option className='bg-black' value="ar" selected={i18n.language === 'ar'}>عربي</option>
+                        <option className='bg-black' value="en" selected={i18n.language === 'en'}>english</option>
                     </select>
                 </div>
                 <div className="flex-none gap-[0.5rem]">
@@ -20,10 +22,10 @@ function Header() {
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                             <div className="indicator">
                                 <FontAwesomeIcon icon={faDollarSign} className='btn btn-xs px-[0.7rem] py-[0.5rem] rounded-full btn-primary text-black' />
-                                <span className="top-[120%] left-[40%] border-none text-white indicator-item">العملة <FontAwesomeIcon icon={faSortDown} /></span>
+                                <span className={`top-[120%] ${i18n.language === 'ar' ? 'left-[40%]' : 'right-[40%]'} border-none text-white indicator-item`}>{t('currency_title')} <FontAwesomeIcon icon={faSortDown} /></span>
                             </div>
                         </div>
-                        <ul className="menu left-[12px] dropdown-content bg-white text-black w-20 rounded-box shadow">
+                        <ul className={`menu ${i18n.language === 'ar' ? 'left-[12px]' : 'right-[12px]'} dropdown-content bg-white text-black w-20 rounded-box shadow`}>
                             <ul >
                                 <li>$ USD</li>
                             </ul>
@@ -44,9 +46,9 @@ function Header() {
                             tabIndex={0}
                             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                             <li className='hover:bg-[#F1F1F1] cursor-pointer'>
-                                الحساب
+                            {t('account_title')}
                             </li>
-                            <li className='hover:bg-[#F1F1F1] cursor-pointer'>تسجيل الخروج</li>
+                            <li className='hover:bg-[#F1F1F1] cursor-pointer'>{t('logout_title')}</li>
                         </ul>
                     </div>
                     <div>
@@ -69,15 +71,15 @@ function Header() {
                                 <span className="badge badge-sm bg-[#FD0D00] border-none text-white py-[0.6rem] indicator-item">8</span>
                             </div>
                         </div>
-                        <ul className="menu left-[12px] dropdown-content bg-white text-black w-52 z-[50] rounded-box shadow">
+                        <ul className={`menu ${i18n.language === 'ar' ? 'left-[12px]' : 'right-[12px]'} dropdown-content bg-white text-black w-52 z-[50] rounded-box shadow`}>
                             <h1 className='my-[0.8rem]'>
-                                إشعارات
+                            {t('notifucation_title')}
                             </h1>
                             <hr />
                             <div className='flex flex-col h-52 gap-[0.3rem]  justify-center items-center'>
                                 <FontAwesomeIcon icon={faBell} className='text-[1.5rem]' />
-                                <h1 className='font-bold'>لا يوجد إشعارات حتى الآن</h1>
-                                <h1>ستظهر الإشعارات الجديدة هنا.</h1>
+                                <h1 className='font-bold'>{t('notifucation_header')}</h1>
+                                <h1>{t('notifucation_text')}</h1>
                             </div>
                         </ul>
                     </div>

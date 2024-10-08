@@ -1,9 +1,10 @@
 import { faCloudArrowUp } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 
 function Profile() {
+  const { t, i18n } = useOutletContext();
   const [image, setImage] = useState("https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp");
 
   // Handle Image Upload
@@ -21,8 +22,8 @@ function Profile() {
   return (
     <div className='relative z-50'>
       <div className='flex flex-col items-end gap-[1rem]'>
-        <button className='btn btn-error w-44'>تسجيل الخررج</button>
-        <Link to="/client/settings/updatePassword" className='btn btn-primary w-44'>تغيير كلمة المرور</Link>
+        <button className='btn btn-error w-44'>{t('button_1_settings')}</button>
+        <Link to="/client/settings/updatePassword" className='btn btn-primary w-44'>{t('button_2_settings')}</Link>
       </div>
       <div className='mt-[1rem]'>
         <form className='flex flex-col gap-[1rem] justify-center items-center'>
@@ -51,18 +52,18 @@ function Profile() {
             </div>
           </div>
           <div className='flex flex-col'>
-            <label htmlFor="name">الاسم</label>
+            <label htmlFor="name">{t('label_1_settings')}</label>
             <input type="text" className='input input-bordered w-80' />
           </div>
           <div className='flex flex-col'>
-            <label htmlFor="name">الهاتف</label>
+            <label htmlFor="name">{t('label_2_settings')}</label>
             <input type="text" className='input input-bordered w-80' />
           </div>
           <div className='flex flex-col'>
-            <label htmlFor="name">البريد الالكتروني</label>
+            <label htmlFor="name">{t('label_3_settings')}</label>
             <input type="text" className='input input-bordered w-80' />
           </div>
-          <button className='btn btn-primary px-[2rem] text-xl'>حفظ</button>
+          <button className='btn btn-primary px-[2rem] text-xl'>{t('button_3_settings')}</button>
         </form>
       </div>
     </div>

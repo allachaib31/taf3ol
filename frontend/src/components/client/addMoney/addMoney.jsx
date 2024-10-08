@@ -11,7 +11,9 @@ import googlePayIcon from "../../../images/googlePayIcon.png";
 import paypalIcon from "../../../images/paypalIcon.png";
 import skrillIcon from "../../../images/skrillIcon.png";
 import carteCreditIcon from "../../../images/carteCreditIcon.png";
+import { Link, useOutletContext } from 'react-router-dom';
 function AddMoney() {
+  const { t, i18n } = useOutletContext();
   const [activeTab, setActiveTab] = useState('addMoney');
   return (
     <div className="relative z-50 ">
@@ -21,14 +23,14 @@ function AddMoney() {
             }`}
           onClick={() => setActiveTab('addMoney')}
         >
-          إضافة رصيد
+          {t('title_addCredit_tab_1')}
         </button>
         <button
           className={`py-2 px-4 text-lg font-bold sm:rounded-t-[10px] ${activeTab === 'payBook' ? 'bg-primary text-black border' : 'bg-black text-white'
             }`}
           onClick={() => setActiveTab('payBook')}
         >
-          سجل المدفوعات
+          {t('title_addCredit_tab_2')}
         </button>
       </div>
       <div className="border-2 p-[1rem]">
@@ -36,13 +38,13 @@ function AddMoney() {
           activeTab == "addMoney" && (
             <div className="grid grid-cols-1">
               <div className='flex flex-col gap-[1rem]'>
-                <h1>طريقة الدفع</h1>
+                <h1>{t('lable_1_addCredit_tabContent_1')}</h1>
                 <select className='select select-bordered'>
-                  <option selected disabled>اختر طريقة الدفع</option>
+                  <option selected disabled>{t('placeholder_1_addCredit_tabContent_1')}</option>
                 </select>
-                <h1>التعليمات</h1>
+                <h1>{t('lable_2_addCredit_tabContent_1')}</h1>
                 <div className='bg-[#f1f1f1] py-[2rem] rounded-[14px]'>
-                  <h1 className='text-center'>يرجى التواصل معنا على صفحة :<span className='underline'>الدعم الفني</span>, لتفعيل الدفع عبر البطاقات </h1>
+                  <h1 className='text-center' dangerouslySetInnerHTML={{ __html: t('content_1_addCredit_tabContent_1') }}></h1>
                 </div>
               </div>
 
@@ -54,12 +56,12 @@ function AddMoney() {
             <div className="grid grid-cols-1">
               <div className="overflow-x-auto mt-[2rem]">
                 <table className="table table-zebra">
-                  <thead className='bg-primary text-black'>
+                  <thead className='bg-primary text-[1rem] text-black'>
                     <tr>
                       <th><input type="checkbox" className="checkbox" /></th>
-                      <th>رقم </th>
-                      <th>تاريخ إضافة رصيد</th>
-                      <th>الرصيد</th>
+                      <th>{t('table_1_th_1_addCredit_tabContent_2')} </th>
+                      <th>{t('table_1_th_2_addCredit_tabContent_2')}</th>
+                      <th>{t('table_1_th_3_addCredit_tabContent_2')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -96,7 +98,7 @@ function AddMoney() {
         }
       </div>
       <div className='container mx-auto'>
-        <h1 className='font-bold text-3xl my-[1.3rem]'>طرق الدفع</h1>
+        <h1 className='font-bold text-3xl my-[1.3rem]'>{t('title_1_addCredit')}</h1>
         <div className='flex justify-center items-center flex-wrap gap-[1.5rem] xl:gap-x-[7rem] gap-y-[2rem]'>
           <div className='border rounded-full flex justify-center items-center p-[1.3rem]'>
             <img src={ethereumIcon} alt="" className='sm:w-[100px] sm:h-[100px] w-[80px] h-[80px]' />

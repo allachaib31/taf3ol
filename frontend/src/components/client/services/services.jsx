@@ -1,39 +1,41 @@
 import React from 'react'
 import logo from "../../../images/Logo.png";
+import { useOutletContext } from 'react-router-dom';
 function Services() {
+  const { t, i18n } = useOutletContext();
   return (
     <div className='relative z-50'>
       <div className='flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between'>
         <select className="select select-bordered text-[1rem] font-bold bg-black text-white w-full sm:max-w-xs">
-          <option selected disabled>فلتر</option>
-          <option value="">الكل</option>
-          <option value="">المفضلة</option>
-          <option value="">الأكثر مبيعًا</option>
+          <option selected disabled>{t('select_1_option_1_services')}</option>
+          <option value="">{t('select_1_option_2_services')}</option>
+          <option value="">{t('select_1_option_3_services')}</option>
+          <option value="">{t('select_1_option_4_services')}</option>
         </select>
         <div className="join ">
           <div>
             <div>
-              <input className="input input-bordered join-item" placeholder="البحث" />
+              <input className="input input-bordered join-item" placeholder={t('placeholder_1_services')} />
             </div>
           </div>
           <div className="indicator">
-            <button className="btn btn-primary join-item font-bold text-[1rem]">البحث</button>
+            <button className="btn btn-primary join-item font-bold text-[1rem]">{t('button_1_services')}</button>
           </div>
         </div>
       </div>
       <div className="overflow-x-auto mt-[2rem]">
         <table className="table table-zebra">
           {/* head */}
-          <thead className='bg-primary text-black'>
+          <thead className='bg-primary text-black text-[1rem]'>
             <tr>
               <th><input type="checkbox" className="checkbox" /></th>
-              <th>الرقم </th>
-              <th>الاسم</th>
-              <th>السعر لكل 1000</th>
-              <th>الحد الادنى</th>
-              <th>الحد الاقصى</th>
-              <th>السرعة التقريبية</th>
-              <th>وصف الخدمة</th>
+              <th>{t('table_1_th_1_services')} </th>
+              <th>{t('table_1_th_2_services')}</th>
+              <th>{t('table_1_th_3_services')}</th>
+              <th>{t('table_1_th_4_services')}</th>
+              <th>{t('table_1_th_5_services')}</th>
+              <th>{t('table_1_th_6_services')}</th>
+              <th>{t('table_1_th_7_services')}</th>
             </tr>
           </thead>
           <tbody>
@@ -46,7 +48,7 @@ function Services() {
               <td></td>
               <td></td>
               <td></td>
-              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>تفاصيل</button></td>
+              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>{t('table_1_button')}</button></td>
             </tr>
             {/* row 2 */}
             <tr>
@@ -57,7 +59,7 @@ function Services() {
               <td></td>
               <td></td>
               <td></td>
-              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>تفاصيل</button></td>
+              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>{t('table_1_button')}</button></td>
             </tr>
             {/* row 3 */}
             <tr>
@@ -68,7 +70,7 @@ function Services() {
               <td></td>
               <td></td>
               <td></td>
-              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>تفاصيل</button></td>
+              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>{t('table_1_button')}</button></td>
             </tr>
             <tr>
               <th><input type="checkbox" className="checkbox" /></th>
@@ -78,7 +80,7 @@ function Services() {
               <td></td>
               <td></td>
               <td></td>
-              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>تفاصيل</button></td>
+              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>{t('table_1_button')}</button></td>
             </tr>
             <tr>
               <th><input type="checkbox" className="checkbox" /></th>
@@ -88,7 +90,7 @@ function Services() {
               <td></td>
               <td></td>
               <td></td>
-              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>تفاصيل</button></td>
+              <td><button onClick={() => document.getElementById('serviceDetail').showModal()} className='btn btn-primary'>{t('table_1_button')}</button></td>
             </tr>
           </tbody>
         </table>
@@ -99,46 +101,46 @@ function Services() {
             <img src={logo} className='w-[107px] sm:w-[168px] sm:h-auto h-[50px]' alt="" />
           </div>
           <div className='p-[1rem]'>
-            <p className='text-center'>مشاهدات فيديو انستقرام [خدمة جديدة - سيرفر #1] [تعمل على جميع انواع الفيديوهات]</p>
+            <p className='text-center'>{t('modal_1_title_services')}</p>
             <div className='mt-[1rem]'>
               <div className='flex flex-wrap gap-2 sm:gap-0 justify-center sm:justify-around'>
                 <div>
                   <div className='w-32 sm:w-44 md:w-56 text-center bg-black text-primary p-[1rem] text-[0.8rem] sm:text-xl md:text-2xl font-bold mb-[1rem]'>
-                    الوقت التقريبي
+                    {t('modal_1_placeholder_1_services')}
                   </div>
                   2 دقيقة
                 </div>
                 <div>
                   <div className='w-32 sm:w-44 md:w-56 text-center bg-black text-primary p-[1rem] text-[0.8rem] sm:text-xl md:text-2xl font-bold mb-[1rem]'>
-                  السرعة
+                    {t('modal_1_placeholder_2_services')}
                   </div>
-                  
+
                 </div>
                 <div>
                   <div className='w-32 sm:w-44 md:w-56 text-center bg-black text-primary p-[1rem] text-[0.8rem] sm:text-xl md:text-2xl font-bold mb-[1rem]'>
-                  وقت البدا
+                    {t('modal_1_placeholder_3_services')}
                   </div>
-                  
+
                 </div>
               </div>
               <div className='mt-[1rem] flex flex-wrap gap-2 sm:gap-0 justify-center sm:justify-around'>
                 <div>
                   <div className='w-32 sm:w-44 md:w-56 text-center bg-black text-primary p-[1rem] text-[0.8rem] sm:text-xl md:text-2xl font-bold mb-[1rem]'>
-                  الضمان والتعويض
+                    {t('modal_1_placeholder_4_services')}
                   </div>
-                  
+
                 </div>
                 <div>
                   <div className='w-32 sm:w-44 md:w-56 text-center bg-black text-primary p-[1rem] text-[0.8rem] sm:text-xl md:text-2xl font-bold mb-[1rem]'>
-                  الجودة
+                    {t('modal_1_placeholder_5_services')}
                   </div>
-                  
+
                 </div>
                 <div>
                   <div className='w-32 sm:w-44 md:w-56 text-center bg-black text-primary p-[1rem] text-[0.8rem] sm:text-xl md:text-2xl font-bold mb-[1rem]'>
-                  وصف الخدمة
+                    {t('modal_1_placeholder_6_services')}
                   </div>
-                  
+
                 </div>
               </div>
             </div>
@@ -146,7 +148,7 @@ function Services() {
           <div className="modal-action m-[1rem]">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button className="btn">اغلاق</button>
+              <button className="btn">{t('modal_1_button_1_services')}</button>
             </form>
           </div>
         </div>

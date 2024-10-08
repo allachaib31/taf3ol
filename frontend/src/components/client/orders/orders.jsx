@@ -1,46 +1,48 @@
 import React from 'react'
+import { useOutletContext } from 'react-router-dom';
 
 function Orders() {
+  const { t, i18n } = useOutletContext();
   return (
     <div className='relative z-50'>
       <div className='flex sm:flex-row flex-col gap-5 sm:gap-0 justify-between'>
         <select className="select select-bordered text-[1rem] font-bold bg-black text-white w-full sm:max-w-xs">
-          <option selected disabled>اختيار حالة الطلب</option>
-          <option value="">الكل</option>
-          <option value="">قيد الانتظار</option>
-          <option value="">قيد التنفيذ</option>
-          <option value="">مكتمل</option>
-          <option value="">مكتمل جزئيًا</option>
-          <option value="">قيد المعالجة</option>
-          <option value="">ملغى</option>
+          <option selected disabled>{t('select_1_option_1_orders')}</option>
+          <option value="">{t('select_1_option_2_orders')}</option>
+          <option value="">{t('select_1_option_3_orders')}</option>
+          <option value="">{t('select_1_option_4_orders')}</option>
+          <option value="">{t('select_1_option_5_orders')}</option>
+          <option value="">{t('select_1_option_6_orders')}</option>
+          <option value="">{t('select_1_option_7_orders')}</option>
+          <option value="">{t('select_1_option_8_orders')}</option>
         </select>
         <div className="join ">
           <div>
             <div>
-              <input className="input input-bordered join-item" placeholder="البحث" />
+              <input className="input input-bordered join-item" placeholder={t('placeholder_1_orders')} />
             </div>
           </div>
           <div className="indicator">
-            <button className="btn btn-primary join-item font-bold text-[1rem]">البحث</button>
+            <button className="btn btn-primary join-item font-bold text-[1rem]">{t('button_1_orders')}</button>
           </div>
         </div>
       </div>
       <div className="overflow-x-auto mt-[2rem]">
         <table className="table table-zebra">
           {/* head */}
-          <thead className='bg-primary text-black'>
+          <thead className='bg-primary text-black text-[1rem]'>
             <tr>
               <th><input type="checkbox" className="checkbox" /></th>
-              <th>رقم الطلب</th>
-              <th>تاريخ الطلب</th>
-              <th>الرابط</th>
-              <th>الكمية</th>
-              <th>الثمن</th>
-              <th>عدد البدا</th>
-              <th>التقييم</th>
-              <th>الخدمة</th>
-              <th>العدد المتبقي</th>
-              <th>حالة الطلب</th>
+              <th>{t('table_1_th_1_orders')}</th>
+              <th>{t('table_1_th_2_orders')}</th>
+              <th>{t('table_1_th_3_orders')}</th>
+              <th>{t('table_1_th_4_orders')}</th>
+              <th>{t('table_1_th_5_orders')}</th>
+              <th>{t('table_1_th_6_orders')}</th>
+              <th>{t('table_1_th_7_orders')}</th>
+              <th>{t('table_1_th_8_orders')}</th>
+              <th>{t('table_1_th_9_orders')}</th>
+              <th>{t('table_1_th_10_orders')}</th>
             </tr>
           </thead>
           <tbody>

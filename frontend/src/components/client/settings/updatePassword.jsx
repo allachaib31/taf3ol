@@ -1,6 +1,8 @@
 import React from 'react'
+import { useOutletContext } from 'react-router-dom';
 
 function UpdatePassword() {
+  const { t, i18n } = useOutletContext();
   return (
     <div className='relative z-50'>
       <div>
@@ -15,18 +17,18 @@ function UpdatePassword() {
 
           </div>
           <div className='flex flex-col'>
-            <label htmlFor="name">كلمة المرور الحالية</label>
+            <label htmlFor="name">{t('label_1_updatePassword')}</label>
             <input type="text" className='input input-bordered w-80' />
           </div>
           <div className='flex flex-col'>
-            <label htmlFor="name">كلمة المرور الجديدة</label>
+            <label htmlFor="name">{t('label_2_updatePassword')}</label>
             <input type="text" className='input input-bordered w-80' />
           </div>
           <div className='flex flex-col'>
-            <label htmlFor="name">تأكيد كلمة المرور</label>
+            <label htmlFor="name">{t('label_3_updatePassword')}</label>
             <input type="text" className='input input-bordered w-80' />
           </div>
-          <button className='btn btn-primary px-[2rem] text-xl'>حفظ</button>
+          <button className='btn btn-primary px-[2rem] text-xl'>{t('button_1_updatePassword')}</button>
         </form>
       </div>
     </div>

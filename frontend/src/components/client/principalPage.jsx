@@ -1,6 +1,7 @@
 import { faCircleXmark, faCoins, faMoneyBill1Wave, faSackDollar, faSquareCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
+import React from 'react';
+import { useOutletContext } from "react-router-dom";
 import level1Image from "../../images/level1.png";
 import level2Image from "../../images/level2.png";
 import level3Image from "../../images/level3.png";
@@ -9,19 +10,20 @@ import level5Image from "../../images/level5.png";
 import level6Image from "../../images/level6.png";
 
 function PrincipalPage() {
+    const { t, i18n } = useOutletContext();
     return (
         <div className='container mx-auto relative '>
             <div className='flex lg:block justify-center '>
                 <div className='flex lg:flex-row flex-col lg:gap-0 gap-[1rem] lg:justify-between'>
                     <div className="card bg-black text-white w-[19rem] xs:w-80 xxl:w-96 shadow-xl">
-                        <div className="card-body p-[1rem] flex flex-row justify-between">
+                        <div className="card-body p-[1rem] flex flex-row justify-around">
                             <div className='flex flex-col items-center justify-center'>
-                                <h1 className='text-[1.2rem] lg:text-[1rem] xxl:text-[1.2rem] flex gap-[0.5rem] items-center'><FontAwesomeIcon className='text-primary' icon={faSackDollar} /> <span>رصيدك الحالي:</span></h1>
+                                <h1 className='text-[1.2rem] lg:text-[1rem] xxl:text-[1.2rem] flex gap-[0.5rem] items-center'><FontAwesomeIcon className='text-primary' icon={faSackDollar} /> <span>{t('title_home_card_1')}</span></h1>
                                 <h1 className='font-[900] text-3xl lg:text-xl xxl:text-3xl'>0</h1>
                             </div>
                             <div className="w-[0.2rem] h-[63px] lg:h-full bg-white"></div>
                             <div className='flex flex-col items-center justify-center'>
-                                <h1 className='text-[1.2rem] lg:text-[1rem] xxl:text-[1.2rem] flex gap-[0.5rem] items-center'><FontAwesomeIcon className='text-primary' icon={faMoneyBill1Wave} /> <span>انفقت معنا:</span></h1>
+                                <h1 className='text-[1.2rem] lg:text-[1rem] xxl:text-[1.2rem] flex gap-[0.5rem] items-center'><FontAwesomeIcon className='text-primary' icon={faMoneyBill1Wave} /> <span>{t('title_home_card_1.1')}</span></h1>
                                 <h1 className='font-[900] text-3xl lg:text-xl xxl:text-3xl'>0</h1>
                             </div>
                         </div>
@@ -34,13 +36,13 @@ function PrincipalPage() {
                                 role="progressbar">
                                 70%
                             </div>
-                            <h1 className='text-xl xxl:text-3xl font-bold'>حالة الحساب</h1>
+                            <h1 className='text-xl xxl:text-3xl font-bold'>{t('title_home_card_2')}</h1>
                         </div>
                     </div>
                     <div className="card bg-black text-white w-[19rem] xs:w-80 xxl:w-96 shadow-xl">
                         <div className="card-body p-[1rem] items-center justify-center">
-                            <h1 className='text-xl xxl:text-3xl flex gap-[1rem]'>النقاط <FontAwesomeIcon icon={faCoins} /></h1>
-                            <button className='btn btn-primary text-xl h-auto ' onClick={() => document.getElementById('my_modal_1').showModal()}>تحويل النقاط</button>
+                            <h1 className='text-xl xxl:text-3xl flex gap-[1rem]'>{t('title_home_card_3')} <FontAwesomeIcon icon={faCoins} /></h1>
+                            <button className='btn btn-primary text-xl h-auto ' onClick={() => document.getElementById('my_modal_1').showModal()}>{t('button_home_card_3')}</button>
                         </div>
                     </div>
                 </div>
@@ -53,9 +55,11 @@ function PrincipalPage() {
                         event.currentTarget.classList.add(...["[--tab-bg:#FDF001]", "[--tab-color:black]"]);
                     }} name="my_tabs_2" role="tab" style={{
                         width: "167px"
-                    }} className="tab text-[1rem] font-[900] [--tab-bg:#FDF001] [--tab-color:black]" aria-label="معلومات و تحديثات" defaultChecked />
+                    }} className="tab text-[1rem] font-[900] [--tab-bg:#FDF001] [--tab-color:black]" aria-label={t('title_home_tab_1')} defaultChecked />
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-[1.2rem] font-bold">
-                        <h1>الخدمات حاليا مكتوبة على هذا التنسيق :</h1>
+                    {
+                            i18n.language === 'ar' ? <>
+                                                    <h1>الخدمات حاليا مكتوبة على هذا التنسيق :</h1>
                         <p>اسم الخدمة [الحد الاعلى] [وقت البدا - السرعة] <br /> تبدا سرعة التوصيل بعد وقت البدا الموجود بالوصف.</p>
                         <ul>
                             <li>🔥 = افضل الخدمات.</li>
@@ -75,6 +79,8 @@ function PrincipalPage() {
                         <h1>لمزيد من الاخبار, شاهد قسم الاخبار لموقعنا.</h1>
                         <h1>لمزيد من المعلومات, شاهد قسم الاسئلة الشائعة لموقعنا</h1>
                         <h1>لمزيد من المساعدة, يرجى التواصل معنا الان.</h1>
+                            </> : "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nobis velit enim doloribus dolorem repudiandae, qui est nihil deleniti nisi voluptates neque molestiae expedita odit explicabo repellat sint error, quas perferendis."
+                        }
                     </div>
 
                     <input
@@ -91,10 +97,12 @@ function PrincipalPage() {
                             width: "167px"
                         }}
                         className="tab text-[1rem] font-[900] bg-black text-white"
-                        aria-label="الاشتراكات"
+                        aria-label={t('title_home_tab_2')}
                     />
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6 text-[1.2rem] font-bold">
-                        <h1>الخدمات حاليا مكتوبة على هذا التنسيق :</h1>
+                        {
+                            i18n.language === 'ar' ? <>
+                                                    <h1>الخدمات حاليا مكتوبة على هذا التنسيق :</h1>
                         <p>اسم الخدمة [الحد الاعلى] [وقت البدا - السرعة] <br /> تبدا سرعة التوصيل بعد وقت البدا الموجود بالوصف.</p>
                         <ul>
                             <li>🔥 = افضل الخدمات.</li>
@@ -114,6 +122,8 @@ function PrincipalPage() {
                         <h1>لمزيد من الاخبار, شاهد قسم الاخبار لموقعنا.</h1>
                         <h1>لمزيد من المعلومات, شاهد قسم الاسئلة الشائعة لموقعنا</h1>
                         <h1>لمزيد من المساعدة, يرجى التواصل معنا الان.</h1>
+                            </> : "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nobis velit enim doloribus dolorem repudiandae, qui est nihil deleniti nisi voluptates neque molestiae expedita odit explicabo repellat sint error, quas perferendis."
+                        }
                     </div>
                 </div>
             </div>
