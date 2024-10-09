@@ -59,7 +59,7 @@ function Home() {
                     <div className='hidden md:flex items-center gap-[0.5rem] font-bold'><input type="radio" name="radio-1" className="radio" /> {t('remember_input')}</div>
                     <div className='flex sm:flex-row flex-col sm:gap-[1rem]'>
                         <p className='font-bold '>{t('sign_up_subtitle')}  <Link to="/signUp" className='underline'>{t('sign_up_button')}</Link></p>
-                        <p className='font-bold '>{t('reset_password_text')} <a href="" className='underline'>اعادة تعيين</a></p>
+                        <p className='font-bold '>{t('reset_password_text')} <a href="" className='underline'>{t('forget_password_button')}</a></p>
                     </div>
                 </form>
                 <div data-aos="fade-up" className='mt-[4rem]'>
@@ -108,7 +108,7 @@ function Home() {
             <div
                 data-aos="fade-up"
                 className="">
-                <img loading="lazy" src={paymentImage} alt="" className='w-[100vw]' />
+                <img loading="lazy" src={paymentImage} alt="" className='w-[100vw] lg:h-screen' />
             </div>
             <div className='container mx-auto mt-[3rem] sm:p-0 p-[1rem]'>
                 <div className='flex items-center justify-center'>

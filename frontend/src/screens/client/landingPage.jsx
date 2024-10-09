@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import headerWave from "../../images/headerWave.svg";
 import logo from "../../images/Logo.png";
+import waves from "../../images/waves.png"
 import emoger from "../../images/emoger.png";
 import Footer from './footer';
 import { Link, Outlet } from 'react-router-dom';
@@ -73,6 +74,7 @@ function LandingPageAdmin() {
                             {t('sign_up_button')}
                         </Link>
                     </div>
+                    <img src={waves} className='absolute hidden sm:block lg:top-[0px] top-[-100px] xl:top-[-150px] z-[-1] w-screen' alt="" />
                 </div>
             </div>
             <Outlet />
