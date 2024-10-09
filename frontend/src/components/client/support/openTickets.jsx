@@ -1,23 +1,24 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useOutletContext } from 'react-router-dom'
 
 function OpenTickets() {
+    const { t, i18n } = useOutletContext();
     return (
         <div className="relative z-50">
             <div className='flex justify-end'>
-                <Link to="/client/support" className='btn btn-primary text-2xl h-auto px-[2rem]'>الرجوع</Link>
+                <Link to="/client/support" className='btn btn-primary text-2xl h-auto px-[2rem]'>{t('button_1_openTicket')}</Link>
             </div>
             <div className="overflow-x-auto mt-[2rem]">
                 <table className="table table-zebra">
                     {/* head */}
-                    <thead className='bg-primary text-black'>
+                    <thead className='text-[1rem] bg-primary text-black'>
                         <tr>
                             <th><input type="checkbox" className="checkbox" /></th>
-                            <th>رقم الطلب</th>
-                            <th>تاريخ الطلب</th>
-                            <th>الموضوع</th>
-                            <th>اختر الفئة</th>
-                            <th>رسالة</th>
+                            <th>{t('table_1_th_1_openTicket')}</th>
+                            <th>{t('table_1_th_2_openTicket')}</th>
+                            <th>{t('table_1_th_3_openTicket')}</th>
+                            <th>{t('table_1_th_4_openTicket')}</th>
+                            <th>{t('table_1_th_5_openTicket')}</th>
                         </tr>
                     </thead>
                     <tbody>
