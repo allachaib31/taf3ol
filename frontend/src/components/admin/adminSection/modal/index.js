@@ -4,3 +4,6 @@ export { default as AddService } from "./addService";
 export { default as CreateCategoriesForService } from "./createCategoriesForService";
 export { default as DisableCategory } from "./disableCategory";
 export { default as DeleteCategory } from "./deleteCategory";
+export { default as UpdateAdmin } from "./updateAdmin";
+export { default as UpdatePassword } from "./updatePassword";
+export { default as StopAccount } from "./stopAccount";

@@ -51,6 +51,7 @@ function App() {
                 <Route path="/admin/settings" element={<SettingsInformations />}/>
               </Route>
             </Route>
+            <Route path="/admin/auth" element={<AuthAdmin />}/>
           </Route>
         </Routes>
       </Router>

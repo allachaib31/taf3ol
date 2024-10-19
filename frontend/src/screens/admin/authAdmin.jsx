@@ -3,7 +3,7 @@ import { LoginAdmin } from '../../components/admin'
 
 function AuthAdmin() {
   return (
-    <div className='min-h-screen flex justify-center items-center'>
+    <div dir="rtl" lang="ar" className='fontZain min-h-screen flex justify-center items-center'>
         <LoginAdmin />
     </div>
   )
