@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import './App.css';
-import { AdminScreen, AuthAdmin, HomeAdmin } from "./screens/admin";
+import { AdminScreen, AuthAdmin, HomeAdmin, ResetPassword } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
-import { AdminsInformations, OrdersInformations, PaymentsInformations, ReportsInformations, ServicesInformations, SettingsInformations, TicketsInformations, UsersInformations} from "./components/admin";
+import { AccountAdmin, AdminsInformations, OrdersInformations, PaymentsInformations, ReportsInformations, ServicesInformations, SettingsInformations, TicketsInformations, UsersInformations} from "./components/admin";
 import {AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, Profile, ProfitMoney, Services, Settings, Support, UpdatePassword } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
@@ -49,9 +49,11 @@ function App() {
                 <Route path="/admin/tickets" element={<TicketsInformations />}/>
                 <Route path="/admin/reports" element={<ReportsInformations />}/>
                 <Route path="/admin/settings" element={<SettingsInformations />}/>
+                <Route path="/admin/account" element={<AccountAdmin />}/>
               </Route>
             </Route>
             <Route path="/admin/auth" element={<AuthAdmin />}/>
+            <Route path="/reset-password/:token" element={<ResetPassword />}/>
           </Route>
         </Routes>
       </Router>

@@ -145,7 +145,6 @@ function AdminsInformations() {
                 </th>*/}
                 <th className='cursor-pointer' onClick={() => {
                   let arrayReverse = [...admins].reverse();
-                  console.log(arrayReverse)
                   setAdmins(() => {
                     return arrayReverse
                   });

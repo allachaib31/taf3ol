@@ -32,7 +32,6 @@ exports.getAllNotificationsForAdmin = async (req, res) => {
 
         // Execute the query and fetch notifications
         const notifications = await query.exec();
-        console.log(notifications)
         // Respond with the notifications
         res.status(httpStatus.OK).json({
             success: true,

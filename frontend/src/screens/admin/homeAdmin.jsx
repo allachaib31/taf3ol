@@ -230,6 +230,7 @@ function HomeAdmin() {
       case ("/admin/tickets" || "/admin/tickets/"): setTitle("التذاكر"); break;
       case ("/admin/reports" || "/admin/reports/"): setTitle("التقارير"); break;
       case ("/admin/settings" || "/admin/settings/"): setTitle("الإعدادات"); break;
+      case ("/admin/account" || "/admin/account/"): setTitle("الحساب");break;
     }
   }, [active]);
 
@@ -348,12 +349,15 @@ function HomeAdmin() {
               </summary>
               <ul className="menu bg-white text-black left-[6px] dropdown-content rounded-box z-[1] w-52 p-2 shadow">
                 <li>
-                  <div>
+                  <Link onClick={() => setActive("/admin/account")} to="/admin/account">
                     <FontAwesomeIcon icon={faGear} /> حساب
-                  </div>
+                  </Link>
                 </li>
                 <li>
-                  <div>
+                  <div onClick={() => {
+                    window.localStorage.removeItem("token");
+                    navigate("/admin/auth")
+                  }}>
                     <FontAwesomeIcon icon={faRightFromBracket} /> تسجيل الخروج
                   </div>
                 </li>

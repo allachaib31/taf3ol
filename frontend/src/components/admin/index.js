@@ -7,3 +7,4 @@ export { default as PaymentsInformations } from "./adminSection/paymentsInformat
 export { default as TicketsInformations } from "./adminSection/ticketsInformations";
 export { default as ReportsInformations } from "./adminSection/reportsInformations";
 export { default as SettingsInformations } from "./adminSection/settingsInformations";
+export { default as AccountAdmin } from "./adminSection/accountAdmin";

@@ -5,7 +5,7 @@ import { blockAdminRoute } from '../../../../utils/apiRoutes';
 import Loading from '../../../loading';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
 
-function StopAccount({ setAlert, stopAccount, indexAdmin, admins, setAdmins}) {
+function StopAccount({ setAlert, stopAccount, indexAdmin, admins, setAdmins }) {
     const navigate = useNavigate();
     const socket = useSocket();
     const [loading, setLoading] = useState(false);
@@ -46,16 +46,15 @@ function StopAccount({ setAlert, stopAccount, indexAdmin, admins, setAdmins}) {
     return (
         <dialog id="stopAccount" className="modal">
             <div className="modal-box">
-                <h3 className="font-bold text-lg mb-[0.5rem]">تحديث حالة العضو</h3>
+                <h3 className="font-bold text-lg mb-[0.5rem]">تحديث حالة المسؤول</h3>
                 <hr />
-                <div className="modal-action">
+
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <button className="btn ml-[0.5rem]">اغلاق</button>
                         <button disabled={loading} className='btn btn-primary' onClick={handleSubmit}>{loading ? <Loading /> : 'ارسال'}</button>
                     </form>
-                </div>
                 </div>
             </div>
         </dialog>

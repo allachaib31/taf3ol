@@ -5,6 +5,7 @@ import { authAdminRoute, isValidateTokenRoute } from '../../utils/apiRoutes';
 import Alert from '../alert';
 import { getMethode, postMethode } from '../../utils/apiFetchs';
 import LoadingScreen from '../loadingScreen';
+import { ForgetPassword } from './adminSection/modal';
 
 function LoginAdmin() {
   const navigate = useNavigate();
@@ -105,7 +106,9 @@ function LoginAdmin() {
           <button className='btn btn-primary w-full' type="submit" disabled={loading}>
             {loading ? <Loading /> : 'تسجيل الدخول'}
           </button>
+          <p onClick={() => document.getElementById("forgetPassword").showModal()} className='underline cursor-pointer'>تغيير كلمة المرور؟</p>
         </form>
+        <ForgetPassword />
       </div>
     } />
   );

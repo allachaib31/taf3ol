@@ -36,9 +36,22 @@ const userSchema = new mongoose.Schema({
     image: {
         type: mongoose.Schema.Types.ObjectId,
     },
-    isBlocked : {
-        type: Boolean,
-        default: false,
+    balance: {
+        type: Number,
+        default: 0
+    },
+    moneySpent: {
+        type: Number,
+        default: 0
+    },
+    status : {
+        type: String,
+        enum: ['نشيط', 'معلق', 'غير مؤكد', 'خبيث'],
+        default: 'غير مؤكد'
+    },
+    discount: {
+        type: Number,
+        default: 0
     },
     lastLogin: {
         type: Date,
@@ -65,7 +78,11 @@ const validateUser = (user) => {
         lastName: Joi.string().min(2).max(255).required(),
         phoneNumber: Joi.string().min(8).max(20).pattern(/^[0-9]+$/).required(), // Allow digits only
         password: Joi.string().min(6).max(255).required(),
-        image: Joi.string().optional(),
+        image: Joi.string().optional().allow(null, ""),
+        balance: Joi.number().optional(),
+        moneySpent: Joi.number().optional(),
+        status: Joi.string().valid('نشيط', 'معلق', 'غير مؤكد', 'خبيث').optional(),
+        discount: Joi.number().optional(),
         isBlocked: Joi.boolean().optional(),
         lastLogin: Joi.date().optional(),
         createdAt: Joi.date().optional(),

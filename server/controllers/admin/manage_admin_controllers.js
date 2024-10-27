@@ -94,7 +94,7 @@ exports.updateAdmin = async (req, res) => {
     const {id, name, email, username } = req.body;
     const { _id } = req.admin;
     try {
-        const admin = await Admin.findByIdAndUpdate(id, { name, email, username }, { new: true });
+        const admin = await Admin.findByIdAndUpdate(id, { name, email, username }, { new: true }).select("_id email username name");
         if (!admin) {
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
@@ -162,7 +162,7 @@ exports.blockAdmin = async (req, res) => {
     const { _id } = req.admin;
 
     try {
-        const admin = await Admin.findByIdAndUpdate(id, { isBlocked: block }, { new: true });
+        const admin = await Admin.findByIdAndUpdate(id, { isBlocked: block }, { new: true }).select("_id email username name image");
         if (!admin) {
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
@@ -213,9 +213,7 @@ exports.deleteAdmin = async (req, res) => {
 exports.getAdmins = async (req, res) => {
     const { _id } = req.admin;
     try {
-        const admins = await Admin.find({
-            _id: { $ne: _id }  // Use $ne (not equal) operator
-        }).populate("createdBy");
+        const admins = await Admin.find().populate("createdBy").select("_id id email username name image isBlocked lastLogin createdBy createdAt");
         res.status(httpStatus.OK).send(admins);
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب المسؤولين" });
@@ -237,7 +235,7 @@ exports.searchAdmin = async (req, res) => {
             }
             : {}; // If no query, return all admins by setting empty filter
 
-        const admins = await Admin.find(searchCondition).populate("createdBy");
+        const admins = await Admin.find(searchCondition).populate("createdBy").select("_id id email username name image isBlocked lastLogin createdBy createdAt");
 
         if (admins.length === 0) {
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على أي مسؤولين" });
