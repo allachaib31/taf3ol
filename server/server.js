@@ -60,6 +60,9 @@ conn.once('open', () => {
         .use(manageServices)
         .use(notificationRoute)
         .use(fileRoute);
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    });
 
     // Start the combined HTTP + WebSocket server
     server.listen(PORT, () => {
