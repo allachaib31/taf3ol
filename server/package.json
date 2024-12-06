@@ -2,6 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "main": "server.js",
+  "homepage": "/",
   "scripts": {
     "start": "node .",
     "watch": "NODE_TLS_REJECT_UNAUTHORIZED=0 nodemon .",
