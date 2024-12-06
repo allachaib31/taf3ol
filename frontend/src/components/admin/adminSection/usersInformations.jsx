@@ -200,14 +200,6 @@ function UsersInformations() {
                                         } 
                                     });
                                 }}>اخر تسجيل دخول <FontAwesomeIcon icon={direction.lastLogin == 1 ? faCaretDown : faSortUp} /></th>
-                                <th className='cursor-pointer' onClick={() => {
-                                    setDirection((prevDirection) => {
-                                        return {
-                                            ...prevDirection,
-                                            discount: prevDirection.discount == 1 ? -1 : 1
-                                        } 
-                                    });
-                                }}>تخفيض <FontAwesomeIcon icon={direction.discount == 1 ? faCaretDown : faSortUp} /></th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -235,7 +227,7 @@ function UsersInformations() {
                                                     <input type="checkbox" className="checkbox" />
                                                 </label>
                                             </th>*/}
-                                            <th>{user.id}</th>
+                                            <th><Link className='underline' to="/admin/clientDetails">{user.id}</Link></th>
                                             <td>
                                                 <div className="flex items-center gap-3">
                                                     <div className="avatar">
@@ -266,9 +258,6 @@ function UsersInformations() {
                                             <td>{user.status}</td>
                                             <td>{formattedCreatedAt}</td>
                                             <td>{formattedLastLogin != "Invalid Date" ? formattedLastLogin : ""}</td>
-                                            <td>
-                                                <button className='btn w-[121.86px]' onClick={() => document.getElementById('discountModal').showModal()}>تخفيض <span className='bg-primary text-black p-[0.5rem] rounded-full'>{user.discount}%</span></button>
-                                            </td>
                                             <th>
                                                 <details className='relative input input-bordered'>
                                                     <summary className='pt-[0.8rem]'>الأفعال</summary>

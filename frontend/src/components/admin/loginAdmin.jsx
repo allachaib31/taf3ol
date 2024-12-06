@@ -30,7 +30,7 @@ function LoginAdmin() {
         status: true,
         text: response.data.msg
       });
-      navigate("/admin");
+      navigate("/admin/home");
     } catch (err) {
       setAlert({
         display: true,
@@ -47,7 +47,7 @@ function LoginAdmin() {
       try {
         const response = await getMethode(isValidateTokenRoute);
 
-        navigate("/admin");
+        navigate("/admin/home");
 
       } catch (error) {
         console.error('Error validating token');

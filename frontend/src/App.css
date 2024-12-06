@@ -1,56 +1,98 @@
-@import url('https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 .fontZain {
-    font-family: "Zain", sans-serif;
-    font-style: normal;
+  font-family: "Zain", sans-serif;
+  font-style: normal;
 }
-#titleSignUp{
-    position: relative;
-}
-#titleSignUp::after{
-    content: "";
-    z-index: -1;
-    position: absolute;
-    top: 30%;
-    left: 1%;
-    width: 80px;
-    height: 80px;
-    border-radius: 100%;
-    background-color: #FDF001;
-}
-#titleSignUp::before{
-    content: "";
-    z-index: -1;
-    position: absolute;
-    right: -8%;
-    width: 80px;
-    height: 80px;
-    border-radius: 100%;
-    background-color: #FDF001;
-}
-@media (max-width: 36rem) {
-    #titleSignUp::after {
-        top: 10%;  /* Adjust the top position */
-        left: 2%;  /* Move it a little more to the right */
-        width: 60px;  /* Make the circle smaller */
-        height: 60px; 
-    }
 
-    #titleSignUp::before {
-        top: -7%;
-        right: -10%;  /* Adjust the position */
-        width: 60px;  /* Make the circle smaller */
-        height: 60px;
-    }
+#titleSignUp {
+  position: relative;
 }
+
+#titleSignUp::after {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: 30%;
+  left: 1%;
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  background-color: #fdf001;
+}
+
+#titleSignUp::before {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  right: -8%;
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  background-color: #fdf001;
+}
+
+@media (max-width: 36rem) {
+  #titleSignUp::after {
+    top: 10%;
+    /* Adjust the top position */
+    left: 2%;
+    /* Move it a little more to the right */
+    width: 60px;
+    /* Make the circle smaller */
+    height: 60px;
+  }
+
+  #titleSignUp::before {
+    top: -7%;
+    right: -10%;
+    /* Adjust the position */
+    width: 60px;
+    /* Make the circle smaller */
+    height: 60px;
+  }
+}
+
 .progress-circle {
-    transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
+
 .progress-ring {
-    fill: none;
-    stroke-width: 15;
-    stroke-linecap: round;
+  fill: none;
+  stroke-width: 15;
+  stroke-linecap: round;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+/* Custom styles for the Tiptap editor */
+.editor-container .ProseMirror {
+  background-color: white !important; /* White background */
+  color: black !important;            /* Black text */
+}
+
+/* Optional: You can also style placeholder text */
+.editor-container .ProseMirror p[contenteditable="true"]:empty:before {
+  color: grey !important; /* Color of the placeholder text */
 }

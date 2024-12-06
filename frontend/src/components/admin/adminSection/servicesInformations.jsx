@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ReactSortable } from 'react-sortablejs';
 import { faCaretDown, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AddService, AddTypeService, CreateCategoriesForService, DeleteCategory, DisableCategory } from './modal';
+import { AddService } from './modal';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../../screens/admin/homeAdmin';
 import { getMethode } from '../../../utils/apiFetchs';
@@ -21,11 +21,11 @@ function ServicesInformations() {
     const socket = useSocket();
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState(false);
-    const [titleModalCategorie, setTitleModalCategorie] = useState("إضافة فئة");
     const [query, setQuery] = useState("");
     const [startTyping, setStartTyping] = useState(false);
-    const [typeCategory, setTypeCategory] = useState("smmcpan.com");
+    const [typeCategory, setTypeCategory] = useState("");
     const [listTypeCategory, setListTypeCategory] = useState([]);
+    const [services, setServices] = useState([]);
     const [alert, setAlert] = useState({
         display: false,
     });
@@ -69,34 +69,38 @@ function ServicesInformations() {
         })
     }, []);
     useEffect(() => {
-        setLoading(true);
-        setAlert({
-            display: false,
-        });
-        getMethode(`${getCategoriesRoute}?type=${typeCategory}`).then((response) => {
-            setCategories(response.data);
-        }).catch((err) => {
-            if (err.response.status == 500) {
-                setAlert({
-                    display: true,
-                    status: false,
-                    text: err.response.data.msg
-                });
-            }
-            if (err.response.status == 401 || err.response.status == 403) {
-                navigate("/admin/auth")
-            }
-        }).finally(() => {
-            setLoading(false);
-        })
+        if (typeCategory != "") {
+            setLoading(true);
+            setAlert({
+                display: false,
+            });
+            getMethode(`${getCategoriesRoute}?type=${typeCategory}`).then((response) => {
+                setCategories(response.data);
+            }).catch((err) => {
+                if (err.response.status == 500) {
+                    setAlert({
+                        display: true,
+                        status: false,
+                        text: err.response.data.msg
+                    });
+                }
+                if (err.response.status == 401 || err.response.status == 403) {
+                    navigate("/admin/auth")
+                }
+            }).finally(() => {
+                setLoading(false);
+            })
+        }
     }, [typeCategory])
     useEffect(() => {
         if (socket) {
             socket.on('receive-notification', (notification) => {
                 if (notification.name == "add Service") {
-                    setCategories(notification.newCategories);
-                    //if (direction == "down") setAdmins(prevAdmins => [...prevAdmins, notification.newAdmin]);
-                    //else setAdmins(prevAdmins => [notification.newAdmin, ...prevAdmins]);
+                    if (typeCategory == notification.newCategories[0].type) {
+                        setCategories(notification.newCategories);
+                    }
+                } else if (notification.name == "add Type Service") {
+                    setListTypeCategory(notification.newList)
                 }
 
             });
@@ -108,16 +112,11 @@ function ServicesInformations() {
     }, [socket]);
     return (
         <div>
-            <div className='flex xl:flex-row flex-col gap-[1rem] justify-between'>
+            <div className='flex gap-[1rem] justify-between mb-[1rem]'>
                 <div className='flex gap-[1rem]'>
                     <button onClick={() => document.getElementById('addService').showModal()} className='btn btn-primary'> إضافة خدمة</button>
-                    <button onClick={() => {
-                        setTitleModalCategorie("إضافة فئة")
-                        document.getElementById('CreateCategoriesForService').showModal()
-                    }} className='btn btn-primary'> إضافة فئة</button>
-                    <button onClick={() => document.getElementById('addTypeService').showModal()}  className='btn btn-primary'> اضافة نوع جديد</button>
                 </div>
-                <div className="sm:join space-y-2 sm:space-y-0">
+                <div className="join space-y-0">
                     <div>
                         <input className="input bg-black sm:w-auto w-full input-bordered join-item text-white" placeholder="يبحث" value={query}
                             onChange={(e) => {
@@ -125,22 +124,50 @@ function ServicesInformations() {
                                 setQuery(e.target.value)
                             }} />
                     </div>
-                    <div className="indicator sm:w-auto w-full">
-                        <button className="btn  join-item sm:w-auto w-full">
+                    <div className="indicator">
+                        <button className="btn  join-item">
                             <FontAwesomeIcon icon={faMagnifyingGlass} />
                         </button>
                     </div>
                 </div>
             </div>
-            <select className="mt-[1rem] select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
-                setTypeCategory(event.target.value);
-            }}>
-                <option value="smmcpan.com">smmcpan.com</option>
-                <option value="numbersapp.online">numbersapp.online</option>
-                <option value="Manuel">يدوي</option>
-            </select>
+            <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
+                <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
+                    setTypeCategory(event.target.value);
+                }}>
+                    <option selected disabled>اختار نوع الخدمة</option>
+                    {
+                        listTypeCategory && listTypeCategory.map((item) => {
+                            return <option value={item.nameAr} key={item._id}>{item.nameAr}</option>
+                        })
+                    }
+                </select>
+                <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
+                    setServices(categories[event.target.value].items);
+                }}>
+                    <option selected disabled>اختار الفئة</option>
+                    {
+                        categories && categories.map((item, index) => {
+                            return <option value={index} key={item._id}>{item.nameAr}</option>
+                        })
+                    }
+                </select>
+            </div>
             {/* Category Table */}
-            <LoadingScreen loading={loading} component={
+            <LoadingScreen loading={loading} component={services &&
+                <ReactSortable
+                    list={services}
+                    setList={(currentServices) => setServices(currentServices)}
+                    {...sortableOptions}
+                >
+                    {
+                        services.map((service, index) => (
+                            <div className='text-xl p-[1rem] cursor-move bg-[#F1F1F1]  hover:bg-neutral' key={index}>{service.nameAr}</div>
+                        ))
+                    }
+                </ReactSortable>} />
+                <button className='btn btn-primary w-full mt-[1rem]'>حفظ</button>
+            {            /*<LoadingScreen loading={loading} component={
                 <div className="overflow-x-auto  mt-[1rem]">
                     <table className="table w-[1840px] bg-white">
                         <thead>
@@ -151,7 +178,7 @@ function ServicesInformations() {
                                 <th className='w-[22%]'>الخدمات</th>
                                 <th className='w-[8%] py-[12px] px-[16px]'>الأنواع</th>
                                 <th className='w-[8%] py-[12px] px-[16px]'>
-                                مزود الخدمة
+                                    مزود الخدمة
                                 </th>
                                 <th className='w-[8%] py-[12px] px-[16px]'>المعدل</th>
                                 <th className='w-[8%] py-[12px] px-[16px]'>الكمية</th>
@@ -175,7 +202,7 @@ function ServicesInformations() {
                             </tr>
                         </thead>
                     </table>
-                    {
+                    {/*
                         categories &&
                         <ReactSortable
                             className='w-[1840px]'
@@ -217,7 +244,7 @@ function ServicesInformations() {
                                         >
                                             {category.items.map(item => (
                                                 <div className='flex' key={item.id}>
-                                                    <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap flex items-center gap-[1rem]"><input type="checkbox" className="checkbox" /> <span title={item.service}>{item.service.substr(item.service.length - 4,4)}</span></div>
+                                                    <div className="w-[7%] py-[12px] px-[16px]  whitespace-wrap flex items-center gap-[1rem]"><input type="checkbox" className="checkbox" /> <span title={item.service}>{item.service.substr(item.service.length - 4, 4)}</span></div>
                                                     <div className="w-[26%] py-[12px] px-[16px]  whitespace-wrap flex items-center">{item.nameAr}</div>
                                                     <div className="w-[10%] py-[12px] px-[16px]  whitespace-wrap flex items-center">{item.type}</div>
                                                     <div className="w-[9%] py-[12px] px-[16px]  whitespace-wrap flex items-center">{item.provider}</div>
@@ -247,15 +274,11 @@ function ServicesInformations() {
                                     }
                                 </div>
                             ))}
-                        </ReactSortable>
-                    }
-                </div>
-            } />
-            <AddService categories={categories}  setCategories={setCategories} typeCategory={typeCategory}/>
-            <CreateCategoriesForService titleModalCategorie={titleModalCategorie} categories={categories} setCategories={setCategories}/>
-            <DisableCategory />
-            <DeleteCategory />
-            <AddTypeService />
+                        </ReactSortable>*/
+                   // }
+               /* </div>
+           /* } />*/}
+            <AddService categories={categories} setCategories={setCategories} typeCategory={typeCategory} />
         </div>
     );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
 import { getMethode, postMethode } from '../../../../utils/apiFetchs';
-import { addServiceRoute, getServicesRoute } from '../../../../utils/apiRoutes';
+import { addServiceRoute, getCategorieServicesApiRoute } from '../../../../utils/apiRoutes';
 import Loading from '../../../loading';
 import Alert from '../../../alert';
 import { countries } from '../../../../utils/constants';
@@ -81,7 +81,7 @@ function AddService({ categories, setCategories, typeCategory }) {
             setAlert({
                 display: false,
             });
-            getMethode(`${getServicesRoute}?name=${categorieSelected}&type=${typeCategory}`).then((response) => {
+            getMethode(`${getCategorieServicesApiRoute}?name=${categorieSelected}&type=${typeCategory}`).then((response) => {
                 setServices(response.data)
             }).catch((err) => {
                 if (err.response.status == 500) {

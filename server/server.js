@@ -52,12 +52,14 @@ conn.once('open', () => {
     const manageUserRoute = require("./routes/admin/manage_user_route");
     const manageServices = require("./routes/admin/manage_services_routes");
     const notificationRoute = require("./routes/notification/notification_route");
+    const fileRoute = require("./routes/files/files_routes");
     app
         .use(authAdminRoute)
         .use(manageAdminRoute)
         .use(manageUserRoute)
         .use(manageServices)
-        .use(notificationRoute);
+        .use(notificationRoute)
+        .use(fileRoute);
 
     // Start the combined HTTP + WebSocket server
     server.listen(PORT, () => {

@@ -122,7 +122,7 @@ function AddAdmin({ setAlert, setAdmins, direction}) {
                             })
                         }} />
                     </label>
-                    <button className='btn btn-info max-w-sm' type="button" onClick={handleFileClick}>
+                    <button className='btn btn-secondary max-w-sm' type="button" onClick={handleFileClick}>
                         <FontAwesomeIcon icon={faUpload} /> تحميل صورة
                     </button>
                     <input

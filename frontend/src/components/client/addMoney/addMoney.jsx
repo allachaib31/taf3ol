@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import 'core-js/features/symbol';
 import ethereumIcon from "../../../images/ethereumIcon.png";
 import stripeIcon from "../../../images/stripeIcon.png"
 import dashIcon from "../../../images/dashIcon.png";
@@ -12,9 +13,15 @@ import paypalIcon from "../../../images/paypalIcon.png";
 import skrillIcon from "../../../images/skrillIcon.png";
 import carteCreditIcon from "../../../images/carteCreditIcon.png";
 import { Link, useOutletContext } from 'react-router-dom';
+import PayeerPayment from '../payments/payeerPayment';
+import PerfectMoneyPayment from '../payments/perfectMoneyPayment';
+import GooglePayButton from "@google-pay/button-react"
+import PayPalPayment from '../payments/PayPalPayment';
+//import CryptomusPayment from '../payments/cryptomusPayment';
 function AddMoney() {
   const { t, i18n } = useOutletContext();
   const [activeTab, setActiveTab] = useState('addMoney');
+  const [checkout, setCheckOut] = useState(false);
   return (
     <div className="relative z-50 ">
       <div className="flex sm:flex-row flex-col sm:gap-0 gap-[1rem] sm:mb-0 mb-[1rem]">
@@ -138,6 +145,47 @@ function AddMoney() {
           </div>
         </div>
       </div>
+      <PayeerPayment />
+      <PerfectMoneyPayment />
+      <GooglePayButton
+        environment="TEST"
+        paymentRequest={{
+          apiVersion: 2,
+          apiVersionMinor: 0,
+          allowedPaymentMethods: [
+            {
+              type: 'CARD',
+              parameters: {
+                allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                allowedCardNetworks: ['MASTERCARD', 'VISA'],
+              },
+              tokenizationSpecification: {
+                type: 'PAYMENT_GATEWAY',
+                parameters: {
+                  gateway: 'example',
+                  gatewayMerchantId: 'exampleGatewayMerchantId',
+                },
+              },
+            },
+          ],
+          merchantInfo: {
+            merchantId: '12345678901234567890',
+            merchantName: 'Demo Merchant',
+          },
+          transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPriceLabel: 'Total',
+            totalPrice: '100.00',
+            currencyCode: 'USD',
+            countryCode: 'US',
+          },
+        }}
+        onLoadPaymentData={paymentRequest => {
+          console.log('load payment data', paymentRequest);
+        }}
+      />
+      <br />
+      <PayPalPayment />
     </div>
   )
 }

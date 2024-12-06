@@ -8,6 +8,11 @@ const categorieSchema = new mongoose.Schema({
         type: String,
         unique: true,
     },
+    idService: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'TypeServices',
+        required: true 
+    },
     nameAr: {
         type: String,
         unique: true,
@@ -18,20 +23,22 @@ const categorieSchema = new mongoose.Schema({
         unique: true,
         required: true,
     },
-    items: {
-        type: Array,
+    show: {
+        type: Boolean,
+        required: true,
+        default: true,
     },
     image: {
         type: mongoose.Schema.Types.ObjectId,
-    },
-    type: {
-        type: String,
-        enum: ["smmcpan.com", "numbersapp.online","Manuel"],
         required: true
     },
     ranking: {
         type: Number,
-        unique: true,
+        //unique: true,
+    },
+    isDeleted: { 
+        type: Boolean,
+        default: false 
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -62,17 +69,18 @@ categorieSchema.pre('save', async function (next) {
 const validationCategorie = (categorie) => {
     const schema = Joi.object({
         id: Joi.string().optional(), // Automatically generated, so optional
+        idService: Joi.string().required(),
         nameAr: Joi.string().required().messages({
             'string.empty': 'The Arabic name is required.'
         }),
         nameEn: Joi.string().required().messages({
             'string.empty': 'The English name is required.'
         }),
-        items: Joi.array().optional().allow(null),
-        image: Joi.string().optional().allow(null, ""), // Image is optional
-        type: Joi.string().valid("smmcpan.com", "numbersapp.online", "Manuel").required(),
-        createdBy: Joi.string().optional(), // Admin ID (ObjectId as a string)
-        ranking: Joi.number().optional(), // Optional because it's generated automatically
+        show: Joi.boolean().required(),
+        image: Joi.string().required(), // Image is optional
+        isDeleted: Joi.boolean().optional(),
+        createdBy: Joi.string().optional(),
+        ranking: Joi.number().optional(),
         createdAt: Joi.date().optional(), // Automatically set, so optional
     });
 

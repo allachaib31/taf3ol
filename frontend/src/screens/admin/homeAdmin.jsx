@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faChartLine, faCommentDots, faFileCirclePlus, faGear, faGears, faHandHoldingDollar, faHeadset, faMoneyCheckDollar, faMoon, faNewspaper, faRightFromBracket, faUser, faUserTie, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faChartLine, faCommentDots, faCubes, faFileCirclePlus, faGear, faGears, faHandHoldingDollar, faHeadset, faHouse, faMoneyCheckDollar, faMoon, faNewspaper, faRightFromBracket, faUser, faUserTie, faUsers } from "@fortawesome/free-solid-svg-icons";
 import headerWave from "../../images/headerWave.svg";
 import notificationAudio from "../../audio/notifucation.wav";
 import logo from "../../images/Logo.png";
@@ -222,6 +222,7 @@ function HomeAdmin() {
 
   useEffect(() => {
     switch (active) {
+      case ("/admin/home" || "/admin/home/"): setTitle("الرئيسية"); break;
       case ("/admin" || "/admin/"): setTitle("المشرفين"); break;
       case ("/admin/users" || "/admin/users/"): setTitle("المستخدمين"); break;
       case ("/admin/orders" || "/admin/orders/"): setTitle("الطلبات"); break;
@@ -230,7 +231,7 @@ function HomeAdmin() {
       case ("/admin/tickets" || "/admin/tickets/"): setTitle("التذاكر"); break;
       case ("/admin/reports" || "/admin/reports/"): setTitle("التقارير"); break;
       case ("/admin/settings" || "/admin/settings/"): setTitle("الإعدادات"); break;
-      case ("/admin/account" || "/admin/account/"): setTitle("الحساب");break;
+      case ("/admin/account" || "/admin/account/"): setTitle("الحساب"); break;
     }
   }, [active]);
 
@@ -239,16 +240,16 @@ function HomeAdmin() {
   return (
     <div>
       <div className="w-full m-0 p-0" style={{
-        backgroundImage: `url(${headerWave})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        height: "64vh"
+        //backgroundImage: `url(${headerWave})`,
+        //backgroundSize: 'cover',
+        //backgroundPosition: 'center',
+        //backgroundRepeat: 'no-repeat',
+        //height: "64vh"
       }}>
-        <div className="navbar flex text-white justify-between items-center bg-transparent z-[999]">
-          <div className="navbar-start xl:hidden">
-            <div className="dropdown ">
-              <div tabIndex={0} role="button" className="btn btn-ghost xl:hidden">
+        <div className="navbar bg-black text-white">
+          <div className="navbar-start">
+            <div className="dropdown">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -259,42 +260,57 @@ function HomeAdmin() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="M4 6h16M4 12h8m-8 6h16" />
+                    d="M4 6h16M4 12h16M4 18h7" />
                 </svg>
               </div>
               <ul
                 tabIndex={0}
-                className="menu menu-sm w-[95vw] dropdown-content bg-base-100 font-bold text-black z-[999] rounded-box mt-3 p-2 shadow">
-                <li onClick={() => setActive("/admin")} className={`hover:text-primary ${active == "/admin" || active == "/admin/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
-                <li onClick={() => setActive("/admin/users")} className={`hover:text-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin/users"><FontAwesomeIcon icon={faUsers} /> المستخدمين</Link></li>
-                <li onClick={() => setActive("/admin/orders")} className={`hover:text-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
-                <li onClick={() => setActive("/admin/services")} className={`hover:text-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin/services"><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</Link></li>
-                <li onClick={() => setActive("/admin/payments")} className={`hover:text-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
-                <li onClick={() => setActive("/admin/tickets")} className={`hover:text-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
-                <li onClick={() => setActive("/admin/reports")} className={`hover:text-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-primary" : "text-black"}`}><Link className='focus:text-primary' to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>
+                className="menu text-black menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                <li onClick={() => setActive("/admin/home")} className={`hover:text-black hover:bg-primary ${active == "/admin/home" || active == "/admin/home/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/home"><FontAwesomeIcon icon={faHouse} /> الرئيسية</Link></li>
+                <li onClick={() => setActive("/admin")} className={`hover:text-black hover:bg-primary ${active == "/admin" || active == "/admin/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
+                <li onClick={() => setActive("/admin/users")} className={`hover:text-black hover:bg-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-black bg-primary" : "text-black"}`}>
+                  <details className="dropdown">
+                    <summary><FontAwesomeIcon icon={faUsers} /> العملاء</summary>
+                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg">
+                      <li><Link className='focus:text-black' to="/admin/users"> الكل</Link></li>
+                      <li><Link className='focus:text-black' to="/admin/transferMoney">عمليات الشحن</Link></li>
+                      <li><Link className='focus:text-black' to="/admin/groupMoney">المجموعات</Link></li>
+                    </ul>
+                  </details></li>
+
+                <li onClick={() => setActive("/admin/services")} className={`hover:text-black hover:bg-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-black bg-primary" : "text-black"}`}>
+                  <details className='dropdown'>
+                        <summary><FontAwesomeIcon icon={faHandHoldingDollar} /> الخدمات</summary>
+                        <ul className='menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg'>
+                          <li><Link className='focus:text-black' to="/admin/typeServices">انواع الخدمات</Link></li>
+                          <li><Link className='focus:text-black' to="/admin/categoriesServices">الفئات</Link></li>
+                          {/*<li><Link className='focus:text-black' to="/admin/services"> الخدمات</Link></li>*/}
+                        </ul>
+                  </details>
+                </li>
+                <li onClick={() => setActive("/admin/products")} className={`hover:text-black hover:bg-primary ${active == "/admin/products" || active == "/admin/products/" ? "text-black bg-primary" : "text-black"}`}>
+                  <details className='dropdown'>
+                    <summary><FontAwesomeIcon icon={faCubes} />المنتجات</summary>
+                    <ul className='menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg'>
+                      <li><Link className='focus:text-black' to="/admin/addProducts">اضافة منتج</Link></li>
+                      <li><Link className='focus:text-black' to="/admin/productSort">ترتيب المنتجات</Link></li>
+                      <li><Link className='focus:text-black' to="/admin/products">الكل</Link></li>
+                    </ul>
+                  </details>
+                </li>
+                <li onClick={() => setActive("/admin/orders")} className={`hover:text-black hover:bg-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
+                <li onClick={() => setActive("/admin/payments")} className={`hover:text-black hover:bg-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
+                <li onClick={() => setActive("/admin/tickets")} className={`hover:text-black hover:bg-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
+                {/*<li onClick={() => setActive("/admin/reports")} className={`hover:text-black hover:bg-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>*/}
                 {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
-                <li onClick={() => setActive("/admin/settings")} className={`hover:text-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-primary" : "text-black"}`}><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
+                <li onClick={() => setActive("/admin/settings")} className={`hover:text-black hover:bg-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-black bg-primary" : "text-black"}`}><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
               </ul>
             </div>
-            <a className="btn btn-ghost text-xl"><img className='h-[50px]' src={logo} alt="" /></a>
           </div>
-          <div>
-            <a className="xl:block hidden w-[107px] sm:w-[168px] sm:h-auto h-[50px]"><img src={logo} alt="" /></a>
+          <div className="navbar-center">
+            <a className="w-[107px] h-[60px]"><img src={logo} alt="" /></a>
           </div>
-          <div className="navbar-center hidden xl:flex">
-            <ul className="menu font-bold text-[1.1rem] w-full menu-horizontal px-1">
-              <li onClick={() => setActive("/admin")} className={`hover:text-primary ${active == "/admin" || active == "/admin/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
-              <li onClick={() => setActive("/admin/users")} className={`hover:text-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin/users"><FontAwesomeIcon icon={faUsers} /> المستخدمين</Link></li>
-              <li onClick={() => setActive("/admin/orders")} className={`hover:text-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
-              <li onClick={() => setActive("/admin/services")} className={`hover:text-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin/services"><FontAwesomeIcon icon={faHandHoldingDollar} />الخدمات</Link></li>
-              <li onClick={() => setActive("/admin/payments")} className={`hover:text-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
-              <li onClick={() => setActive("/admin/tickets")} className={`hover:text-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
-              <li onClick={() => setActive("/admin/reports")} className={`hover:text-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-primary" : "text-white"}`}><Link className='focus:text-primary' to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>
-              {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
-              <li onClick={() => setActive("/admin/settings")} className={`hover:text-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-primary" : "text-white"}`}><a><FontAwesomeIcon icon={faGears} /> الإعدادات</a></li>
-            </ul>
-          </div>
-          <div className="flex navbar-end w-auto">
+          <div className="navbar-end">
             <details className="dropdown">
               <summary className="btn btn-ghost btn-circle">
                 <div className="indicator">
@@ -365,9 +381,9 @@ function HomeAdmin() {
             </details>
           </div>
         </div>
-        <div className='flex justify-center items-center h-[50%]'>
+        {/* <div className='flex justify-center items-center h-[50%]'>
           <h1 className='text-white font-bold text-[3rem]'>{title}</h1>
-        </div>
+        </div>*/}
       </div>
 
 
@@ -444,7 +460,7 @@ function HomeAdmin() {
         <div className='py-[2rem] sm:px-[2rem] px-[0.5rem]'>
           <Outlet />
         </div>
-        <Footer />
+        {/*<Footer />*/}
       </SocketContext.Provider>
     </div >
   )
