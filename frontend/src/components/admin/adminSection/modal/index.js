@@ -1,6 +1,5 @@
 export { default as AddAdmin } from "./addAdmin";
 export { default as AddUser } from "./addUser";
-export { default as AddService } from "./addService";
 export { default as AddTypeService } from "./addTypeService";
 export { default as CreateCategoriesForService } from "./createCategoriesForService";
 export { default as DeleteCategory } from "./deleteCategory";
@@ -13,3 +12,8 @@ export { default as GroupMoneyModel } from "./groupMoneyModel";
 export { default as ChooseProductsApi } from "./chooseProductsApi";
 export { default as DeleteService } from "./deleteService";
 export { default as DeleteGroupMoney } from "./deleteGroupMoney";
+export { default as AddStock } from "./addStock";
+export { default as CurrenciesModel } from "./currenciesModel";
+export { default as AddModelAdvertisement } from "./adverttisement/addModelAdvertisement";
+export { default as UpdatePasswordModel } from "./settings/updatePasswordModel";
+export { default as AddApiModel } from "./settings/addApiModel";

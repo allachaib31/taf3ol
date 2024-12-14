@@ -48,10 +48,6 @@ const productSchema = new mongoose.Schema({
                     type: Number,
                     required: true,
                 },
-                sellingPrice: {
-                    type: Number,
-                    required: true,
-                }
             }
         ],
         required: true,
@@ -70,7 +66,7 @@ const productSchema = new mongoose.Schema({
     },
     image: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true
+        //required: true
     },
     quantityQuality: {
         type: String,
@@ -152,7 +148,6 @@ const validationProduct = (product) => {
                 Joi.object({
                     nameCoin: Joi.string().required(),
                     costPrice: Joi.number().required(),
-                    sellingPrice: Joi.number().required(),
                 })
             )
             .required()

@@ -710,6 +710,79 @@ exports.searchService = async (req, res) => {
     }
 }
 
+exports.addProductsApi = async (req, res) => {
+    const admin = req.admin;
+    const { liste, idService, idCategorie, provider, categorieSelected } = req.body;
+    console.log(liste)
+    try{
+        for (let i = 0; i < liste.length; i++) {
+            const product = new Product({
+                idService, idCategorie,
+                nameAr: liste[i].name || liste[i].Title,
+                nameEn: liste[i].name || liste[i].Title,
+                service: liste[i].id || liste[i].service || categorieSelected,
+                country:  liste[i].CountryCode                || "",
+                serverNumber:  liste[i].ServerNumber || "",
+                price: [
+                    {
+                        nameCoin: "usd",
+                        costPrice: liste[i].Price || liste[i].price || liste[i].rate,
+                    },
+                    {
+                        nameCoin: "tl",
+                        costPrice: liste[i].Price || liste[i].price || liste[i].rate,
+                    },
+                ],
+                descriptionAr: "<div></div>",
+                descriptionEn: "<div></div>",
+                forQuantity: (liste[i].qty_values && liste[i].qty_values.min) || (liste[i].min) || 1,
+                quantityQuality: ((liste[i].min && liste[i].max) || (liste[i].qty_values) ? "كمية" : "بدون"),
+                minimumQuantity: liste[i].min || (liste[i].qty_values && liste[i].qty_values.min) || "",
+                maximumQuantity: liste[i].max || (liste[i].qty_values && liste[i].qty_values.max) || "",
+                availableQuantity: true,
+                provider,
+                show: false,
+                createdBy: admin._id
+            });
+            await product.save();
+            
+        }
+        const adminData = await Admin.findById(admin._id);
+        const notificationData = {
+            senderId: admin._id,
+            senderModel: 'Admin',
+            receiverModel: 'Admin',
+            type: 'reminder',
+            content: `${adminData.username}قام باضافة مجموعة من المنتجات `,
+            isGlobal: true
+        };
+        const { errorNotification } = validateNotification(notificationData);
+        if (errorNotification) {
+            throw new Error(errorNotification.details[0].message);
+        } else {
+            const notification = new Notification(notificationData);
+            await notification.save();
+        }
+        res.status(httpStatus.OK).send({
+            msg: "تم انشاء الفئة بنجاح",
+            contentNotification: notificationData.content
+        })
+    } catch (err) {
+        console.log(err)
+        if (err.code === 11000 && err.keyPattern && err.keyPattern.nameAr) {
+            // Handle duplicate key error specifically for nameAr field
+            return res.status(httpStatus.CONFLICT).json({
+                msg: "هذا منتج موجود بالفعل",
+                error: err.message
+            });
+        }
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
+
 exports.addProduct = async (req, res) => {
     const admin = req.admin;
     const { file } = req;
@@ -730,7 +803,7 @@ exports.addProduct = async (req, res) => {
             });
         }
         const product = new Product({
-            idService, idCategorie, nameAr, nameEn, service, country, serverNumber, price: JSON.parse(price), forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, image: newFile._id, show
+            idService, idCategorie, nameAr, nameEn, service, country, serverNumber, price: JSON.parse(price), forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, image: newFile._id, warehouse: provider == "stock",show, createdBy: admin._id
         });
         await product.save()
         const adminData = await Admin.findById(admin._id);
@@ -775,6 +848,22 @@ exports.getProducts = async (req, res) => {
     try{
         const products = await Product.find({
             idCategorie
+        }).sort({
+            ranking: 1
+        });
+        return res.status(httpStatus.OK).send(products);
+    } catch (err) {
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
+
+exports.getProductsStock = async (req, res) => {
+    try{
+        const products = await Product.find({
+            warehouse: true
         }).sort({
             ranking: 1
         });

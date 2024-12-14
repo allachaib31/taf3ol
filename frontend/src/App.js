@@ -4,7 +4,7 @@ import './App.css';
 import './index.css';
 import { AdminScreen, AuthAdmin, HomeAdmin, ResetPassword } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
-import { AccountAdmin, AddProducts, AdminsInformations, CategoriesServices, ClientDetails, GroupMoney, OrderInformation, OrdersInformations, PaymentsInformations, Products, ProductSort, ReportsInformations, SettingsInformations, TicketsInformations, TransferMoney, TypeServices, UsersInformations } from "./components/admin";
+import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CategoriesServices, ClientDetails, Currencies, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentsInformations, PopUpMessages, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations } from "./components/admin";
 import { AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, Profile, ProfitMoney, Services, Settings, Support, UpdatePassword } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
@@ -51,17 +51,34 @@ function App() {
                   <Route path="/admin/groupMoney" element={<GroupMoney />}/>
                   <Route path="/admin/orders" element={<OrdersInformations />} />
                   <Route path="/admin/order/get" element={<OrderInformation />}/>
+                  <Route path="/admin/stocks" element={<Stock />} />
+                  <Route path="/admin/stocksInfo" element={<StockInfo />}>
+                    <Route path="/admin/stocksInfo" element={<AddItemToStock />}/>
+                    <Route path="/admin/stocksInfo/recordSold" element={<RecordSoldItemStock />}/>
+                    <Route path="/admin/stocksInfo/available" element={<AvailableInStock />}/>
+                    <Route path="/admin/stocksInfo/damaged" element={<DamagedItemInStock />}/>
+                    <Route path="/admin/stocksInfo/requiresReview" element={<RequiresReviewItemStock />}/>
+                  </Route>
+                  <Route path="/admin/article" element={<Article />}/>
                   {/*<Route path="/admin/services" element={<ServicesInformations />} />*/}
                   <Route path="/admin/typeServices" element={<TypeServices />}/>
                   <Route path="/admin/categoriesServices" element={<CategoriesServices />}/>
+                  <Route path="/admin/addProductsApi" element={<AddProductsApi />}/>
                   <Route path="/admin/addProducts" element={<AddProducts />}/>
                   <Route path="/admin/productSort" element={<ProductSort />}/>
                   <Route path="/admin/products" element={<Products />}/>
                   <Route path="/admin/payments" element={<PaymentsInformations />} />
+                  <Route path="/admin/generateRechargeCards" element={<GenerateRechargeCards />}/>
+                  <Route path="/admin/allRechargeCards" element={<AllRechargeCards />}/>
+                  <Route path="/admin/currencies" element={<Currencies />}/>
                   <Route path="/admin/tickets" element={<TicketsInformations />} />
-                  {/*<Route path="/admin/reports" element={<ReportsInformations />} />*/}
-                  <Route path="/admin/settings" element={<SettingsInformations />} />
-                  <Route path="/admin/account" element={<AccountAdmin />} />
+                  <Route path="/admin/general" element={<General />}/>
+                  <Route path="/admin/advertisement" element={<Advertisement />}/>
+                  <Route path="/admin/registration" element={<Registration />}/>
+                  <Route path="/admin/notifications" element={<Notifications />}/>
+                  <Route path="/admin/popUpMessages" element={<PopUpMessages />}/>
+                  <Route path="/admin/account" element={<Account />}/>
+                  <Route path="/admin/api" element={<Api />}/>
                 </Route>
               </Route>
               <Route path="/admin/auth" element={<AuthAdmin />} />

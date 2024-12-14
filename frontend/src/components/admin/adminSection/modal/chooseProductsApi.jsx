@@ -24,7 +24,6 @@ function ChooseProductsApi({ inputs, setInputs }) {
         });
         getMethode(`${getServicesApiRoute}?type=${apiSelected}&categorieName=${catSelected}`).then((response) => {
             setServicesApi(response.data)
-            console.log(response.data)
         }).catch((err) => {
             if (err.response.status == 500) {
                 setAlert({

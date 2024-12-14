@@ -1,5 +1,5 @@
 require("custom-env").env();
-const { server, app, express } = require('./app');  // Import both the server and the app instance
+const { server, app, express } = require('./app'); // Import both the server and the app instance
 const connectDB = require('./config/db');
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -33,7 +33,27 @@ conn.once('open', () => {
     app
         .use(express.json({ limit: '50mb' }))
         .use(express.urlencoded({ limit: '50mb', extended: true }))
-        .use(helmet())
+        .use(helmet({
+            contentSecurityPolicy: {
+                useDefaults: true,
+                directives: {
+                    "default-src": ["'self'"],
+                    "script-src": ["'self'"],
+                    "style-src": ["'self'", "'unsafe-inline'"],
+                    "img-src": ["'self'", "data:"],
+                    "object-src": ["'none'"],
+                    "frame-ancestors": ["'self'"],
+                },
+            },
+            crossOriginEmbedderPolicy: true,
+            crossOriginOpenerPolicy: { policy: "same-origin" },
+            crossOriginResourcePolicy: { policy: "same-origin" },
+            referrerPolicy: { policy: "no-referrer" },
+        }))
+        .use((req, res, next) => {
+            res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+            next();
+        })
         .disable("x-powered-by")
         .use(cors({
             origin: process.env.URL,
@@ -60,11 +80,13 @@ conn.once('open', () => {
         .use(notificationRoute)
         .use(fileRoute);
 
-
+    // Logging each request for debugging
     app.use((req, res, next) => {
         console.log(`Request URL: ${req.url}`);
         next();
     });
+
+    // Serve static files and handle SPA routing
     app.use(express.static(path.join(__dirname, 'build')));
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, 'build', 'index.html'));

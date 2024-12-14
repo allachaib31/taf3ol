@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const { verifyToken } = require("../../middleware/admin/admin");
-const { addCategorie, getCategories, getCategorieServicesApiRoute, addService, addProduct, searchService, addTypeService, getTypeServices, getServicesApi, updateTypeService, deleteTypeService, updateCategorie, updateTypeServiceRanking, deleteCategorie, getProducts, addGroupMoney, getGroupMoney, updateGroupMoney, deleteGroupMoney } = require("../../controllers/admin/manage_services_controllers");
+const { addCategorie, getCategories, getCategorieServicesApiRoute, addService, addProduct, searchService, addTypeService, getTypeServices, getServicesApi, updateTypeService, deleteTypeService, updateCategorie, updateTypeServiceRanking, deleteCategorie, getProducts, addGroupMoney, getGroupMoney, updateGroupMoney, deleteGroupMoney, addProductsApi, getProductsStock } = require("../../controllers/admin/manage_services_controllers");
 const Router = express.Router();
 
 const  storage = multer.memoryStorage();
@@ -19,6 +19,7 @@ Router.post("/api/v1.0/admin/addService", verifyToken, addService);
 Router.post("/api/v1.0/admin/addTypeService", verifyToken, upload.single("image"), addTypeService);
 Router.post("/api/v1.0/admin/addProduct", verifyToken, upload.single("image"), addProduct);
 Router.post("/api/v1.0/admin/addGroupMoney", verifyToken, upload.single("image"), addGroupMoney);
+Router.post("/api/v1.0/admin/addProductsApi", verifyToken, addProductsApi)
 
 //PUT METHODS
 Router.put("/api/v1.0/admin/updateTypeServiceRanking", verifyToken, updateTypeServiceRanking);
@@ -36,6 +37,7 @@ Router.get("/api/v1.0/admin/getServicesApi", verifyToken, getServicesApi);
 Router.get("/api/v1.0/admin/getTypeServices", verifyToken, getTypeServices);
 Router.get("/api/v1.0/admin/searchService", verifyToken, searchService);
 Router.get("/api/v1.0/admin/getProducts", verifyToken, getProducts);
+Router.get("/api/v1.0/admin/getProductsStock", verifyToken, getProductsStock)
 Router.get("/api/v1.0/admin/getGroupMoney", verifyToken, getGroupMoney)
 
 //DELETE METHODS
