@@ -20,12 +20,17 @@ export { default as DamagedItemInStock } from "./adminSection/stockInfo/damagedI
 export { default as AvailableInStock } from "./adminSection/stockInfo/availableInStock";
 export { default as AddProductsApi } from "./adminSection/products/addProductsApi";
 export { default as AddProducts } from "./adminSection/products/addProducts";
+export { default as ProductDetails } from "./adminSection/products/productDetails";
+export { default as ProductDetailsGeneral } from "./adminSection/products/productDetailsGeneral";
+export { default as ProductDetailsRequired } from "./adminSection/products/productDetailsRequired";
+export { default as ProductDetailsApi } from "./adminSection/products/productDetailsApi";
 export { default as Editor } from "./adminSection/editor/editor";
 export { default as ClientDetails } from "./adminSection/usersInformations/clientDetails";
 export { default as OrderInformation } from "./adminSection/orders/orderInformation";
 export { default as Article } from "./adminSection/article/article";
 export { default as GenerateRechargeCards } from "./adminSection/rechargeCards/generateRechargeCards";
 export { default as AllRechargeCards } from "./adminSection/rechargeCards/allRechargeCards";
+export { default as CardTitles } from "./adminSection/rechargeCards/cardTitles";
 export { default as Currencies } from "./adminSection/currencies/currencies";
 export { default as General } from "./adminSection/settings/general";
 export { default as Advertisement } from "./adminSection/settings/advertisement";

@@ -36,20 +36,8 @@ const productSchema = new mongoose.Schema({
     serverNumber: {
         type: String,
     },
-    price: {
-        type: [
-            {
-                nameCoin: {
-                    type: String,
-                    enum: ["usd", "tl"],
-                    required: true,
-                },
-                costPrice: {
-                    type: Number,
-                    required: true,
-                },
-            }
-        ],
+    costPrice: {
+        type: Number,
         required: true,
     },
     forQuantity: {
@@ -84,12 +72,40 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     provider: {
-        type: String,
+        type: [
+            {
+                name: {
+                    type: String,
+                    required: true
+                },
+                nameProduct: {
+                    type: String,
+                    required: true
+                },
+                costPrice: {
+                    type: Number,
+                    required: true
+                },
+                service: {
+                    type: String,
+                },
+                country: {
+                    type: String,
+                },
+                serverNumber: {
+                    type: String,
+                },
+                isAvailable: {
+                    type: Boolean,
+                    required: true
+                },
+                isActive: {
+                    type: Boolean,
+                    required: true
+                }
+            }
+        ],
         required: true,
-    },
-    warehouse: {
-        type: Boolean,
-        default: false
     },
     ranking: {
         type: Number,
@@ -143,18 +159,7 @@ const validationProduct = (product) => {
         service: Joi.string().optional().allow(null, ""),
         country: Joi.string().optional().allow(null, ""),
         serverNumber: Joi.string().optional().allow(null, ""),
-        price: Joi.array()
-            .items(
-                Joi.object({
-                    nameCoin: Joi.string().required(),
-                    costPrice: Joi.number().required(),
-                })
-            )
-            .required()
-            .messages({
-                'array.base': 'Price must be an array.',
-                'array.includesRequiredUnknowns': 'Each price object must include nameCoin, costPrice, and sellingPrice.',
-            }),
+        costPrice: Joi.number().required(),
         forQuantity: Joi.number().required(),
         descriptionAr: Joi.string().required(),
         descriptionEn: Joi.string().required(),
@@ -165,8 +170,24 @@ const validationProduct = (product) => {
         minimumQuantity: Joi.number().optional().allow(null, ""),
         maximumQuantity: Joi.number().optional().allow(null, ""),
         availableQuantity: Joi.boolean().required(),
-        provider: Joi.string().required(),
-        warehouse: Joi.boolean().optional().allow(null, ""),
+        provider: Joi.array()
+        .items(
+            Joi.object({
+                name: Joi.string().required(),
+                nameProduct: Joi.string().required(),
+                costPrice: Joi.number().required(),
+                service: Joi.string().optional().allow(null, ""),
+                country: Joi.string().optional().allow(null, ""),
+                serverNumber: Joi.string().optional().allow(null, ""),
+                isAvailable: Joi.boolean().required(),
+                isActive: Joi.boolean().required()
+            })
+        )
+        .required()
+        .messages({
+            'array.base': 'provider must be an array.',
+            'array.includesRequiredUnknowns': 'Each provider object must include name, service, and costPrice.',
+        }),
         ranking: Joi.number().optional().allow(null, ""),
         show: Joi.boolean().required(),
         isDeleted: Joi.boolean().optional().allow(null, ""),

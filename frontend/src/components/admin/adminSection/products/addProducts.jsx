@@ -9,14 +9,15 @@ import 'cropperjs/dist/cropper.css';
 import { ChooseProductsApi } from '../modal';
 import Loading from '../../../loading';
 import Alert from '../../../alert';
+import { getApis } from '../../../../utils/constants';
 
 function AddProducts() {
     const navigate = useNavigate();
     const socket = useSocket();
     const [loading, setLoading] = useState(false);
+    const [apiList, setApiList] = useState(false);
     const [listeTypeService, setListTypeService] = useState([]);
     const [categories, setCategories] = useState(false);
-    const [indexCoin, setIndexCoin] = useState(0);
     const [inputs, setInputs] = useState({
         idService: "",
         idCategorie: "",
@@ -25,18 +26,7 @@ function AddProducts() {
         service: "",
         country: "",
         serverNumber: "",
-        price: [
-            {
-                nameCoin: "usd",
-                costPrice: "",
-                sellingPrice: "",
-            },
-            {
-                nameCoin: "tl",
-                costPrice: "",
-                sellingPrice: "",
-            },
-        ],
+        costPrice: "",
         forQuantity: "",
         descriptionAr: "",
         descriptionEn: "",
@@ -45,18 +35,17 @@ function AddProducts() {
         minimumQuantity: "",
         maximumQuantity: "",
         availableQuantity: "",
-        provider: "",
+        provider: [],
         show: true,
     });
     const [arDescription, setArDescription] = useState('');
     const [enDescription, setEnDescription] = useState('');
-    const [params, setParams] = useState("الكل");
+    const [idService, setIdService] = useState("");
     const [query, setQuery] = useState("");
     const [alert, setAlert] = useState({
         display: false,
     });
     const [image, setImage] = useState(null);
-    const [croppedImage, setCroppedImage] = useState(null);
     const [file, setFile] = useState(null);
 
     const handleImageChange = (e) => {
@@ -75,7 +64,7 @@ function AddProducts() {
         if (file) {
             const cropper = document.getElementById('cropper').cropper;
             const canvas = cropper.getCroppedCanvas();
-    
+
             // Convert the canvas to a Blob (binary format)
             return new Promise((resolve, reject) => {
                 canvas.toBlob((blob) => {
@@ -91,7 +80,7 @@ function AddProducts() {
         return "";
         //return Promise.reject(new Error("No file selected."));
     };
-    
+
     const handleSubmit = async () => {
         setLoading(true);
         setAlert({
@@ -100,13 +89,13 @@ function AddProducts() {
         try {
             const form = new FormData();
             form.append("idService", inputs.idService);
-            form.append("idCategorie",inputs.idCategorie);
+            form.append("idCategorie", inputs.idCategorie);
             form.append("nameAr", inputs.nameAr);
             form.append("nameEn", inputs.nameEn);
             form.append("service", inputs.service);
             form.append("country", inputs.country);
             form.append("serverNumber", inputs.serverNumber);
-            form.append("price", JSON.stringify(inputs.price));
+            form.append("costPrice", inputs.costPrice);
             form.append("forQuantity", inputs.forQuantity);
             form.append("descriptionAr", inputs.descriptionAr);
             form.append("descriptionEn", inputs.descriptionEn);
@@ -115,7 +104,7 @@ function AddProducts() {
             form.append("minimumQuantity", inputs.minimumQuantity);
             form.append("maximumQuantity", inputs.maximumQuantity);
             form.append("availableQuantity", inputs.availableQuantity);
-            form.append("provider", inputs.provider);
+            form.append("provider", JSON.stringify(inputs.provider));
             form.append("show", inputs.show);
             const response = await postMethode(addProductRoute, form);
             setAlert({
@@ -137,24 +126,20 @@ function AddProducts() {
         }
     }
     useEffect(() => {
+        getApis(setApiList);
+    }, []);
+    useEffect(() => {
         setLoading(true);
-        getMethode(`${getCategoriesRoute}?type=${params}&query=${query}`).then((response) => {
+        getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
             setCategories(response.data);
         }).catch((err) => {
-            if (err.response.status == 500) {
-                setAlert({
-                    display: true,
-                    status: false,
-                    text: err.response.data.msg
-                });
-            }
             if (err.response.status == 401 || err.response.status == 403) {
                 navigate("/admin/auth")
             }
         }).finally(() => {
             setLoading(false);
         })
-    }, [params, query]);
+    }, [idService, query]);
     useEffect(() => {
         getMethode(`${getTypeServicesRoute}`).then((response) => {
             setListTypeService(response.data);
@@ -177,7 +162,7 @@ function AddProducts() {
                 ...prevInputs,
                 descriptionAr: arDescription,
                 descriptionEn: enDescription
-            } 
+            }
         })
     }, [arDescription, enDescription]);
     return (
@@ -185,10 +170,10 @@ function AddProducts() {
             <h1 className='text-3xl font-[900]'>منتج جديد</h1>
             <button className='btn btn-secondary' onClick={() => document.getElementById('chooseProductsApi').showModal()}>اضافة منتج من API</button>
             <div>
-            {alert.display && <Alert msg={alert} />}
+                {alert.display && <Alert msg={alert} />}
                 <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
                     <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
-                        setParams(event.target.value)
+                        setIdService(event.target.value)
                         setInputs((prevInputs) => {
                             return {
                                 ...prevInputs,
@@ -196,8 +181,7 @@ function AddProducts() {
                             }
                         })
                     }}>
-                        <option disabled>اختار نوع الخدمة</option>
-                        <option selected value="الكل">الكل</option>
+                        <option disabled selected>اختار نوع الخدمة</option>
                         {
                             listeTypeService && listeTypeService.map((item) => {
                                 return <option value={item._id} key={item._id}>{item.nameAr}</option>
@@ -246,39 +230,6 @@ function AddProducts() {
                     </label>
                 </div>
                 <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
-                    <select onChange={(event) => setIndexCoin(event.target.value)} className="select select-bordered w-full sm:w-1/2 font-bold text-[1rem]">
-                        <option disabled>اختار العملة</option>
-                        <option selected value="0">USD</option>
-                        <option value="1">TL</option>
-                    </select>
-                    <label className="input input-bordered w-full sm:w-1/2 flex items-center gap-2">
-                        سعر الكلفة
-                        <input type="number" className="grow" value={inputs.price[indexCoin].costPrice} onChange={(event) => {
-                            let price = inputs.price;
-                            price[indexCoin].costPrice = event.target.value;
-                            setInputs((prevInputs) => {
-                                return {
-                                    ...prevInputs,
-                                    price
-                                }
-                            })
-                        }} />
-                    </label>
-                    {/*<label className="input input-bordered w-full sm:w-1/3 flex items-center gap-2">
-                        سعر البيع
-                        <input type="number" className="grow" value={inputs.price[indexCoin].sellingPrice} onChange={(event) => {
-                            let price = inputs.price;
-                            price[indexCoin].sellingPrice = event.target.value;
-                            setInputs((prevInputs) => {
-                                return {
-                                    ...prevInputs,
-                                    price
-                                }
-                            })
-                        }} />
-                    </label>*/}
-                </div>
-                <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
                     <label className="input input-bordered w-full sm:w-1/2 flex items-center gap-2">
                         من اجل كمية
                         <input type="number" className="grow" value={inputs.forQuantity} onChange={(event) => {
@@ -291,12 +242,12 @@ function AddProducts() {
                         }} />
                     </label>
                     <label className="input input-bordered w-full sm:w-1/2 flex items-center gap-2">
-                    البلاد
-                        <input type="text" className="grow" value={inputs.country} onChange={(event) => {
+                        سعر الكلفة
+                        <input type="number" className="grow" value={inputs.costPrice} onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
                                     ...prevInputs,
-                                    country: event.target.value
+                                    costPrice: event.target.value
                                 }
                             })
                         }} />
@@ -304,7 +255,7 @@ function AddProducts() {
                 </div>
                 <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
                     <label className="input input-bordered w-full sm:w-1/2 flex items-center gap-2">
-                    خدمة
+                        خدمة
                         <input type="text" className="grow" value={inputs.service} onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
@@ -315,7 +266,7 @@ function AddProducts() {
                         }} />
                     </label>
                     <label className="input input-bordered w-full sm:w-1/2 flex items-center gap-2">
-                    رقم الخادم
+                        رقم الخادم
                         <input type="number" className="grow" value={inputs.serverNumber} onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {
@@ -326,13 +277,26 @@ function AddProducts() {
                         }} />
                     </label>
                 </div>
+                <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
+                    <label className="input input-bordered w-full flex items-center gap-2">
+                        البلاد
+                        <input type="text" className="grow" value={inputs.country} onChange={(event) => {
+                            setInputs((prevInputs) => {
+                                return {
+                                    ...prevInputs,
+                                    country: event.target.value
+                                }
+                            })
+                        }} />
+                    </label>
+                </div>
                 <div className='mt-[1rem]'>
                     <p className='text-[1.2rem]'>وصف المنتج AR</p>
-                    <Editor content={arDescription} setContent={setArDescription}/>
+                    <Editor content={arDescription} setContent={setArDescription} />
                 </div>
                 <div className='mt-[1rem]'>
                     <p className='text-[1.2rem]'>وصف المنتج EN</p>
-                    <Editor content={enDescription} setContent={setEnDescription}/>
+                    <Editor content={enDescription} setContent={setEnDescription} />
                 </div>
                 <div>
                     <label className="block text-[1.2rem] text-gray-700 font-bold mt-2">تحميل الصورة</label>
@@ -354,17 +318,6 @@ function AddProducts() {
                                 />
                             </div>
                         )}
-                        {/*<button
-                            onClick={handleCrop}
-                            className="btn btn-primary"
-                        >
-                            قص الصورة
-                        </button>*/}
-                        {/*croppedImage && (
-                            <div className="mt-4">
-                                <img src={croppedImage} alt="Cropped" />
-                            </div>
-                        )*/}
                     </div>
                 </div>
                 <div className='mt-[1rem]'>
@@ -431,39 +384,47 @@ function AddProducts() {
                     </div>
                 </div>
                 <div className="flex items-center gap-[1rem] mt-[1rem]">
-                    <span className="text-xl">الكمية المتوفرة</span> <input type="checkbox" className="toggle toggle-primary" checked={inputs.availableQuantity} onChange={() => setInputs((prevInputs) => {
+                    <input type="checkbox" className="toggle toggle-primary" checked={inputs.availableQuantity} onChange={() => setInputs((prevInputs) => {
                         return {
                             ...prevInputs,
                             availableQuantity: !prevInputs.availableQuantity
                         }
                     })} value={inputs.availableQuantity} />
+                    <span className="text-xl">الكمية المتوفرة</span>
+                </div>
+                <div className="flex items-center gap-[1rem] mt-[1rem]">
+                    <input type="checkbox" className="toggle toggle-primary" checked={inputs.show} onChange={() => setInputs((prevInputs) => {
+                        return {
+                            ...prevInputs,
+                            show: !prevInputs.show
+                        }
+                    })} value={inputs.show} />
+                    <span className="text-xl">عرض</span>
                 </div>
                 <div className='mt-[1rem]'>
                     <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
                         setInputs((prevInputs) => {
                             return {
                                 ...prevInputs,
-                                provider: event.target.value
+                                provider: {
+                                    name: event.target.value,
+                                    nameProduct: prevInputs.nameAr,
+                                    isAvailable: true,
+                                    isActive: true,
+                                }
                             }
                         })
                     }}>
                         <option selected={inputs.provider == ""} disabled>اختر API</option>
                         <option value="stock">المخزن</option>
-                        <option value="https://smmcpan.com" selected={inputs.provider == "https://smmcpan.com"}>https://smmcpan.com</option>
-                        <option value="https://justanotherpanel.com"  selected={inputs.provider == "https://justanotherpanel.com"}>https://justanotherpanel.com</option>
-                        <option value="https://drd3m.me"  selected={inputs.provider == "https://drd3m.me"}>https://drd3m.me</option>
-                        <option value="https://api.numbersapp.online/api" selected={inputs.provider == "https://api.numbersapp.online/api"}>https://api.numbersapp.online/api</option>
-                        <option value="https://give-sms.com/api/v1"  selected={inputs.provider == "https://give-sms.com/api/v1"}>https://give-sms.com/api/v1</option>
-                        <option value="https://api.kasim-store.com" selected={inputs.provider == "https://api.kasim-store.com"}>https://api.kasim-store.com</option>
-                    </select>
-                </div>
-                <div className="flex items-center gap-[1rem] mt-[1rem]">
-                    <span className="text-xl">عرض</span> <input type="checkbox" className="toggle toggle-primary" checked={inputs.show} onChange={() => setInputs((prevInputs) => {
-                        return {
-                            ...prevInputs,
-                            show: !prevInputs.show
+                        {
+                            apiList && apiList.map((api) => {
+                                return (
+                                    <option value={api.name} selected={inputs.provider?.name == api.name}>{api.name}</option>
+                                )
+                            })
                         }
-                    })} value={inputs.show} />
+                    </select>
                 </div>
                 <button className='btn btn-primary w-full mt-[1rem]' disabled={loading} onClick={handleSubmit}>{loading ? <Loading /> : 'ارسال'}</button>
             </div>

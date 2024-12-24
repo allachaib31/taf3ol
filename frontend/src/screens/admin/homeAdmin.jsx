@@ -9,6 +9,7 @@ import Footer from './footer';
 import { getAdminsRoute, getFileRoute, getMessageRoute, getNotificationAdminRoute, host } from '../../utils/apiRoutes';
 import { io } from 'socket.io-client';
 import { getMethode } from '../../utils/apiFetchs';
+import { randomColor } from '../../utils/constants';
 const SocketContext = createContext(null);
 
 function HomeAdmin() {
@@ -269,72 +270,74 @@ function HomeAdmin() {
                 className="menu text-black menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                 <li onClick={() => setActive("/admin/home")} className={`hover:text-black hover:bg-primary ${active == "/admin/home" || active == "/admin/home/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/home"><FontAwesomeIcon icon={faHouse} /> الرئيسية</Link></li>
                 <li onClick={() => setActive("/admin")} className={`hover:text-black hover:bg-primary ${active == "/admin" || active == "/admin/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin"><FontAwesomeIcon icon={faUserTie} /> المشرفين</Link></li>
-                <li onClick={() => setActive("/admin/users")} className={`hover:text-black hover:bg-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-black bg-primary" : "text-black"}`}>
-                  <details className="dropdown">
-                    <summary><FontAwesomeIcon icon={faUsers} /> العملاء</summary>
-                    <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg">
-                      <li><Link className='focus:text-black' to="/admin/users"> الكل</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/transferMoney">عمليات الشحن</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/groupMoney">المجموعات</Link></li>
-                    </ul>
-                  </details></li>
-
-                <li onClick={() => setActive("/admin/services")} className={`hover:text-black hover:bg-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-black bg-primary" : "text-black"}`}>
-                  <details className='dropdown'>
-                        <summary><FontAwesomeIcon icon={faHandHoldingDollar} /> الخدمات</summary>
-                        <ul className='menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg'>
-                          <li><Link className='focus:text-black' to="/admin/typeServices">انواع الخدمات</Link></li>
-                          <li><Link className='focus:text-black' to="/admin/categoriesServices">الفئات</Link></li>
-                          {/*<li><Link className='focus:text-black' to="/admin/services"> الخدمات</Link></li>*/}
-                        </ul>
-                  </details>
-                </li>
-                <li onClick={() => setActive("/admin/products")} className={`hover:text-black hover:bg-primary ${active == "/admin/products" || active == "/admin/products/" ? "text-black bg-primary" : "text-black"}`}>
-                  <details className='dropdown'>
-                    <summary><FontAwesomeIcon icon={faCubes} />المنتجات</summary>
-                    <ul className='menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg'>
-                    <li><Link className='focus:text-black' to="/admin/addProductsApi">اضافة من API</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/addProducts">اضافة منتج</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/productSort">ترتيب المنتجات</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/products">الكل</Link></li>
+                <li>
+                  <details>
+                    <summary onClick={() => setActive("/admin/users")} className={`hover:text-black hover:bg-primary ${active == "/admin/users" || active == "/admin/users/" ? "text-black bg-primary" : "text-black"}`}><FontAwesomeIcon icon={faUsers} /> العملاء</summary>
+                    <ul>
+                      <li><Link to="/admin/users"> الكل</Link></li>
+                      <li><Link to="/admin/transferMoney">عمليات الشحن</Link></li>
+                      <li><Link to="/admin/groupMoney">المجموعات</Link></li>
                     </ul>
                   </details>
                 </li>
-                <li onClick={() => setActive("/admin/stocks")} className={`hover:text-black hover:bg-primary ${active == "/admin/stocks" || active == "/admin/stocks/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/stocks"><FontAwesomeIcon icon={faWarehouse} /> المخزون</Link> </li>
 
-                <li onClick={() => setActive("/admin/article")} className={`hover:text-black hover:bg-primary ${active == "/admin/article" || active == "/admin/article/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/article"><FontAwesomeIcon icon={faNewspaper} /> المقالات</Link> </li>
-
-
-
-                <li onClick={() => setActive("/admin/orders")} className={`hover:text-black hover:bg-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
-                <li onClick={() => setActive("/admin/payments")} className={`hover:text-black hover:bg-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
-
-                <li onClick={() => setActive("/admin/rechargeCards")} className={`hover:text-black hover:bg-primary ${active == "/admin/rechargeCards" || active == "/admin/rechargeCards/" ? "text-black bg-primary" : "text-black"}`}>
-                  <details className='dropdown'>
-                    <summary><FontAwesomeIcon icon={faBarcode} />بطاقات الشحن</summary>
-                    <ul className='menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg'>
-                      <li><Link className='focus:text-black' to="/admin/allRechargeCards"> الكل</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/generateRechargeCards">توليد بطاقات</Link></li>
+                <li>
+                  <details>
+                    <summary onClick={() => setActive("/admin/services")} className={`hover:text-black hover:bg-primary ${active == "/admin/services" || active == "/admin/services/" ? "text-black bg-primary" : "text-black"}`}><FontAwesomeIcon icon={faHandHoldingDollar} /> الخدمات</summary>
+                    <ul>
+                      <li><Link to="/admin/typeServices">انواع الخدمات</Link></li>
+                      <li><Link to="/admin/categoriesServices">الفئات</Link></li>
+                      {/*<li><Link to="/admin/services"> الخدمات</Link></li>*/}
                     </ul>
                   </details>
                 </li>
-                <li onClick={() => setActive("/admin/currencies")} className={`hover:text-black hover:bg-primary ${active == "/admin/currencies" || active == "/admin/currencies/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/currencies"><FontAwesomeIcon icon={faDollarSign} /> العملات</Link></li>
+                <li>
+                  <details>
+                    <summary onClick={() => setActive("/admin/products")} className={`hover:text-black hover:bg-primary ${active == "/admin/products" || active == "/admin/products/" ? "text-black bg-primary" : "text-black"}`}><FontAwesomeIcon icon={faCubes} />المنتجات</summary>
+                    <ul>
+                      <li><Link to="/admin/addProductsApi">اضافة من API</Link></li>
+                      <li><Link to="/admin/addProducts">اضافة منتج</Link></li>
+                      <li><Link to="/admin/productSort">ترتيب المنتجات</Link></li>
+                      <li><Link to="/admin/products">الكل</Link></li>
+                    </ul>
+                  </details>
+                </li>
+                <li onClick={() => setActive("/admin/stocks")} className={`hover:text-black hover:bg-primary ${active == "/admin/stocks" || active == "/admin/stocks/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/stocks"><FontAwesomeIcon icon={faWarehouse} /> المخزون</Link> </li>
 
-                <li onClick={() => setActive("/admin/tickets")} className={`hover:text-black hover:bg-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
-                {/*<li onClick={() => setActive("/admin/reports")} className={`hover:text-black hover:bg-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-black bg-primary" : "text-black"}`}><Link className='focus:text-black' to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>*/}
+                <li onClick={() => setActive("/admin/article")} className={`hover:text-black hover:bg-primary ${active == "/admin/article" || active == "/admin/article/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/article"><FontAwesomeIcon icon={faNewspaper} /> المقالات</Link> </li>
+
+
+
+                <li onClick={() => setActive("/admin/orders")} className={`hover:text-black hover:bg-primary ${active == "/admin/orders" || active == "/admin/orders/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/orders"><FontAwesomeIcon icon={faFileCirclePlus} /> الطلبات</Link> </li>
+                <li onClick={() => setActive("/admin/payments")} className={`hover:text-black hover:bg-primary ${active == "/admin/payments" || active == "/admin/payments/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/payments"><FontAwesomeIcon icon={faMoneyCheckDollar} /> المدفوعات </Link></li>
+
+                <li>
+                  <details>
+                    <summary onClick={() => setActive("/admin/rechargeCards")} className={`hover:text-black hover:bg-primary ${active == "/admin/rechargeCards" || active == "/admin/rechargeCards/" ? "text-black bg-primary" : "text-black"}`}><FontAwesomeIcon icon={faBarcode} />بطاقات الشحن</summary>
+                    <ul>
+                      <li><Link to="/admin/allRechargeCards"> الكل</Link></li>
+                      <li><Link to="/admin/cardTitles">عناوين البطاقات</Link></li>
+                      <li><Link to="/admin/generateRechargeCards">توليد بطاقات</Link></li>
+                    </ul>
+                  </details>
+                </li>
+                <li onClick={() => setActive("/admin/currencies")} className={`hover:text-black hover:bg-primary ${active == "/admin/currencies" || active == "/admin/currencies/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/currencies"><FontAwesomeIcon icon={faDollarSign} /> العملات</Link></li>
+
+                <li onClick={() => setActive("/admin/tickets")} className={`hover:text-black hover:bg-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
+                {/*<li onClick={() => setActive("/admin/reports")} className={`hover:text-black hover:bg-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>*/}
                 {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}
 
-                <li onClick={() => setActive("/admin/settings")} className={`hover:text-black hover:bg-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-black bg-primary" : "text-black"}`}>
-                  <details className='dropdown'>
-                    <summary><FontAwesomeIcon icon={faGears} /> الإعدادات</summary>
-                    <ul className='menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow-lg'>
-                      <li><Link className='focus:text-black' to="/admin/general"> عام</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/api"> API</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/advertisement">صورة الاعلانات</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/registration">التسجيل</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/notifications">ارسال اشعار</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/popUpMessages">رسائل المنبثقة</Link></li>
-                      <li><Link className='focus:text-black' to="/admin/account">حساب</Link></li>
+                <li>
+                  <details>
+                    <summary onClick={() => setActive("/admin/settings")} className={`hover:text-black hover:bg-primary ${active == "/admin/settings" || active == "/admin/settings/" ? "text-black bg-primary" : "text-black"}`}><FontAwesomeIcon icon={faGears} /> الإعدادات</summary>
+                    <ul>
+                      <li><Link to="/admin/general"> عام</Link></li>
+                      <li><Link to="/admin/api"> API</Link></li>
+                      <li><Link to="/admin/advertisement">صورة الاعلانات</Link></li>
+                      <li><Link to="/admin/registration">التسجيل</Link></li>
+                      <li><Link to="/admin/notifications">ارسال اشعار</Link></li>
+                      <li><Link to="/admin/popUpMessages">رسائل المنبثقة</Link></li>
+                      <li><Link to="/admin/account">حساب</Link></li>
 
                     </ul>
                   </details>
@@ -396,7 +399,20 @@ function HomeAdmin() {
             </details>
             <details className="dropdown">
               <summary className="btn btn-ghost btn-circle">
-                <img src={`${getFileRoute}${accountInfo.image}`} alt=""  className="h-[3rem] w-[3rem] rounded-full" crossOrigin="anonymous"/>
+                {accountInfo.image ? (
+                  <img
+                    src={`${getFileRoute}${accountInfo.image}`}
+                    crossOrigin="anonymous"
+                    className="h-[3rem] w-[3rem] rounded-full"
+                  />
+                ) : (
+                  <div
+                    className={`h-[3rem] w-[3rem] rounded-full flex justify-center items-center text-white font-bold text-xl`}
+                    style={{ backgroundColor: randomColor }}
+                  >
+                    {accountInfo.username?.[0]?.toUpperCase() || '?'}
+                  </div>
+                )}
               </summary>
               <ul className="menu bg-white text-black left-[6px] dropdown-content rounded-box z-[1] w-52 p-2 shadow">
                 <li>

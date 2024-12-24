@@ -36,6 +36,9 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    contentEn: {
+        type: String,
+    },
     isRead: {
         type: Boolean,
         default: false
@@ -77,6 +80,7 @@ const validateNotification = (notification) => {
         }),
         type: Joi.string().valid('message', 'alert', 'reminder').required(),
         content: Joi.string().min(1).max(1000).required(),
+        contentEn: Joi.string().optional(),
         isRead: Joi.boolean().optional(),
         isGlobal: Joi.boolean().optional(), // Whether the notification is global
         createdAt: Joi.date().optional(),

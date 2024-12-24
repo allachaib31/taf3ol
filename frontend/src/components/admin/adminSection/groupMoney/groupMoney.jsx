@@ -7,6 +7,7 @@ import { getGroupMoneyRoute, getTypeServicesRoute } from '../../../../utils/apiR
 import { useNavigate } from 'react-router-dom'
 import LoadingScreen from '../../../loadingScreen'
 import { useSocket } from '../../../../screens/admin/homeAdmin'
+import { handleSelectAll, handleSelectItem } from '../../../../utils/constants'
 
 function GroupMoney() {
     const navigate = useNavigate();
@@ -31,19 +32,6 @@ function GroupMoney() {
         display: false,
     });
 
-    const handleSelectAll = (event) => {
-        if (event.target.checked) {
-            setListGroupMoneySelected(groupMoneyList.map((item) => item._id));
-        } else {
-            setListGroupMoneySelected([]);
-        }
-    };
-
-    const handleSelectItem = (id) => {
-        setListGroupMoneySelected((prev) =>
-            prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
-        );
-    };
 
     useEffect(() => {
         setLoading(true);
@@ -95,7 +83,7 @@ function GroupMoney() {
                     if (selectedIdService == "الكل" || selectedIdService == notification.newList[0].idService._id) {
                         setGroupMoneyList(notification.newGroupMoneyList);
                     }
-                }else if (notification.name == "delete group money"){
+                } else if (notification.name == "delete group money") {
                     if (selectedIdService == "الكل" || selectedIdService == notification.newList[0].idService._id) {
                         setGroupMoneyList(notification.newList)
                     }
@@ -131,7 +119,9 @@ function GroupMoney() {
                         <tr>
                             <th>
                                 <label>
-                                    <input type="checkbox" className="checkbox" onChange={handleSelectAll} />
+                                    <input type="checkbox" className="checkbox" onChange={(event) => {
+                                        handleSelectAll(event, setListGroupMoneySelected, groupMoneyList)
+                                    }} />
                                 </label>
                             </th>
                             <th>الاسم</th>
@@ -150,7 +140,7 @@ function GroupMoney() {
                                         <th>
                                             <label>
                                                 <input type="checkbox" className="checkbox" checked={listGroupMoneySelected.includes(item._id)}
-                                                    onChange={() => handleSelectItem(item._id)} />
+                                                    onChange={() => handleSelectItem(item._id, setListGroupMoneySelected)} />
                                             </label>
                                         </th>
                                         <td>{item.name}</td>
@@ -166,7 +156,7 @@ function GroupMoney() {
                                         </td>
                                         <td>{item.createdBy.name}</td>
                                         <td>
-                                            <button className="btn btn-ghost btn-xs" onClick={() => {
+                                            <button className="btn btn-warning " onClick={() => {
                                                 setInputs({
                                                     _id: item._id,
                                                     name: item.name,
@@ -181,7 +171,7 @@ function GroupMoney() {
                                                 })
                                                 setTitleModalGroupMoney("تعديل مجموعة");
                                                 document.getElementById('groupMoneyModel').showModal();
-                                            }}><FontAwesomeIcon icon={faPen} className='text-warning text-[1rem]' /></button>
+                                            }}><FontAwesomeIcon icon={faPen} className='text-white text-[1rem]' /></button>
                                         </td>
                                     </tr>
                                 )
@@ -190,7 +180,9 @@ function GroupMoney() {
                     </tbody>
                 </table>
             </div>} />
-            <button className="btn btn-ghost btn-xs" onClick={() => document.getElementById('deleteGroupMoney').showModal()}><FontAwesomeIcon icon={faTrash} className='text-error text-[1rem]' /></button>
+            <button className="btn btn-error text-white " onClick={() => {
+                if(listGroupMoneySelected.length > 0) document.getElementById('deleteGroupMoney').showModal()
+            }}><FontAwesomeIcon icon={faTrash} className='text-[1rem]' /></button>
             <GroupMoneyModel titleModalGroupMoney={titleModalGroupMoney} listTypeService={listTypeService} inputs={inputs} setInputs={setInputs} groupMoneyList={groupMoneyList} setGroupMoneyList={setGroupMoneyList} selectedIdService={selectedIdService} />
             <DeleteGroupMoney groupMoneyList={groupMoneyList} setGroupMoneyList={setGroupMoneyList} listGroupMoneySelected={listGroupMoneySelected} />
         </div>

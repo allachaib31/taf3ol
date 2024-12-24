@@ -17,9 +17,13 @@ export const searchAdminRoute = `${host}api/v1.0/admin/searchAdmin`;
 // manage user
 export const addUserRoute = `${host}api/v1.0/admin/addUser`;
 export const changeStatusUserRoute = `${host}api/v1.0/admin/changeStatus`;
-export const deleteUserRoute = `${host}api/v1.0/admin/deleteUser`;
+export const deleteUsersRoute = `${host}api/v1.0/admin/deleteUsers`;
+export const addBalanceRoute = `${host}api/v1.0/admin/addBalance`;
+export const addNegativeBalanceRoute = `${host}api/v1.0/admin/addNegativeBalance`;
 export const getUsersRoute = `${host}api/v1.0/admin/getUsers`;
 export const searchUserRoute = `${host}api/v1.0/admin/searchUser`;
+export const getUserDataRoute = `${host}api/v1.0/admin/getUserData`;
+export const getFinancialUserRoute = `${host}api/v1.0/admin/getFinancialUser`;
 // manage services
 export const addCategorieRoute = `${host}api/v1.0/admin/addCategorie`;
 export const updateCategorieRoute = `${host}api/v1.0/admin/updateCategorie`;
@@ -28,6 +32,10 @@ export const addServiceRoute = `${host}api/v1.0/admin/addService`;
 export const addTypeServiceRoute = `${host}api/v1.0/admin/addTypeService`;
 export const addProductApiRoute = `${host}api/v1.0/admin/addProductsApi`;
 export const addProductRoute = `${host}api/v1.0/admin/addProduct`;
+export const deleteProductsRoute = `${host}api/v1.0/admin/deleteProducts`;
+export const updateProductsShowRoute = `${host}api/v1.0/admin/updateProductsShow`;
+export const updateProductRankingRoute = `${host}api/v1.0/admin/updateProductRanking`;
+export const getProductDetailsRoute = `${host}api/v1.0/admin/getProductDetails`;
 export const getProductsRoute = `${host}api/v1.0/admin/getProducts`;
 export const getProductsStockRoute = `${host}api/v1.0/admin/getProductsStock`;
 export const updateTypeServiceRoute = `${host}api/v1.0/admin/updateTypeService`;
@@ -42,6 +50,11 @@ export const addGroupMoneyRoute = `${host}api/v1.0/admin/addGroupMoney`;
 export const updateGroupMoneyRoute = `${host}api/v1.0/admin/updateGroupMoney`;
 export const deleteGroupMoneyRoute = `${host}api/v1.0/admin/deleteGroupMoney`;
 export const getGroupMoneyRoute = `${host}api/v1.0/admin/getGroupMoney`;
+// manage api
+export const addApiRoute = `${host}api/v1.0/admin/addApi`;
+export const updateApiRoute = `${host}api/v1.0/admin/updateApi`;
+export const deleteApiRoute = `${host}api/v1.0/admin/deleteApi`;
+export const getApiRoute = `${host}api/v1.0/admin/getApi`;
 // manage notification
 export const getNotificationAdminRoute = `${host}api/v1.0/admin/getNotificationAdmin`;
 export const getMessageRoute = `${host}api/v1.0/admin/getMessage`;

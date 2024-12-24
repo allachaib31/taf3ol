@@ -4,7 +4,6 @@ const { Readable } = require('stream');
 const httpStatus = require('http-status')
 const { bucket } = require('../../server');
 const { saveFile } = require('../../utils/saveFile');
-const { Notification, validateNotification } = require('../../models/notifucation/notifucation');
 const { Admin } = require('../../models/admin/admin');
 const { Categorie, validationCategorie } = require("../../models/categorie/categorie");
 const { validationTypeService, TypeService } = require("../../models/typeService/typeService");
@@ -12,18 +11,8 @@ const { countriesGiveSms, platformsGiveSms } = require("../../utils/countryGiveS
 const { validationProduct, Product } = require("../../models/products/product");
 const { default: mongoose } = require("mongoose");
 const { validationGroupMoney, GroupMoney } = require("../../models/groupMoney/groupMoney");
-const APIKEYSMMCPAN = process.env.API_KEY_SMMSCPAN;
-const LINKSMMCPAN = process.env.LINK_SMMCPAN;
-const APIKEYJUSTANOTHERPANEL = process.env.API_KEY_JUSTANOTHERPANEL;
-const LINKJUSTANOTHERPANEL = process.env.LINK_JUSTANOTHERPANEL;
-const APIKEYDRD3M = process.env.API_KEY_DRD3M;
-const LINKDRD3M = process.env.LINK_DRD3M;
-const APIKEYNUMBERSAPP = process.env.API_KEY_NUMBERSAPP;
-const LINKNUMBERSAPP = process.env.LINK_NUMBERSAPP;
-const APIKEYKASEM = process.env.API_KEY_KASEM;
-const LINKKASEM = process.env.LINK_KASEM;
-const LINKGIVESMS = process.env.LINK_GIVESMS;
-const APIKEYGIVESMS = process.env.API_KEY_GIVESMS;
+const { saveNotification } = require("../../utils/constants");
+const { Api } = require("../../models/api/api");
 
 exports.addCategorie = async (req, res) => {
     const admin = req.admin;
@@ -48,27 +37,16 @@ exports.addCategorie = async (req, res) => {
             image: newFile._id,
             createdBy: admin._id,
         });
-        await categorie.save()
+        await categorie.save();
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بانشاء فئة جديدة (${nameAr})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام بانشاء فئة جديدة (${nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
+
         res.status(httpStatus.OK).send({
             msg: "تم انشاء الفئة بنجاح",
             categorie,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         console.log(err)
@@ -114,26 +92,15 @@ exports.updateCategorie = async (req, res) => {
         if (newFile) categorie.image = newFile._id;
 
         await categorie.save()
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بتحديث  فئة  (${nameAr})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام بتحديث  فئة  (${nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
+
         res.status(httpStatus.OK).send({
             msg: "تم تحديث الفئة بنجاح",
             categorie,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         console.log(err)
@@ -169,32 +136,14 @@ exports.deleteCategorie = async (req, res) => {
         // Mark related products as deleted
         await Product.updateMany({ idCategorie: id }, { isDeleted: true });
 
-        // Prepare and validate notification
         const adminData = await Admin.findById(admin._id);
-        if (!adminData) {
-            return res.status(httpStatus.NOT_FOUND).json({ msg: "Admin not found" });
-        }
+        let content = `${adminData.username} قام بحذف فئة (${categorie.nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
 
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بحذف فئة (${categorie.nameAr})`,
-            isGlobal: true
-        };
-
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        }
-
-        const notification = new Notification(notificationData);
-        await notification.save();
 
         res.status(httpStatus.OK).json({
             msg: "تم الحذف بنجاح",
-            contentNotification: notificationData.content
+            contentNotification: content
         });
     } catch (err) {
         console.error(err);
@@ -205,95 +154,93 @@ exports.deleteCategorie = async (req, res) => {
     }
 }
 
-exports.addService = async (req, res) => {
-    const admin = req.admin;
-    const { category, service, nameAr, nameEn, type, country, rate, quantity, min, max, provider, price, discount, dripfeed, refill, cancel } = req.body;
+exports.getCategories = async (req, res) => {
+    const { type, query } = req.query;
+    console.log(query)
     try {
-        console.log(req.body)
-        const findCategory = await Categorie.findOne({ nameAr: category });
-
-        if (!findCategory) {
-            return res.status(httpStatus.NOT_FOUND).send({
-                msg: "هذه الفئة غير موجودة"
+        const searchCondition = query
+            ? {
+                isDeleted: false,
+                $or: [
+                    { nameAr: { $regex: query, $options: "i" } }, // Case-insensitive search
+                    { nameEn: { $regex: query, $options: "i" } },
+                    { id: { $regex: query, $options: "i" } },
+                ],
+            }
+            : { isDeleted: false, };
+        let categories;
+        if (type == "الكل") {
+            categories = await Categorie.find(searchCondition).sort({
+                ranking: 1
             });
-        }
-
-        // Ensure findCategory.items is initialized
-        if (!findCategory.items) {
-            findCategory.items = [];
-        }
-
-        let result = findCategory.items.findIndex(item => item.nameAr === nameAr);
-        if (result >= 0) {
-            return res.status(httpStatus.CONFLICT).send({
-                msg: "تم اضافة هذه الخدمة في هذه الفئة من قبل"
-            });
-        }
-        const now = new Date();
-
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
-
-        // Generate a random number and pad to 4 digits
-        const randomPart = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-
-        // Concatenate the date, time, and random part
-        const uniqueNumber = `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}${randomPart}`;
-        findCategory.items.push({
-            service: service == "" ? uniqueNumber : service,
-            nameAr,
-            nameEn,
-            type,
-            country,
-            rate,
-            quantity,
-            min,
-            max,
-            provider,
-            status: "مفعل",
-            price,
-            discount,
-            dripfeed,
-            refill,
-            cancel,
-            ranking: findCategory.items.length ? findCategory.items.length + 1 : 1
-        });
-
-        await findCategory.save();
-        const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بانشاء خدمة جديدة (${nameAr})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
         } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
+            categories = await Categorie.find({
+                idService: type,
+                ...searchCondition
+            }).sort({
+                ranking: 1
+            });
         }
-        return res.status(httpStatus.OK).send({
-            msg: "تمت اضافتها بنجاح",
-            findCategory,
-            contentNotification: notificationData.content
-        });
+        res.status(httpStatus.OK).send(categories);
     } catch (err) {
-        console.log(err);
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-            msg: "خطأ في الخادم",
-            error: err.message,
-        });
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب الفئات" });
     }
-};
+}
+
+exports.getCategorieServicesApiRoute = async (req, res) => {
+    const { apiName } = req.query;
+    try {
+        var liste = [];
+        const findApi = await Api.findOne({
+            name: apiName
+        })
+        if (findApi.groupesApi == "مزودي خدمات السوشل ميديا") {
+            let apiKey = findApi.token;
+            const { data } = await axios.get(`${findApi.link}?key=${apiKey}&action=services`);
+            const uniqueListe = [];
+            for (let i = 0; i < data.length; i++) {
+                if (uniqueListe.indexOf(data[i].category) == -1) liste.push({
+                    title: data[i].category,
+                    Service: data[i].category
+                });
+
+                uniqueListe.push(data[i].category)
+            }
+        } else if (findApi.groupesApi == "مواقع تكود ارقام مؤقته") {
+            let apiKey = findApi.token;
+            const { data } = await axios.get(`${findApi.link}/getLiveSections?api_key=${apiKey}`);
+            for (let i = 0; i < data.length; i++) {
+                liste.push({
+                    title: data[i].Title,
+                    Service: data[i].Service
+                });
+
+            }
+        } else if (findApi.groupesApi == "مزودي بطاقات الهدايا") {
+            let apiKey = findApi.token;
+            const { data } = await axios.get(`${findApi.link}/client/api/content/0`, {
+                headers: {
+                    'api-token': apiKey,
+                },
+            });
+
+            for (let i = 0; i < data.categories.length; i++) {
+                liste.push({
+                    Service: data.categories[i].id,
+                    title: data.categories[i].name
+                })
+            }
+        } else if (findApi.groupesApi == "برمجة خاصة") {
+            if (findApi.link == "https://give-sms.com/api/v1") {
+                liste = countriesGiveSms;
+            }
+        }
+        return res.status(httpStatus.OK).send(liste);
+    } catch (err) {
+        console.log(err)
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب الخدمات" });
+    }
+}
 
 exports.addTypeService = async (req, res) => {
     const admin = req.admin;
@@ -319,27 +266,16 @@ exports.addTypeService = async (req, res) => {
             image: newFile._id,
             createdBy: admin._id,
         });
-        await typeService.save()
+        await typeService.save();
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بانشاء نوع فئة جديدة (${nameAr})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام بانشاء نوع فئة جديدة (${nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         res.status(httpStatus.OK).send({
             msg: "تم انشاء نوع الفئة بنجاح",
             typeService,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         if (err.code === 11000 && err.keyPattern && err.keyPattern.nameAr) {
@@ -385,26 +321,15 @@ exports.updateTypeService = async (req, res) => {
         if (newFile) typeService.image = newFile._id;
 
         await typeService.save()
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بتحديث نوع فئة  (${nameAr})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام بتحديث نوع فئة  (${nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         res.status(httpStatus.OK).send({
             msg: "تم تحديث نوع الفئة بنجاح",
             typeService,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         if (err.code === 11000 && err.keyPattern && err.keyPattern.nameAr) {
@@ -443,31 +368,13 @@ exports.updateTypeServiceRanking = async (req, res) => {
 
         // Notification Logic
         const adminData = await Admin.findById(admin._id);
-        if (!adminData) {
-            return res.status(httpStatus.NOT_FOUND).json({ msg: "Admin not found" });
-        }
-
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بتحديث ترتيب قائمة نوع الخدمة `,
-            isGlobal: true,
-        };
-
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        }
-
-        const notification = new Notification(notificationData);
-        await notification.save();
+        let content = `${adminData.username} قام بتحديث ترتيب قائمة نوع الخدمة `;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
 
         res.status(httpStatus.OK).json({
             msg: "تم تحديث الترتيب بنجاح",
             newTypeService,
-            contentNotification: notificationData.content,
+            contentNotification: content,
         });
     } catch (err) {
         console.error("Error updating type service ranking:", {
@@ -480,8 +387,6 @@ exports.updateTypeServiceRanking = async (req, res) => {
         });
     }
 };
-
-
 
 exports.deleteTypeService = async (req, res) => {
     const admin = req.admin;
@@ -506,30 +411,12 @@ exports.deleteTypeService = async (req, res) => {
 
         // Prepare and validate notification
         const adminData = await Admin.findById(admin._id);
-        if (!adminData) {
-            return res.status(httpStatus.NOT_FOUND).json({ msg: "Admin not found" });
-        }
-
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بحذف نوع فئة (${typeService.nameAr})`,
-            isGlobal: true
-        };
-
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        }
-
-        const notification = new Notification(notificationData);
-        await notification.save();
+        let content = `${adminData.username} قام بحذف نوع فئة (${typeService.nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
 
         res.status(httpStatus.OK).json({
             msg: "تم الحذف بنجاح",
-            contentNotification: notificationData.content
+            contentNotification: content
         });
     } catch (err) {
         console.error(err);
@@ -539,134 +426,6 @@ exports.deleteTypeService = async (req, res) => {
         });
     }
 };
-
-
-exports.getCategories = async (req, res) => {
-    const { type, query } = req.query;
-    console.log(query)
-    try {
-        const searchCondition = query
-            ? {
-                isDeleted: false,
-                $or: [
-                    { nameAr: { $regex: query, $options: "i" } }, // Case-insensitive search
-                    { nameEn: { $regex: query, $options: "i" } },
-                    { id: { $regex: query, $options: "i" } },
-                ],
-            }
-            : {isDeleted: false,};
-        let categories;
-        if (type == "الكل") {
-            categories = await Categorie.find(searchCondition).sort({
-                ranking: 1
-            });
-        } else {
-            categories = await Categorie.find({
-                idService: type,
-                ...searchCondition
-            }).sort({
-                ranking: 1
-            });
-        }
-        res.status(httpStatus.OK).send(categories);
-    } catch (err) {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب الفئات" });
-    }
-}
-
-exports.getCategorieServicesApiRoute = async (req, res) => {
-    const { type } = req.query;
-    try {
-        var liste = [];
-        if (type == "https://smmcpan.com" || type == "https://justanotherpanel.com" || type == "https://drd3m.me") {
-            let apiKey = type == "https://smmcpan.com" ? APIKEYSMMCPAN : type == "https://justanotherpanel.com" ? APIKEYJUSTANOTHERPANEL : type == "https://drd3m.me" ? APIKEYDRD3M : ""
-            const { data } = await axios.get(`${type}/api/v2?key=${apiKey}&action=services`);
-            const uniqueListe = [];
-            for (let i = 0; i < data.length; i++) {
-                if (uniqueListe.indexOf(data[i].category) == -1) liste.push({
-                    title: data[i].category,
-                    Service: data[i].category
-                });
-
-                uniqueListe.push(data[i].category)
-            }
-        } else if (type == "https://api.numbersapp.online/api") {
-            const { data } = await axios.get(`${LINKNUMBERSAPP}getLiveSections?api_key=${APIKEYNUMBERSAPP}`);
-            for (let i = 0; i < data.length; i++) {
-                liste.push({
-                    title: data[i].Title,
-                    Service: data[i].Service
-                });
-
-            }
-        } else if (type == "https://give-sms.com/api/v1") {
-            liste = countriesGiveSms;
-        } else if (type == "https://api.kasim-store.com") {
-            const { data } = await axios.get('https://api.kasim-store.com/client/api/content/0', {
-                headers: {
-                    'api-token': '93eedafddc374ffd69f59f671c8757a85a51008e5f069773',
-                },
-            });
-            console.log(data);
-
-            for (let i = 0; i < data.categories.length; i++) {
-                liste.push({
-                    Service: data.categories[i].id,
-                    title: data.categories[i].name
-                })
-            }
-        }
-        return res.status(httpStatus.OK).send(liste);
-    } catch (err) {
-        console.log(err)
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب الخدمات" });
-    }
-}
-
-exports.getServicesApi = async (req, res) => {
-    const { type, categorieName } = req.query;
-    try {
-        var liste = [];
-        if (type == "https://smmcpan.com" || type == "https://justanotherpanel.com" || type == "https://drd3m.me") {
-            let apiKey = type == "https://smmcpan.com" ? APIKEYSMMCPAN : type == "https://justanotherpanel.com" ? APIKEYJUSTANOTHERPANEL : type == "https://drd3m.me" ? APIKEYDRD3M : ""
-            const { data } = await axios.get(`${type}/api/v2?key=${apiKey}&action=services`);
-            for (let i = 0; i < data.length; i++) {
-                if (data[i].category == categorieName) {
-                    liste.push(data[i]);
-                }
-            }
-        } else if (type == "https://api.numbersapp.online/api") {
-            const { data } = await axios.get(`${LINKNUMBERSAPP}getServiceCountries?api_key=${APIKEYNUMBERSAPP}&service=${categorieName}`);
-            liste = data;
-        } else if (type == "https://give-sms.com/api/v1") {
-            const { data } = await axios.get(`${LINKGIVESMS}?method=getcount&userkey=${APIKEYGIVESMS}&country=${categorieName}`);
-            let arr = data.data.ANY;
-            Object.keys(arr).forEach(key => {
-                liste.push({
-                    name: platformsGiveSms[key] || key,
-                    service: key,
-                    CountryCode: categorieName,
-                    price: arr[key].price,
-                    min: 1
-                })
-            });
-        } else if (type == "https://api.kasim-store.com") {
-            const { data } = await axios.get(`${LINKKASEM}/client/api/products`, {
-                headers: {
-                    'api-token': APIKEYKASEM,
-                }
-            });
-            for (let i = 0; i < data.length; i++) {
-                liste.push(data[i]);
-            }
-        }
-        console.log(liste[1])
-        return res.status(httpStatus.OK).send(liste);
-    } catch (err) {
-        console.log(err)
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب الخدمات" });
-    }
-}
 
 exports.getTypeServices = async (req, res) => {
     try {
@@ -681,12 +440,66 @@ exports.getTypeServices = async (req, res) => {
     }
 }
 
+exports.getServicesApi = async (req, res) => {
+    const { apiName, categorieName } = req.query;
+    try {
+        var liste = [];
+        const findApi = await Api.findOne({
+            name: apiName
+        })
+        if (findApi.groupesApi == "مزودي خدمات السوشل ميديا") {
+            let apiKey = findApi.token;
+            const { data } = await axios.get(`${findApi.link}?key=${apiKey}&action=services`);
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].category == categorieName) {
+                    liste.push(data[i]);
+                }
+            }
+        } else if (findApi.groupesApi == "مواقع تكود ارقام مؤقته") {
+            let apiKey = findApi.token;
+            const { data } = await axios.get(`${findApi.link}/getServiceCountries?api_key=${apiKey}&service=${categorieName}`);
+            liste = data;
+        } else if (findApi.groupesApi == "مزودي بطاقات الهدايا") {
+            let apiKey = findApi.token;
+            const { data } = await axios.get(`${findApi.link}/client/api/products`, {
+                headers: {
+                    'api-token': apiKey,
+                }
+            });
+            for (let i = 0; i < data.length; i++) {
+                liste.push(data[i]);
+            }
+        } else if (findApi.groupesApi == "برمجة خاصة") {
+            if (findApi.link == "https://give-sms.com/api/v1") {
+                let apiKey = findApi.token;
+                const { data } = await axios.get(`${findApi.link}?method=getcount&userkey=${apiKey}&country=${categorieName}`);
+                let arr = data.data.ANY;
+                Object.keys(arr).forEach(key => {
+                    liste.push({
+                        name: platformsGiveSms[key] || key,
+                        service: key,
+                        CountryCode: categorieName,
+                        price: arr[key].price,
+                        min: 1
+                    })
+                });
+            }
+        }
+        return res.status(httpStatus.OK).send(liste);
+    } catch (err) {
+        console.log(err)
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب الخدمات" });
+    }
+}
+
+
 exports.searchService = async (req, res) => {
     const { query } = req.query; // Search term passed as a query parameter
     try {
         // If query is empty, return all admins
         const searchCondition = query
             ? {
+                isDeleted: false,
                 $or: [
                     { nameAr: { $regex: query, $options: "i" } }, // Case-insensitive search
                     { nameEn: { $regex: query, $options: "i" } },
@@ -696,7 +509,9 @@ exports.searchService = async (req, res) => {
                     { 'items.service': { $regex: query, $options: "i" } },
                 ],
             }
-            : {}; // If no query, return all admins by setting empty filter
+            : {
+                isDeleted: false,
+            }; // If no query, return all admins by setting empty filter
 
         const categories = await Categorie.find(searchCondition);
         if (categories.length === 0) {
@@ -713,62 +528,86 @@ exports.searchService = async (req, res) => {
 exports.addProductsApi = async (req, res) => {
     const admin = req.admin;
     const { liste, idService, idCategorie, provider, categorieSelected } = req.body;
-    console.log(liste)
-    try{
+
+    // Input validation
+    if (!liste || !Array.isArray(liste) || liste.length === 0) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+            msg: "قائمة المنتجات مطلوبة ويجب أن تحتوي على عناصر"
+        });
+    }
+    if (!idService || !idCategorie || !provider || !categorieSelected) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+            msg: "جميع الحقول المطلوبة (idService, idCategorie, provider, categorieSelected) يجب ملؤها"
+        });
+    }
+
+    try {
+        let listeProducts = [];
         for (let i = 0; i < liste.length; i++) {
+            const currentProduct = liste[i];
+
+            // Check if the product already exists based on unique fields (e.g., nameAr and service)
+            const existingProduct = await Product.findOne({
+                nameAr: currentProduct.name || currentProduct.Title,
+                service: currentProduct.id || currentProduct.service || categorieSelected
+            });
+
+            if (existingProduct) {
+                console.log(`المنتج "${currentProduct.name || currentProduct.Title}" موجود بالفعل`);
+                return res.status(httpStatus.CONFLICT).json({
+                    msg: `المنتج "${currentProduct.name || currentProduct.Title}" موجود بالفعل`,
+                });
+            }
+
+            // Create new product
             const product = new Product({
-                idService, idCategorie,
-                nameAr: liste[i].name || liste[i].Title,
-                nameEn: liste[i].name || liste[i].Title,
-                service: liste[i].id || liste[i].service || categorieSelected,
-                country:  liste[i].CountryCode                || "",
-                serverNumber:  liste[i].ServerNumber || "",
-                price: [
-                    {
-                        nameCoin: "usd",
-                        costPrice: liste[i].Price || liste[i].price || liste[i].rate,
-                    },
-                    {
-                        nameCoin: "tl",
-                        costPrice: liste[i].Price || liste[i].price || liste[i].rate,
-                    },
-                ],
+                idService,
+                idCategorie,
+                nameAr: currentProduct.name || currentProduct.Title,
+                nameEn: currentProduct.name || currentProduct.Title,
+                service: currentProduct.id || currentProduct.service || categorieSelected,
+                country: currentProduct.CountryCode || "",
+                serverNumber: currentProduct.ServerNumber || "",
+                costPrice: currentProduct.Price || currentProduct.price || currentProduct.rate,
                 descriptionAr: "<div></div>",
                 descriptionEn: "<div></div>",
-                forQuantity: (liste[i].qty_values && liste[i].qty_values.min) || (liste[i].min) || 1,
-                quantityQuality: ((liste[i].min && liste[i].max) || (liste[i].qty_values) ? "كمية" : "بدون"),
-                minimumQuantity: liste[i].min || (liste[i].qty_values && liste[i].qty_values.min) || "",
-                maximumQuantity: liste[i].max || (liste[i].qty_values && liste[i].qty_values.max) || "",
+                forQuantity: (currentProduct.qty_values && currentProduct.qty_values.min) || currentProduct.min || 1,
+                quantityQuality: ((currentProduct.min && currentProduct.max) || currentProduct.qty_values) ? "كمية" : "بدون",
+                minimumQuantity: currentProduct.min || (currentProduct.qty_values && currentProduct.qty_values.min) || "",
+                maximumQuantity: currentProduct.max || (currentProduct.qty_values && currentProduct.qty_values.max) || "",
                 availableQuantity: true,
-                provider,
+                provider: [
+                    {
+                        name: provider,
+                        nameProduct: currentProduct.name || currentProduct.Title,
+                        isAvailable: true,
+                        isActive: true,
+                        costPrice: currentProduct.Price || currentProduct.price || currentProduct.rate,
+                        service: currentProduct.id || currentProduct.service || categorieSelected,
+                        country: currentProduct.CountryCode || "",
+                        serverNumber: currentProduct.ServerNumber || "",
+                    }
+                ],
                 show: false,
                 createdBy: admin._id
             });
+            listeProducts.push(product);
             await product.save();
-            
         }
+
+        // Admin data and notification
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username}قام باضافة مجموعة من المنتجات `,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام باضافة مجموعة من المنتجات`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
+
         res.status(httpStatus.OK).send({
-            msg: "تم انشاء الفئة بنجاح",
-            contentNotification: notificationData.content
-        })
+            msg: "تم اضافة المنتجات بنجاح",
+            contentNotification: content,
+            listeProducts
+        });
     } catch (err) {
-        console.log(err)
+        console.error(err);
         if (err.code === 11000 && err.keyPattern && err.keyPattern.nameAr) {
             // Handle duplicate key error specifically for nameAr field
             return res.status(httpStatus.CONFLICT).json({
@@ -781,12 +620,23 @@ exports.addProductsApi = async (req, res) => {
             error: err.message,
         });
     }
-}
+};
+
 
 exports.addProduct = async (req, res) => {
     const admin = req.admin;
     const { file } = req;
-    const { idService, idCategorie, nameAr, nameEn, service, country, serverNumber, price, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, show } = req.body;
+    let { idService, idCategorie, nameAr, nameEn, service, country, serverNumber, costPrice, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, show } = req.body;
+    provider = [
+        {
+            ...JSON.parse(provider),
+            costPrice,
+            service,
+            country,
+            serverNumber
+        }
+    ]
+    console.log(provider)
     try {
         let newFile
         if (!file) {
@@ -795,7 +645,7 @@ exports.addProduct = async (req, res) => {
             })
         }
         newFile = await saveFile(file, File, Readable, bucket);
-        const { error } = validationProduct({ ...req.body, price: JSON.parse(price), image: newFile._id.toString() });
+        const { error } = validationProduct({ ...req.body, provider, image: newFile._id.toString() });
         if (error) {
             console.log(error)
             return res.status(httpStatus.BAD_REQUEST).json({
@@ -803,29 +653,18 @@ exports.addProduct = async (req, res) => {
             });
         }
         const product = new Product({
-            idService, idCategorie, nameAr, nameEn, service, country, serverNumber, price: JSON.parse(price), forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, image: newFile._id, warehouse: provider == "stock",show, createdBy: admin._id
+            idService, idCategorie, nameAr, nameEn, service, country, serverNumber, costPrice, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, image: newFile._id, show, createdBy: admin._id
         });
-        await product.save()
+        await product.save();
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username}قام بانشاء منتج جديدة (${nameAr})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username}قام بانشاء منتج جديدة (${nameAr})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         res.status(httpStatus.OK).send({
             msg: "تم انشاء الفئة بنجاح",
             product,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         console.log(err)
@@ -843,15 +682,179 @@ exports.addProduct = async (req, res) => {
     }
 }
 
+exports.updateProductRanking = async (req, res) => {
+    const admin = req.admin;
+    const newProducts = req.body;
+
+    if (!Array.isArray(newProducts)) {
+        return res.status(httpStatus.BAD_REQUEST).json({ msg: "Invalid input format" });
+    }
+
+    try {
+        // Process updates sequentially to avoid duplicate ranking conflicts
+        for (let i = 0; i < newProducts.length; i++) {
+            const item = newProducts[i];
+            if (i + 1 !== item.ranking) {
+                await Product.updateOne(
+                    { _id: item._id },
+                    { ranking: i + 1 }
+                );
+            }
+        }
+
+        // Notification Logic
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username} قام بتحديث ترتيب قائمة المنتجات `;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
+        res.status(httpStatus.OK).json({
+            msg: "تم تحديث الترتيب بنجاح",
+            newProducts,
+            contentNotification: content,
+        });
+    } catch (err) {
+        console.error("Error updating type service ranking:", {
+            error: err.message,
+            stack: err.stack,
+        });
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
+
+exports.updateProductsShow = async (req, res) => {
+    const admin = req.admin;
+    const { productIds, idCategorie } = req.body;
+
+    if (!productIds || !Array.isArray(productIds)) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+            msg: "يرجى إرسال معرفات المنتجات للتحديث",
+        });
+    }
+
+    try {
+        await Product.updateMany(
+            {
+                _id: { $in: productIds },
+                idCategorie: idCategorie,
+            },
+            { show: true } // Set `show` to `true` for matching products
+        );
+
+        // Optionally, reset `show` to `false` for products in the same category not in `productIds`
+        await Product.updateMany(
+            {
+                _id: { $nin: productIds }, // Exclude selected productIds
+                idCategorie: idCategorie,
+            },
+            { show: false } // Set `show` to `false` for non-matching products
+        );
+
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username}قام بتحديث المنتجات`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
+        // Return success response
+        return res.status(httpStatus.OK).json({
+            msg: "تم تحديث المنتجات بنجاح",
+            contentNotification: content
+        });
+    } catch (err) {
+        // Handle any errors
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
+
+exports.deleteProducts = async (req, res) => {
+    const admin = req.admin;
+    const { productIds } = req.body;
+
+    if (!productIds || !Array.isArray(productIds)) {
+        return res.status(httpStatus.BAD_REQUEST).json({
+            msg: "يرجى إرسال معرفات المنتجات للحذف",
+        });
+    }
+
+    try {
+        // Mark the selected group money as deleted
+        await Product.updateMany(
+            { _id: { $in: productIds } },
+            { isDeleted: true }
+        );
+
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username}قام بحذف المنتجات`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
+        // Return success response
+        return res.status(httpStatus.OK).json({
+            msg: "تم حذف المنتجات بنجاح",
+            contentNotification: content
+        });
+    } catch (err) {
+        // Handle any errors
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
+
 exports.getProducts = async (req, res) => {
     const { idCategorie } = req.query;
-    try{
-        const products = await Product.find({
-            idCategorie
-        }).sort({
-            ranking: 1
+    const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit, 10) || 10; // Default to 10 items per page
+    const skip = (page - 1) * limit;
+    try {
+        let products;
+        if (limit == "ALL") {
+            products = await Product.find({
+                idCategorie,
+                isDeleted: false,
+            }).sort({
+                ranking: 1
+            })
+        } else {
+            products = await Product.find({
+                idCategorie,
+                isDeleted: false,
+            }).sort({
+                ranking: 1
+            })
+                .skip(skip)
+                .limit(limit);
+        }
+        const groupMoney = await GroupMoney.find({
+            idService: products[0].idService,
+            isDeleted: false
         });
-        return res.status(httpStatus.OK).send(products);
+        const totalDocuments = await Product.countDocuments();
+        return res.status(httpStatus.OK).send({
+            total: totalDocuments,
+            page,
+            limit,
+            totalPages: Math.ceil(totalDocuments / limit),
+            products,
+            groupMoney
+        });
+    } catch (err) {
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "خطأ في الخادم",
+            error: err.message,
+        });
+    }
+}
+
+exports.getProductDetails = async (req, res) => {
+    const { id } = req.query;
+    try{
+        const product = await Product.findById(id).populate("idService idCategorie");
+        return res.status(httpStatus.OK).send(product);
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
@@ -861,9 +864,10 @@ exports.getProducts = async (req, res) => {
 }
 
 exports.getProductsStock = async (req, res) => {
-    try{
+    try {
         const products = await Product.find({
-            warehouse: true
+            warehouse: true,
+            isDeleted: false,
         }).sort({
             ranking: 1
         });
@@ -906,26 +910,15 @@ exports.addGroupMoney = async (req, res) => {
         await groupMoney.save();
 
         const populatedGroupMoney = await groupMoney.populate("idService createdBy");
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بانشاء مجموعة مالية جديدة (${name})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام بانشاء مجموعة مالية جديدة (${name})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         res.status(httpStatus.OK).send({
             msg: "تم انشاء نوع الفئة بنجاح",
             groupMoney: populatedGroupMoney,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         console.log(err)
@@ -975,26 +968,15 @@ exports.updateGroupMoney = async (req, res) => {
 
         await groupMoney.save()
         const populatedGroupMoney = await groupMoney.populate("idService createdBy");
+
         const adminData = await Admin.findById(admin._id);
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${adminData.username} قام بتحديث  مجموعة  (${name})`,
-            isGlobal: true
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+        let content = `${adminData.username} قام بتحديث  مجموعة  (${name})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         res.status(httpStatus.OK).send({
             msg: "تم تحديث الفئة بنجاح",
             groupMoney: populatedGroupMoney,
-            contentNotification: notificationData.content
+            contentNotification: content
         })
     } catch (err) {
         console.log(err)
@@ -1013,6 +995,7 @@ exports.updateGroupMoney = async (req, res) => {
 }
 
 exports.deleteGroupMoney = async (req, res) => {
+    const admin = req.admin;
     const { groupMoneyIds } = req.body;
 
     if (!groupMoneyIds || !Array.isArray(groupMoneyIds)) {
@@ -1028,9 +1011,14 @@ exports.deleteGroupMoney = async (req, res) => {
             { isDeleted: true }
         );
 
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username}قام بحذف المجموعات`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         // Return success response
         return res.status(httpStatus.OK).json({
             msg: "تم حذف المجموعات بنجاح",
+            contentNotification: content
         });
     } catch (err) {
         // Handle any errors
@@ -1044,11 +1032,11 @@ exports.deleteGroupMoney = async (req, res) => {
 
 exports.getGroupMoney = async (req, res) => {
     const { idService } = req.query;
-    try{
+    try {
         let query = idService == "الكل" ? {} : {
             idService
         }
-        const groupMoney = await GroupMoney.find({...query, isDeleted: false}).populate("idService createdBy");
+        const groupMoney = await GroupMoney.find({ ...query, isDeleted: false }).populate("idService createdBy");
         return res.status(httpStatus.OK).send(groupMoney);
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
-import { CreateCategoriesForService, DeleteCategory } from '../modal';
+import { CategoriesForService, DeleteCategory } from '../modal';
 import { getMethode } from '../../../../utils/apiFetchs';
 import { getCategoriesRoute, getTypeServicesRoute } from '../../../../utils/apiRoutes';
 import { ReactSortable } from 'react-sortablejs';
@@ -101,7 +101,7 @@ function CategoriesServices() {
                         setInputs({
                             nameAr: "", nameEn: "", idService: "", show: true, image: ""
                         })
-                        document.getElementById('CreateCategoriesForService').showModal()
+                        document.getElementById('CategoriesForService').showModal()
                     }} className='btn btn-primary'> اضافة فئة جديد</button>
                 </div>
                 <div className="join space-y-0">
@@ -158,7 +158,7 @@ function CategoriesServices() {
                                                     index
                                                 })
                                                 setTitleModalCategorie("تعديل الفئة");
-                                                document.getElementById('CreateCategoriesForService').showModal();
+                                                document.getElementById('CategoriesForService').showModal();
                                             }}>تعديل الفئة</li>
                                             <li className='hover:bg-[#F1F1F1] flex justify-between p-[0.5rem] cursor-pointer'  onClick={() => {
                                                 setIdCategorie(item._id);
@@ -174,7 +174,7 @@ function CategoriesServices() {
                 }
             </div>} />
             <button className='btn btn-primary w-full mt-[1rem]'>حفظ</button>
-            <CreateCategoriesForService titleModalCategorie={titleModalCategorie} listeTypeService={listeTypeService} categories={categories} setCategories={setCategories} params={params} inputs={inputs} setInputs={setInputs}/>
+            <CategoriesForService titleModalCategorie={titleModalCategorie} listeTypeService={listeTypeService} categories={categories} setCategories={setCategories} params={params} inputs={inputs} setInputs={setInputs}/>
             <DeleteCategory categories={categories} setCategories={setCategories} idCategorie={idCategorie} indexCategorie={indexCategorie} />
         </div>
     )

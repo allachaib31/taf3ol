@@ -73,6 +73,7 @@ conn.once('open', () => {
     const manageAdminRoute = require("./routes/admin/manage_admin_route");
     const manageUserRoute = require("./routes/admin/manage_user_route");
     const manageServices = require("./routes/admin/manage_services_routes");
+    const manageApi = require("./routes/admin/manage_api_route");
     const notificationRoute = require("./routes/notification/notification_route");
     const fileRoute = require("./routes/files/files_routes");
     app
@@ -80,6 +81,7 @@ conn.once('open', () => {
         .use(manageAdminRoute)
         .use(manageUserRoute)
         .use(manageServices)
+        .use(manageApi)
         .use(notificationRoute)
         .use(fileRoute);
 

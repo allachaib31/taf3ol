@@ -5,10 +5,14 @@ import { addProductApiRoute, getCategorieServicesApiRoute, getCategoriesRoute, g
 import Alert from '../../../alert';
 import LoadingScreen from '../../../loadingScreen';
 import Loading from '../../../loading';
+import { useSocket } from '../../../../screens/admin/homeAdmin';
+import { getApis } from '../../../../utils/constants';
 
 function AddProductsApi() {
     const navigate = useNavigate();
+    const socket = useSocket();
     const [listeTypeService, setListTypeService] = useState([]);
+    const [apiList, setApiList] = useState(false);
     const [categories, setCategories] = useState(false);
     const [apiSelected, setApiSelected] = useState("");
     const [categoriesApi, setCategoriesApi] = useState(false);
@@ -28,7 +32,7 @@ function AddProductsApi() {
     const handleSearch = (catSelected) => {
         setLoadingService(true);
         setAlert({ display: false });
-        getMethode(`${getServicesApiRoute}?type=${apiSelected}&categorieName=${catSelected}`)
+        getMethode(`${getServicesApiRoute}?apiName=${apiSelected}&categorieName=${catSelected}`)
             .then((response) => {
                 const servicesWithChecked = response.data.map((service) => ({
                     ...service,
@@ -90,6 +94,12 @@ function AddProductsApi() {
                 status: true,
                 text: response.data.msg
             });
+            socket.emit('broadcast-notification', {
+                msg: response.data.contentNotification,
+                name: "add Products",
+                idCategorie,
+                products: response.data.listeProducts
+            });
         } catch (err) {
             if (err.response.status == 401 || err.response.status == 403) {
                 return navigate("/admin/auth")
@@ -104,10 +114,13 @@ function AddProductsApi() {
         }
     }
     useEffect(() => {
+        getApis(setApiList);
+    }, []);
+    useEffect(() => {
         if (apiSelected !== "") {
             setLoading(true);
             setAlert({ display: false });
-            getMethode(`${getCategorieServicesApiRoute}?type=${apiSelected}`)
+            getMethode(`${getCategorieServicesApiRoute}?apiName=${apiSelected}`)
                 .then((response) => {
                     setCategoriesApi(response.data);
                 })
@@ -177,12 +190,13 @@ function AddProductsApi() {
                     className="select select-bordered w-full font-bold text-[1rem]"
                 >
                     <option selected disabled>اختر API</option>
-                    <option value="https://smmcpan.com">https://smmcpan.com</option>
-                    <option value="https://justanotherpanel.com">https://justanotherpanel.com</option>
-                    <option value="https://drd3m.me">https://drd3m.me</option>
-                    <option value="https://api.numbersapp.online/api">https://api.numbersapp.online/api</option>
-                    <option value="https://give-sms.com/api/v1">https://give-sms.com/api/v1</option>
-                    <option value="https://api.kasim-store.com">https://api.kasim-store.com</option>
+                    {
+                        apiList && apiList.map((api) => {
+                            return (
+                                <option value={api.name}>{api.name}</option>
+                            )
+                        })
+                    }
                 </select>
                 <LoadingScreen
                     loading={loading}
@@ -273,7 +287,7 @@ function AddProductsApi() {
                     </div>
                 }
             />
-            <button className='btn btn-primary mr-[0.5rem]' disabled={submit} onClick={handleSubmit}>{submit ? <Loading /> : 'ارسال'}</button>
+            <button className='btn btn-primary mr-[0.5rem] w-full mt-[1rem]' disabled={submit} onClick={handleSubmit}>{submit ? <Loading /> : 'ارسال'}</button>
         </div>
     );
 }

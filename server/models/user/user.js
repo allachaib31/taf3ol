@@ -7,6 +7,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
     },
+    idExpenses: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Expenses",
+    },
+    idAgent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
     email: {
         type: String,
         unique: true,
@@ -36,22 +44,14 @@ const userSchema = new mongoose.Schema({
     image: {
         type: mongoose.Schema.Types.ObjectId,
     },
-    balance: {
-        type: Number,
-        default: 0
-    },
-    moneySpent: {
-        type: Number,
-        default: 0
-    },
     status : {
         type: String,
         enum: ['نشيط', 'معلق', 'غير مؤكد', 'خبيث'],
         default: 'غير مؤكد'
     },
-    discount: {
-        type: Number,
-        default: 0
+    isDeleted: { 
+        type: Boolean,
+        default: false 
     },
     lastLogin: {
         type: Date,
@@ -72,6 +72,7 @@ userSchema.pre('save', async function (next) {
 const validateUser = (user) => {
     const schema = Joi.object({
         id: Joi.string().optional(),
+        idAgent: Joi.string().optional(),
         email: Joi.string().email().max(255).required(),
         username: Joi.string().min(3).max(255).required(),
         firstName: Joi.string().min(2).max(255).required(),
@@ -79,11 +80,8 @@ const validateUser = (user) => {
         phoneNumber: Joi.string().min(8).max(20).pattern(/^[0-9]+$/).required(), // Allow digits only
         password: Joi.string().min(6).max(255).required(),
         image: Joi.string().optional().allow(null, ""),
-        balance: Joi.number().optional(),
-        moneySpent: Joi.number().optional(),
         status: Joi.string().valid('نشيط', 'معلق', 'غير مؤكد', 'خبيث').optional(),
-        discount: Joi.number().optional(),
-        isBlocked: Joi.boolean().optional(),
+        isDeleted: Joi.boolean().optional(),
         lastLogin: Joi.date().optional(),
         createdAt: Joi.date().optional(),
     });

@@ -6,7 +6,7 @@ const httpStatus = require('http-status'); // Importing http-status package
 const SALTROUNDS = Number(process.env.SALTROUNDS);
 const { bucket } = require('../../server');
 const { saveFile } = require('../../utils/saveFile');
-const { validateNotification, Notification } = require('../../models/notifucation/notifucation');
+const { saveNotification } = require('../../utils/constants');
 
 exports.addAdmin = async (req, res) => {
     const admin = req.admin;
@@ -51,21 +51,11 @@ exports.addAdmin = async (req, res) => {
         // Save the admin to the database
         await newAdmin.save();
         const populatedAdmin = await Admin.findById(newAdmin._id).populate('createdBy');
-        const notificationData = {
-            senderId: admin._id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${populatedAdmin.createdBy.username} قام باضافة مسؤول جديد (${populatedAdmin.name})`,
-            isGlobal: true 
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
+
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username} قام باضافة مسؤول جديد (${populatedAdmin.name})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
         // Send response
         return res.status(httpStatus.CREATED).json({
             msg: "تم إنشاء المسؤول بنجاح",
@@ -92,98 +82,66 @@ exports.addAdmin = async (req, res) => {
 
 exports.updateAdmin = async (req, res) => {
     const {id, name, email, username } = req.body;
-    const { _id } = req.admin;
+    const admin = req.admin;
     try {
-        const admin = await Admin.findByIdAndUpdate(id, { name, email, username }, { new: true }).select("_id email username name");
-        if (!admin) {
+        const adminUpdate = await Admin.findByIdAndUpdate(id, { name, email, username }, { new: true }).select("_id email username name");
+        if (!adminUpdate) {
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
-        const responsable = await Admin.findById(_id);
-        const notificationData = {
-            senderId: _id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${responsable.username} قام بتحديث معلومات المسؤول (${name})`,
-            isGlobal: true 
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
-        res.status(httpStatus.OK).send({ msg: "تم تحديث المسؤول بنجاح", admin, responsableName: responsable.username });
+
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username} قام بتحديث معلومات المسؤول (${name})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+
+        res.status(httpStatus.OK).send({ msg: "تم تحديث المسؤول بنجاح", admin: adminUpdate, responsableName: adminData.username });
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في تحديث المسؤول" });
     }
 };
 exports.updatePassword = async (req, res) => {
     const { id, currentPassword, newPassword } = req.body;
-    const { _id } = req.admin;
+    const admin = req.admin;
     try {
-        const admin = await Admin.findById(id);
-        if (!admin) {
+        const adminUpdate = await Admin.findById(id);
+        if (!adminUpdate) {
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
 
-        const validPassword = await bcrypt.compare(currentPassword, admin.password);
+        const validPassword = await bcrypt.compare(currentPassword, adminUpdate.password);
         if (!validPassword) {
             return res.status(httpStatus.BAD_REQUEST).send({ msg: "كلمة المرور الحالية غير صحيحة" });
         }
 
         const salt = await bcrypt.genSalt(10);
-        admin.password = await bcrypt.hash(newPassword, salt);
-        await admin.save();
-        const responsable = await Admin.findById(_id);
-        const notificationData = {
-            senderId: _id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${responsable.username} قام بتغيير كلمة المرور الخاصه بي (${admin.name})`,
-            isGlobal: true 
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
-        res.status(httpStatus.OK).send({ msg: "تم تحديث كلمة المرور بنجاح",username: admin.username, responsableName: responsable.username });
+        adminUpdate.password = await bcrypt.hash(newPassword, salt);
+        await adminUpdate.save();
+
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username} قام بتغيير كلمة المرور الخاصه بي (${adminUpdate.name})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
+
+        res.status(httpStatus.OK).send({ msg: "تم تحديث كلمة المرور بنجاح",username: adminUpdate.username, responsableName: adminData.username });
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في تحديث كلمة المرور" });
     }
 };
 exports.blockAdmin = async (req, res) => {
     const { id, block } = req.body; // `block` is a boolean to block (true) or unblock (false)
-    const { _id } = req.admin;
+    const admin = req.admin;
 
     try {
-        const admin = await Admin.findByIdAndUpdate(id, { isBlocked: block }, { new: true }).select("_id email username name image");
-        if (!admin) {
+        const adminUpdate = await Admin.findByIdAndUpdate(id, { isBlocked: block }, { new: true }).select("_id email username name image");
+        if (!adminUpdate) {
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
-        const responsable = await Admin.findById(_id);
+
+        const adminData = await Admin.findById(admin._id);
+        let content = `${adminData.username} قام بتغيير حالة المسؤول (${adminUpdate.name})`;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
+
         const action = block ? "توقيف" : "فتح";
-        const notificationData = {
-            senderId: _id,
-            senderModel: 'Admin',
-            receiverModel: 'Admin',
-            type: 'reminder',
-            content: `${responsable.username} قام بتغيير حالة المسؤول (${admin.name})`,
-            isGlobal: true 
-        };
-        const { errorNotification } = validateNotification(notificationData);
-        if (errorNotification) {
-            throw new Error(errorNotification.details[0].message);
-        } else {
-            const notification = new Notification(notificationData);
-            await notification.save();
-        }
-        res.status(httpStatus.OK).send({ msg: `تم ${action} بنجاح من قبل المسؤول`, admin ,responsableName: responsable.username});
+
+        res.status(httpStatus.OK).send({ msg: `تم ${action} بنجاح من قبل المسؤول`, admin: adminUpdate ,responsableName: adminData.username});
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "حدث خطأ أثناء تحديث حالة حظر المشرف" });
     }

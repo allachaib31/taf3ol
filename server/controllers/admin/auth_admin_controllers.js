@@ -23,6 +23,8 @@ exports.authAdmin = async (req, res) => {
         const validPassword = await bcrypt.compare(password, admin.password);
         if (!validPassword) {
             return res.status(httpStatus.UNAUTHORIZED).send({ msg: "البريد الإلكتروني أو كلمة المرور غير صحيحة" });
+        } else if (admin.isBlocked) {
+            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "تم تعليق حسابك" });
         }
 
         // Generate JWT token
@@ -51,6 +53,8 @@ exports.forgotPassword = async (req, res) => {
             return res.status(httpStatus.NOT_FOUND).send({
                 msg: "البريد الالكتروني غير موجود"
             });
+        } else if (admin.isBlocked) {
+            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "تم تعليق حسابك" });
         }
 
         const token = jwt.sign({ adminId: admin._id }, JWTKEY, { expiresIn: '1h' });;
@@ -109,6 +113,8 @@ exports.resetPassword = async (req, res) => {
         const admin = await Admin.findById(decoded.adminId);
         if (!admin) {
             return res.status(httpStatus.NOT_FOUND).send({ success: false, msg: 'Admin not found' });
+        } else if (admin.isBlocked) {
+            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "تم تعليق حسابك" });
         }
 
         // Hash the new password
@@ -132,6 +138,9 @@ exports.resetPassword = async (req, res) => {
 exports.isValidateToken = async (req, res) => {
     try {
         const admin = await Admin.findById(req.admin._id).select("_id email username name image")
+        if (admin.isBlocked) {
+            return res.status(httpStatus.UNAUTHORIZED).send({ msg: "تم تعليق حسابك" });
+        }
         return res.status(200).send({
             msg: "تم تسجيل الدخول بنجاح",
             admin

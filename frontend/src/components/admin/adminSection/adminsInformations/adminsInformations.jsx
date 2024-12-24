@@ -8,6 +8,7 @@ import { getAdminsRoute, getFileRoute, searchAdminRoute } from '../../../../util
 import Alert from '../../../alert';
 import LoadingScreen from '../../../loadingScreen';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
+import { randomColor } from '../../../../utils/constants';
 
 
 function AdminsInformations() {
@@ -133,7 +134,7 @@ function AdminsInformations() {
         {alert.display && <Alert msg={alert} />}
       </div>
       <LoadingScreen loading={loading} component={
-        <div className="overflow-x-auto mt-[1rem]">
+        <div id='table' className="overflow-x-auto mt-[1rem]">
           <table className="table bg-white xl:w-full w-[1900px]">
             {/* head */}
             <thead>
@@ -178,7 +179,7 @@ function AdminsInformations() {
                   const formattedCreatedAt = createdAt.toLocaleString("en-US", confDate);
                   const formattedLastLogin = lastLogin.toLocaleString("en-US", confDate);
                   return (
-                    <tr key={admin._id}>
+                    <tr key={admin._id} className='hover:bg-base-200'>
                       {/*<th>
                         <label>
                           <input type="checkbox" className="checkbox" />
@@ -189,10 +190,19 @@ function AdminsInformations() {
                         <div className="flex items-center gap-3">
                           <div className="avatar">
                             <div className="mask mask-squircle h-12 w-12">
+                            {admin.image ? (
                               <img
-                                src={admin.image ? `${getFileRoute}${admin.image}` : "https://img.daisyui.com/images/profile/demo/2@94.webp"}
-                                alt="Avatar Tailwind CSS Component" 
-                                crossOrigin="anonymous"/>
+                                src={`${getFileRoute}${admin.image}`}
+                                crossOrigin="anonymous"
+                              />
+                            ) : (
+                              <div
+                                className={`h-12 flex justify-center items-center text-white font-bold text-xl`}
+                                style={{ backgroundColor: randomColor }}
+                              >
+                                {admin.username?.[0]?.toUpperCase() || '?'}
+                              </div>
+                            )}
                             </div>
                           </div>
                           <div>
@@ -229,10 +239,10 @@ function AdminsInformations() {
           </table>
         </div>
       } />
-      <AddAdmin setAlert={setAlert} setAdmins={setAdmins} direction={direction} />
-      <UpdateAdmin updateAdmin={updateAdmin} setUpdateAdmin={setUpdateAdmin} setAlert={setAlert} admins={admins} setAdmins={setAdmins} indexAdmin={indexAdmin} />
-      <UpdatePassword setAlert={setAlert} updatePassword={updatePassword} setUpdatePassword={setUpdatePassword}/>
-      <StopAccount setAlert={setAlert} stopAccount={stopAccount} setStopAccount={setStopAccount} indexAdmin={indexAdmin} admins={admins} setAdmins={setAdmins}/>
+      <AddAdmin setAdmins={setAdmins} direction={direction} />
+      <UpdateAdmin updateAdmin={updateAdmin} setUpdateAdmin={setUpdateAdmin} admins={admins} setAdmins={setAdmins} indexAdmin={indexAdmin} />
+      <UpdatePassword updatePassword={updatePassword} setUpdatePassword={setUpdatePassword}/>
+      <StopAccount stopAccount={stopAccount} setStopAccount={setStopAccount} indexAdmin={indexAdmin} admins={admins} setAdmins={setAdmins}/>
 
     </div>
   )

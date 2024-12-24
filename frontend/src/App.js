@@ -4,7 +4,7 @@ import './App.css';
 import './index.css';
 import { AdminScreen, AuthAdmin, HomeAdmin, ResetPassword } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
-import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CategoriesServices, ClientDetails, Currencies, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentsInformations, PopUpMessages, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations } from "./components/admin";
+import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CardTitles, CategoriesServices, ClientDetails, Currencies, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentsInformations, PopUpMessages, ProductDetails, ProductDetailsApi, ProductDetailsGeneral, ProductDetailsRequired, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations } from "./components/admin";
 import { AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, Profile, ProfitMoney, Services, Settings, Support, UpdatePassword } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
@@ -67,9 +67,15 @@ function App() {
                   <Route path="/admin/addProducts" element={<AddProducts />}/>
                   <Route path="/admin/productSort" element={<ProductSort />}/>
                   <Route path="/admin/products" element={<Products />}/>
+                  <Route path="/admin/productDetails" element={<ProductDetails />}>
+                    <Route path="/admin/productDetails" element={<ProductDetailsGeneral />}/>
+                    <Route path="/admin/productDetails/productDetailsRequired" element={<ProductDetailsRequired />}/>
+                    <Route path="/admin/productDetails/productDetailsApi" element={<ProductDetailsApi />}/>
+                  </Route>
                   <Route path="/admin/payments" element={<PaymentsInformations />} />
                   <Route path="/admin/generateRechargeCards" element={<GenerateRechargeCards />}/>
                   <Route path="/admin/allRechargeCards" element={<AllRechargeCards />}/>
+                  <Route path="/admin/cardTitles" element={<CardTitles />}/>
                   <Route path="/admin/currencies" element={<Currencies />}/>
                   <Route path="/admin/tickets" element={<TicketsInformations />} />
                   <Route path="/admin/general" element={<General />}/>

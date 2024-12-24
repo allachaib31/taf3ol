@@ -4,7 +4,6 @@ const JWTKEY = process.env.JWTKEY;
 
 exports.verifyToken = (req, res, next) => {
     const token = req.header('Authorization');
-    console.log(token)
     if (!token) {
         return res.status(httpStatus.UNAUTHORIZED).send({ msg: "Access denied. No token provided." });
     }

@@ -2,7 +2,7 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import { ReactSortable } from 'react-sortablejs';
-import { AddTypeService, DeleteService } from '../modal';
+import {  DeleteService } from '../modal';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
 import { getMethode, putMethode } from '../../../../utils/apiFetchs';
@@ -10,6 +10,7 @@ import { getTypeServicesRoute, updateTypeServiceRankingRoute } from '../../../..
 import Loading from '../../../loading';
 import LoadingScreen from '../../../loadingScreen';
 import Alert from '../../../alert';
+import TypeServiceModel from '../modal/services/typeServiceModel';
 
 const sortableOptions = {
     animation: 150,
@@ -163,7 +164,7 @@ function TypeServices() {
                 }/>
             </div>
             <button onClick={handleSubmit} disabled={submit} className='btn btn-primary w-full mt-[1rem]'>{submit ? <Loading /> : "حفظ"}</button>
-            <AddTypeService listTypeService={listTypeService} setListTypeService={setListTypeService} titleModalTypeService={titleModalTypeService} inputs={inputs} setInputs={setInputs} />
+            <TypeServiceModel listTypeService={listTypeService} setListTypeService={setListTypeService} titleModalTypeService={titleModalTypeService} inputs={inputs} setInputs={setInputs} />
             <DeleteService listTypeService={listTypeService} setListTypeService={setListTypeService} idTypeService={idTypeService} indexTypeService={indexTypeService} />
         </div>
     )
