@@ -15,21 +15,6 @@ function GroupMoneyModel({ titleModalGroupMoney, listTypeService, inputs, setInp
     const [alert, setAlert] = useState({
         display: false,
     });
-    const fileInputRef = useRef(null);
-    const handleFileClick = () => {
-        fileInputRef.current.click();
-    };
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setInputs((prevInput) => {
-                return {
-                    ...prevInput,
-                    image: file
-                }
-            })
-        }
-    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -37,16 +22,7 @@ function GroupMoneyModel({ titleModalGroupMoney, listTypeService, inputs, setInp
             display: false,
         });
         try {
-            const form = new FormData();
-            form.append("name", inputs.name);
-            form.append("idService", inputs.idService);
-            form.append("pricingType", inputs.pricingType);
-            form.append("value", inputs.value);
-            form.append("negativeBalance", inputs.negativeBalance);
-            form.append("agentRatio", inputs.agentRatio);
-            form.append("meritValue", inputs.meritValue);
-            form.append("image", inputs.image);
-            const response = await postMethode(addGroupMoneyRoute, form);
+            const response = await postMethode(addGroupMoneyRoute, inputs);
             setAlert({
                 display: true,
                 status: true,
@@ -81,17 +57,7 @@ function GroupMoneyModel({ titleModalGroupMoney, listTypeService, inputs, setInp
             display: false,
         });
         try {
-            const form = new FormData();
-            form.append("_id", inputs._id);
-            form.append("name", inputs.name);
-            form.append("idService", inputs.idService);
-            form.append("pricingType", inputs.pricingType);
-            form.append("value", inputs.value);
-            form.append("negativeBalance", inputs.negativeBalance);
-            form.append("agentRatio", inputs.agentRatio);
-            form.append("meritValue", inputs.meritValue);
-            form.append("image", inputs.image);
-            const response = await patchMethode(updateGroupMoneyRoute, form);
+            const response = await patchMethode(updateGroupMoneyRoute, inputs);
             setAlert({
                 display: true,
                 status: true,
@@ -244,21 +210,6 @@ function GroupMoneyModel({ titleModalGroupMoney, listTypeService, inputs, setInp
                         <FontAwesomeIcon icon={faMoneyBill} />
                     </label>
                 </label>
-                <button
-                    className="mt-[1rem] btn btn-secondary w-full"
-                    type="button"
-                    onClick={handleFileClick}
-                >
-                    <FontAwesomeIcon icon={faUpload} /> تحميل صورة
-                </button>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    onChange={handleFileChange}
-                    accept="image/png, image/gif, image/jpeg"
-                />
-                {titleModalGroupMoney == "تعديل مجموعة" &&  <img src={`${getFileRoute}${inputs.image}`} alt="" crossOrigin="anonymous"/>}
                 <div className="modal-action">
                     <form method="dialog">
                         {/* if there is a button in form, it will close the modal */}

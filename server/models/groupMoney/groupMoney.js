@@ -37,9 +37,9 @@ const groupMoneySchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    image: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+    defaultGroup: {
+        type: Boolean,
+        default: false
     },
     isDeleted: { 
         type: Boolean,
@@ -57,13 +57,13 @@ const groupMoneySchema = new mongoose.Schema({
 
 
 // Pre-save hook to set id and ranking
-groupMoneySchema.pre('save', async function (next) {
+/*groupMoneySchema.pre('save', async function (next) {
     if (this.isNew) { // Check if the document is new
         // Generate a new ID using your custom utility function
         this.id = await generateNextId("GroupMoney", "GM");
     }
     next();
-});
+});*/
 
 // Create a validation schema using Joi
 const validationGroupMoney = (groupMoney) => {
@@ -78,7 +78,6 @@ const validationGroupMoney = (groupMoney) => {
         negativeBalance: Joi.number().required(),
         agentRatio: Joi.number().required(),
         meritValue: Joi.number().required(),
-        image: Joi.string().required(),
         isDeleted: Joi.boolean().optional(),
         createdBy: Joi.string().optional(),
         ranking: Joi.number().optional(),

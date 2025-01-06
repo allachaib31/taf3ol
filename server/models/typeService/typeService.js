@@ -50,7 +50,7 @@ const typeServiceSchema = new mongoose.Schema({
 });
 
 // Pre-save hook to set id and ranking
-typeServiceSchema.pre('save', async function (next) {
+/*typeServiceSchema.pre('save', async function (next) {
     if (this.isNew) { // Check if the document is new
         // Generate a new ID using your custom utility function
         this.id = await generateNextId("TypeServices", "TS");
@@ -62,7 +62,7 @@ typeServiceSchema.pre('save', async function (next) {
         this.ranking = lastTypeServices ? lastTypeServices.ranking + 1 : 1;
     }
     next();
-});
+});*/
 
 // Create a validation schema using Joi
 const validationTypeService = (typeService) => {

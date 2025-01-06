@@ -277,6 +277,8 @@ function HomeAdmin() {
                       <li><Link to="/admin/users"> الكل</Link></li>
                       <li><Link to="/admin/transferMoney">عمليات الشحن</Link></li>
                       <li><Link to="/admin/groupMoney">المجموعات</Link></li>
+                      <li><Link to="/admin/usersLevel">المستويات</Link></li>
+                      <li><Link to="/admin/customPrices">الاسعار المخصصة</Link></li>
                     </ul>
                   </details>
                 </li>

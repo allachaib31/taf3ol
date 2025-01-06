@@ -7,31 +7,39 @@ const SALTROUNDS = Number(process.env.SALTROUNDS);
 const { bucket } = require('../../server');
 const { saveFile } = require('../../utils/saveFile');
 const { saveNotification } = require('../../utils/constants');
+const { default: mongoose } = require('mongoose');
 
 exports.addAdmin = async (req, res) => {
     const admin = req.admin;
     const { file } = req;
     const { email, username, name, password } = req.body;
+    const session = await mongoose.startSession();
 
     try {
-        let newFile
+        await session.startTransaction(); // Begin transaction
+
+        let newFile;
         if (file) {
-            newFile = await saveFile(file, File, Readable, bucket);
+            newFile = await saveFile(file, File, Readable, bucket); // File save remains outside the session
         }
+
         // Validate the admin data using Joi
         const { error } = validateAdmin(req.body);
         if (error) {
-            console.log(error)
+            await session.abortTransaction(); // Rollback on validation error
+            session.endSession();
             return res.status(httpStatus.BAD_REQUEST).json({
-                msg: error.details[0].message
+                msg: error.details[0].message,
             });
         }
 
         // Check if an admin with the same email or username already exists
-        let existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] });
+        let existingAdmin = await Admin.findOne({ $or: [{ email }, { username }] }).session(session);
         if (existingAdmin) {
+            await session.abortTransaction(); // Rollback if admin already exists
+            session.endSession();
             return res.status(httpStatus.CONFLICT).json({
-                msg: "البريد الإلكتروني أو اسم المستخدم موجود بالفعل"
+                msg: "البريد الإلكتروني أو اسم المستخدم موجود بالفعل",
             });
         }
 
@@ -45,18 +53,25 @@ exports.addAdmin = async (req, res) => {
             name,
             password: hashedPassword,
             image: newFile ? newFile._id : null,
-            createdBy: admin._id
+            createdBy: admin._id,
         });
 
-        // Save the admin to the database
-        await newAdmin.save();
-        const populatedAdmin = await Admin.findById(newAdmin._id).populate('createdBy');
+        // Save the new admin within the session
+        await newAdmin.save({ session });
 
-        const adminData = await Admin.findById(admin._id);
+        // Fetch the admin for populating references
+        const populatedAdmin = await Admin.findById(newAdmin._id)
+            .populate("createdBy")
+            .session(session);
+
+        // Save a notification for the admin creation
+        const adminData = await Admin.findById(admin._id).session(session);
         let content = `${adminData.username} قام باضافة مسؤول جديد (${populatedAdmin.name})`;
-        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+        await saveNotification(admin, "Admin", "Admin", "reminder", content, true, null, null, session);
 
-        // Send response
+        await session.commitTransaction(); // Commit the transaction
+
+        // Send success response
         return res.status(httpStatus.CREATED).json({
             msg: "تم إنشاء المسؤول بنجاح",
             newAdmin: {
@@ -68,104 +83,205 @@ exports.addAdmin = async (req, res) => {
                 createdAt: populatedAdmin.createdAt,
                 createdBy: populatedAdmin.createdBy,
                 lastLogin: populatedAdmin.lastLogin,
-                image: populatedAdmin.image
+                image: populatedAdmin.image,
             },
         });
+
     } catch (err) {
+        await session.abortTransaction(); // Rollback on error
         console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
             error: err.message,
         });
+    } finally {
+        session.endSession(); // Ensure session is ended
     }
 };
 
+
 exports.updateAdmin = async (req, res) => {
-    const {id, name, email, username } = req.body;
+    const { id, name, email, username } = req.body;
     const admin = req.admin;
+    const session = await mongoose.startSession();
+
     try {
-        const adminUpdate = await Admin.findByIdAndUpdate(id, { name, email, username }, { new: true }).select("_id email username name");
+        await session.startTransaction(); // Begin transaction
+
+        // Update the admin
+        const adminUpdate = await Admin.findByIdAndUpdate(
+            id,
+            { name, email, username },
+            { new: true, session }
+        ).select("_id email username name");
+
         if (!adminUpdate) {
+            await session.abortTransaction(); // Rollback if admin not found
+            session.endSession();
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
 
-        const adminData = await Admin.findById(admin._id);
-        let content = `${adminData.username} قام بتحديث معلومات المسؤول (${name})`;
-        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true);
+        // Fetch the responsible admin data
+        const adminData = await Admin.findById(admin._id).session(session);
+        const content = `${adminData.username} قام بتحديث معلومات المسؤول (${name})`;
 
-        res.status(httpStatus.OK).send({ msg: "تم تحديث المسؤول بنجاح", admin: adminUpdate, responsableName: adminData.username });
+        // Save a notification about the update
+        await saveNotification(admin, "Admin", "Admin", "reminder", content, true, null, null, session);
+
+        await session.commitTransaction(); // Commit transaction
+
+        // Send response
+        res.status(httpStatus.OK).send({
+            msg: "تم تحديث المسؤول بنجاح",
+            admin: adminUpdate,
+            responsableName: adminData.username,
+        });
     } catch (err) {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في تحديث المسؤول" });
+        await session.abortTransaction(); // Rollback on error
+        console.error(err);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في تحديث المسؤول", error: err.message });
+    } finally {
+        session.endSession(); // Ensure session is ended
     }
 };
+
 exports.updatePassword = async (req, res) => {
     const { id, currentPassword, newPassword } = req.body;
     const admin = req.admin;
+    const session = await mongoose.startSession();
+
     try {
-        const adminUpdate = await Admin.findById(id);
+        await session.startTransaction(); // Begin transaction
+
+        // Find the admin whose password is to be updated
+        const adminUpdate = await Admin.findById(id).session(session);
         if (!adminUpdate) {
+            await session.abortTransaction(); // Rollback if admin not found
+            session.endSession();
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
 
+        // Validate the current password
         const validPassword = await bcrypt.compare(currentPassword, adminUpdate.password);
         if (!validPassword) {
+            await session.abortTransaction(); // Rollback on invalid password
+            session.endSession();
             return res.status(httpStatus.BAD_REQUEST).send({ msg: "كلمة المرور الحالية غير صحيحة" });
         }
 
+        // Hash the new password
         const salt = await bcrypt.genSalt(10);
         adminUpdate.password = await bcrypt.hash(newPassword, salt);
-        await adminUpdate.save();
+        await adminUpdate.save({ session }); // Save with session
 
-        const adminData = await Admin.findById(admin._id);
-        let content = `${adminData.username} قام بتغيير كلمة المرور الخاصه بي (${adminUpdate.name})`;
-        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
+        // Log the action in notifications
+        const adminData = await Admin.findById(admin._id).session(session);
+        const content = `${adminData.username} قام بتغيير كلمة المرور الخاصه بي (${adminUpdate.name})`;
+        await saveNotification(admin, "Admin", "Admin", "reminder", content, true, null, null, session);
 
-        res.status(httpStatus.OK).send({ msg: "تم تحديث كلمة المرور بنجاح",username: adminUpdate.username, responsableName: adminData.username });
+        await session.commitTransaction(); // Commit transaction
+
+        // Respond with success
+        res.status(httpStatus.OK).send({
+            msg: "تم تحديث كلمة المرور بنجاح",
+            username: adminUpdate.username,
+            responsableName: adminData.username,
+        });
     } catch (err) {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في تحديث كلمة المرور" });
+        await session.abortTransaction(); // Rollback on error
+        console.error(err);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في تحديث كلمة المرور", error: err.message });
+    } finally {
+        session.endSession(); // Ensure session is ended
     }
 };
+
 exports.blockAdmin = async (req, res) => {
     const { id, block } = req.body; // `block` is a boolean to block (true) or unblock (false)
     const admin = req.admin;
+    const session = await mongoose.startSession();
 
     try {
-        const adminUpdate = await Admin.findByIdAndUpdate(id, { isBlocked: block }, { new: true }).select("_id email username name image");
+        await session.startTransaction(); // Start a transaction
+
+        // Update the admin's `isBlocked` status
+        const adminUpdate = await Admin.findByIdAndUpdate(
+            id,
+            { isBlocked: block },
+            { new: true, session } // Use the session
+        ).select("_id email username name image");
+
         if (!adminUpdate) {
+            await session.abortTransaction(); // Rollback if the admin is not found
+            session.endSession();
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
 
-        const adminData = await Admin.findById(admin._id);
-        let content = `${adminData.username} قام بتغيير حالة المسؤول (${adminUpdate.name})`;
-        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true)
+        // Log the action in notifications
+        const adminData = await Admin.findById(admin._id).session(session);
+        const content = `${adminData.username} قام بتغيير حالة المسؤول (${adminUpdate.name})`;
+        await saveNotification(admin, "Admin", "Admin", "reminder", content, true, null, null, session);
 
+        // Determine the action message
         const action = block ? "توقيف" : "فتح";
 
-        res.status(httpStatus.OK).send({ msg: `تم ${action} بنجاح من قبل المسؤول`, admin: adminUpdate ,responsableName: adminData.username});
+        await session.commitTransaction(); // Commit the transaction
+
+        res.status(httpStatus.OK).send({
+            msg: `تم ${action} بنجاح من قبل المسؤول`,
+            admin: adminUpdate,
+            responsableName: adminData.username,
+        });
     } catch (err) {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "حدث خطأ أثناء تحديث حالة حظر المشرف" });
+        await session.abortTransaction(); // Rollback on error
+        console.error(err);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "حدث خطأ أثناء تحديث حالة حظر المشرف", error: err.message });
+    } finally {
+        session.endSession(); // Ensure the session is ended
     }
 };
+
 
 exports.deleteAdmin = async (req, res) => {
     const { id } = req.params;
     const loggedInAdminId = req.admin._id;
+    const session = await mongoose.startSession();
 
     try {
+        await session.startTransaction(); // Start a transaction
+
+        // Prevent deleting the logged-in admin
         if (id === loggedInAdminId) {
+            await session.abortTransaction(); // Rollback if trying to delete self
+            session.endSession();
             return res.status(httpStatus.FORBIDDEN).send({ msg: "لا يمكنك حذف نفسك" });
         }
 
-        const admin = await Admin.findByIdAndDelete(id);
+        // Attempt to delete the admin
+        const admin = await Admin.findByIdAndDelete(id).session(session);
         if (!admin) {
+            await session.abortTransaction(); // Rollback if admin not found
+            session.endSession();
             return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على المسؤول" });
         }
 
+        // Log the action in the notifications
+        const adminData = await Admin.findById(req.admin._id).session(session);
+        const content = `${adminData.username} قام بحذف المسؤول (${admin.username})`;
+        await saveNotification(req.admin, "Admin", "Admin", "reminder", content, true, null, null, session);
+
+        await session.commitTransaction(); // Commit the transaction
+
         res.status(httpStatus.OK).send({ msg: "تم حذف المسؤول بنجاح" });
     } catch (err) {
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في حذف المسؤول" });
+        await session.abortTransaction(); // Rollback on error
+        console.error(err);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في حذف المسؤول", error: err.message });
+    } finally {
+        session.endSession(); // Ensure session is ended
     }
 };
+
 
 
 exports.getAdmins = async (req, res) => {

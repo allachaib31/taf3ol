@@ -176,7 +176,7 @@ function CategoriesForService({ titleModalCategorie, listeTypeService, categorie
                         type="button"
                         onClick={handleFileClick}
                     >
-                        <FontAwesomeIcon icon={faUpload} /> تحميل أيقونة
+                        <FontAwesomeIcon icon={faUpload} /> تحميل صورة
                     </button>
                     <input
                         type="file"

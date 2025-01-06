@@ -84,3 +84,24 @@ export const handleImageChange = (e, setImage, setFile) => {
         reader.readAsDataURL(selectedFile);
     }
 };
+
+export const handleCrop = (file) => {
+    if (file) {
+        const cropper = document.getElementById('cropper').cropper;
+        const canvas = cropper.getCroppedCanvas();
+
+        // Convert the canvas to a Blob (binary format)
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const croppedFile = new File([blob], "cropped-image.png", { type: blob.type });
+                    resolve(croppedFile);
+                } else {
+                    reject(new Error("Failed to create Blob from canvas."));
+                }
+            }, "image/png"); // You can specify the desired image format
+        });
+    }
+    return "";
+    //return Promise.reject(new Error("No file selected."));
+};

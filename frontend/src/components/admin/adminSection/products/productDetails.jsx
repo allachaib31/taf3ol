@@ -35,7 +35,7 @@ function ProductDetails() {
           <Link to={`/admin/productDetails/productDetailsRequired?id=${queryParams.get("id")}`} onClick={() => setEdit("required")} className={`badge rounded-none p-[1rem] cursor-pointer hover:badge-ghost ${edit == "required" ? "badge-ghost" : ""} text-xl`}>المتطلبات</Link>
           <Link to={`/admin/productDetails/productDetailsApi?id=${queryParams.get("id")}`} onClick={() => setEdit("api")} className={`badge rounded-none rounded-l-full p-[1rem] cursor-pointer hover:badge-ghost ${edit == "api" ? "badge-ghost" : ""} text-xl`}>ربط API</Link>
         </div>
-        <Outlet context={{productDetails}}/>
+        <Outlet context={{productDetails, setProductDetails}}/>
       </>
       } />
     </div>

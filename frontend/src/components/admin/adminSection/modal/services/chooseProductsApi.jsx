@@ -24,7 +24,7 @@ function ChooseProductsApi({ inputs, setInputs }) {
         setAlert({
             display: false,
         });
-        getMethode(`${getServicesApiRoute}?apiName=${apiSelected}&categorieName=${catSelected}`).then((response) => {
+        getMethode(`${getServicesApiRoute}?apiId=${apiSelected}&categorieName=${catSelected}`).then((response) => {
             setServicesApi(response.data)
         }).catch((err) => {
             if (err.response.status == 500) {
@@ -47,7 +47,6 @@ function ChooseProductsApi({ inputs, setInputs }) {
             return;
         }
         const service = servicesApi[indexService];
-        console.log(service)
         setInputs((prev) => {
             return {
                 ...prev,
@@ -63,10 +62,14 @@ function ChooseProductsApi({ inputs, setInputs }) {
                 maximumQuantity: service.max || (service.qty_values && service.qty_values.max) || "",
                 availableQuantity: true,
                 provider: {
-                        name: apiSelected,
+                        idProvider: apiSelected,
                         nameProduct: service.name || service.Title,
                         isAvailable: true,
-                        isActive: true
+                        isActive: true,
+                        costPrice: service.Price || service.price || service.rate,
+                        service: (service.id || service.service || categorieSelected).toString(),
+                        country: service.CountryCode || "",
+                        serverNumber: service.ServerNumber || "",
                 }
             }
         })
@@ -80,7 +83,7 @@ function ChooseProductsApi({ inputs, setInputs }) {
             setAlert({
                 display: false,
             });
-            getMethode(`${getCategorieServicesApiRoute}?apiName=${apiSelected}`).then((response) => {
+            getMethode(`${getCategorieServicesApiRoute}?apiId=${apiSelected}`).then((response) => {
                 setCategories(response.data)
             }).catch((err) => {
                 if (err.response.status == 500) {
@@ -111,7 +114,7 @@ function ChooseProductsApi({ inputs, setInputs }) {
                         {
                             apiList && apiList.map((api) => {
                                 return (
-                                    <option value={api.name}>{api.name}</option>
+                                    <option value={api._id}>{api.name}</option>
                                 )
                             })
                         }

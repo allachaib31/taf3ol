@@ -9,12 +9,14 @@ import 'cropperjs/dist/cropper.css';
 import { ChooseProductsApi } from '../modal';
 import Loading from '../../../loading';
 import Alert from '../../../alert';
-import { getApis } from '../../../../utils/constants';
+import { getApis, handleCrop, handleImageChange } from '../../../../utils/constants';
+import LoadingScreen from '../../../loadingScreen';
 
 function AddProducts() {
     const navigate = useNavigate();
     const socket = useSocket();
     const [loading, setLoading] = useState(false);
+    const [loadingCategorie, setLoadingCategorie] = useState(false);
     const [apiList, setApiList] = useState(false);
     const [listeTypeService, setListTypeService] = useState([]);
     const [categories, setCategories] = useState(false);
@@ -48,39 +50,6 @@ function AddProducts() {
     const [image, setImage] = useState(null);
     const [file, setFile] = useState(null);
 
-    const handleImageChange = (e) => {
-        const selectedFile = e.target.files[0];
-        if (selectedFile) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result);
-                setFile(selectedFile);
-            };
-            reader.readAsDataURL(selectedFile);
-        }
-    };
-
-    const handleCrop = () => {
-        if (file) {
-            const cropper = document.getElementById('cropper').cropper;
-            const canvas = cropper.getCroppedCanvas();
-
-            // Convert the canvas to a Blob (binary format)
-            return new Promise((resolve, reject) => {
-                canvas.toBlob((blob) => {
-                    if (blob) {
-                        const croppedFile = new File([blob], "cropped-image.png", { type: blob.type });
-                        resolve(croppedFile);
-                    } else {
-                        reject(new Error("Failed to create Blob from canvas."));
-                    }
-                }, "image/png"); // You can specify the desired image format
-            });
-        }
-        return "";
-        //return Promise.reject(new Error("No file selected."));
-    };
-
     const handleSubmit = async () => {
         setLoading(true);
         setAlert({
@@ -99,7 +68,7 @@ function AddProducts() {
             form.append("forQuantity", inputs.forQuantity);
             form.append("descriptionAr", inputs.descriptionAr);
             form.append("descriptionEn", inputs.descriptionEn);
-            form.append("image", await handleCrop());
+            form.append("image", await handleCrop(file));
             form.append("quantityQuality", inputs.quantityQuality);
             form.append("minimumQuantity", inputs.minimumQuantity);
             form.append("maximumQuantity", inputs.maximumQuantity);
@@ -129,7 +98,7 @@ function AddProducts() {
         getApis(setApiList);
     }, []);
     useEffect(() => {
-        setLoading(true);
+        setLoadingCategorie(true);
         getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
             setCategories(response.data);
         }).catch((err) => {
@@ -137,7 +106,7 @@ function AddProducts() {
                 navigate("/admin/auth")
             }
         }).finally(() => {
-            setLoading(false);
+            setLoadingCategorie(false);
         })
     }, [idService, query]);
     useEffect(() => {
@@ -188,8 +157,8 @@ function AddProducts() {
                             })
                         }
                     </select>
-
-                    <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
+                    <LoadingScreen loading={loadingCategorie} component={
+                        <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
                         setInputs((prevInputs) => {
                             return {
                                 ...prevInputs,
@@ -203,7 +172,7 @@ function AddProducts() {
                                 return <option value={item._id} key={item._id}>{item.nameAr}</option>
                             })
                         }
-                    </select>
+                    </select>} />
                 </div>
                 <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
                     <label className="input input-bordered w-full sm:w-1/2 flex items-center gap-2">
@@ -303,7 +272,7 @@ function AddProducts() {
                     <input
                         type="file"
                         accept="image/*"
-                        onChange={handleImageChange}
+                        onChange={(event) => handleImageChange(event, setImage, setFile)}
                         className="block w-full text-sm text-gray-700 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                     <div className='flex items-center justify-around gap-[1rem]'>
@@ -416,11 +385,11 @@ function AddProducts() {
                         })
                     }}>
                         <option selected={inputs.provider == ""} disabled>اختر API</option>
-                        <option value="stock">المخزن</option>
+                        {/*<option value="stock">المخزن</option>*/}
                         {
                             apiList && apiList.map((api) => {
                                 return (
-                                    <option value={api.name} selected={inputs.provider?.name == api.name}>{api.name}</option>
+                                    <option value={api._id} selected={inputs.provider?.idProvider == api._id}>{api.name}</option>
                                 )
                             })
                         }

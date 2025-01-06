@@ -46,7 +46,7 @@ function ProductSort() {
         socket.emit('broadcast-notification', {
             msg: response.data.contentNotification,
             name: "update ranking Products",
-            newList: response.data.newProducts
+            products: response.data.newProducts
         });
     } catch (err) {
         if (err.response.status == 401 || err.response.status == 403) {
@@ -90,6 +90,7 @@ function ProductSort() {
       if (err.response.status == 401 || err.response.status == 403) {
         navigate("/admin/auth")
       }
+      setProducts([]);
     }).finally(() => {
       setLoading(false);
     })
@@ -97,9 +98,13 @@ function ProductSort() {
   useEffect(() => {
     if (socket) {
         socket.on('receive-notification', (notification) => {
-            if (notification.name == "add Products" || notification.name == "update ranking Products") {
-              if(idCategorie.toString() == notification.newList[0].idCategorie.toString()){
-                setProducts(notification.newList);
+            if (notification.name == "add Products") {
+              if(idCategorie.toString() == notification.products[0].idCategorie.toString()){
+                setProducts((prevProducts) => [...prevProducts,...notification.products]);
+              }
+            } else if (notification.name == "update ranking Products") {
+              if(idCategorie.toString() == notification.products[0].idCategorie.toString()){
+                setProducts(notification.products);
               }
             }
 

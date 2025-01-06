@@ -1,6 +1,9 @@
 export { default as AddAdmin } from "./admin/addAdmin";
 export { default as AddUser } from "./user/addUser";
+export { default as AddCustomPrice } from "./user/addCustomPrice";
+export { default as DeleteCustomPrice } from "./user/deleteCustomPrice";
 export { default as typeServiceModel } from "./services/typeServiceModel";
+export { default as ChangeTypeServiceModel } from "./services/changeTypeServiceModel";
 export { default as CategoriesForService } from "./services/categoriesForService";
 export { default as DeleteCategory } from "./services/deleteCategory";
 export { default as UpdateAdmin } from "./admin/updateAdmin";

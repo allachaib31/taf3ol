@@ -25,7 +25,6 @@ function GroupMoney() {
         negativeBalance: "",
         agentRatio: "",
         meritValue: "",
-        image: "",
     });
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState({
@@ -98,7 +97,10 @@ function GroupMoney() {
     return (
         <div>
             <h1 className='text-3xl font-[900]'>المجموعات</h1>
-            <button className='btn btn-primary mt-[1rem]' onClick={() => document.getElementById('groupMoneyModel').showModal()}>مجموعة جديدة</button><br />
+            <button className='btn btn-primary mt-[1rem]' onClick={() => {
+                setTitleModalGroupMoney("مجموعة جديدة");
+                document.getElementById('groupMoneyModel').showModal();
+            }}>مجموعة جديدة</button><br />
             <select className="select select-bordered mt-[1rem] w-full" onChange={(event) => {
                 setSelectedIdService(event.target.value)
             }}>
@@ -166,7 +168,6 @@ function GroupMoney() {
                                                     negativeBalance: item.negativeBalance,
                                                     agentRatio: item.agentRatio,
                                                     meritValue: item.meritValue,
-                                                    image: item.image,
                                                     index
                                                 })
                                                 setTitleModalGroupMoney("تعديل مجموعة");

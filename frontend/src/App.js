@@ -4,7 +4,7 @@ import './App.css';
 import './index.css';
 import { AdminScreen, AuthAdmin, HomeAdmin, ResetPassword } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
-import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CardTitles, CategoriesServices, ClientDetails, Currencies, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentsInformations, PopUpMessages, ProductDetails, ProductDetailsApi, ProductDetailsGeneral, ProductDetailsRequired, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations } from "./components/admin";
+import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CardTitles, CategoriesServices, ClientDetails, Currencies, CustomPrices, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentsInformations, PopUpMessages, ProductDetails, ProductDetailsApi, ProductDetailsGeneral, ProductDetailsRequired, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations, UsersLevel } from "./components/admin";
 import { AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, Profile, ProfitMoney, Services, Settings, Support, UpdatePassword } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
@@ -47,8 +47,10 @@ function App() {
                   <Route path="/admin/home" element={<ReportsInformations />}/>
                   <Route path="/admin/users" element={<UsersInformations />} />
                   <Route path="/admin/clientDetails" element={<ClientDetails />}/>
+                  <Route path="/admin/customPrices" element={<CustomPrices />}/>
                   <Route path="/admin/transferMoney" element={<TransferMoney />}/>
                   <Route path="/admin/groupMoney" element={<GroupMoney />}/>
+                  <Route path="/admin/usersLevel" element={<UsersLevel />}/>
                   <Route path="/admin/orders" element={<OrdersInformations />} />
                   <Route path="/admin/order/get" element={<OrderInformation />}/>
                   <Route path="/admin/stocks" element={<Stock />} />

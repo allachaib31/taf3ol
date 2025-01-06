@@ -74,6 +74,10 @@ const productSchema = new mongoose.Schema({
     provider: {
         type: [
             {
+                idProvider: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'API'
+                },
                 name: {
                     type: String,
                     required: true
@@ -131,7 +135,7 @@ const productSchema = new mongoose.Schema({
 });
 
 // Pre-save hook to set id and ranking
-productSchema.pre('save', async function (next) {
+/*productSchema.pre('save', async function (next) {
     if (this.isNew) { // Check if the document is new
         // Generate a new ID using your custom utility function
         this.id = await generateNextId("Product", "P");
@@ -143,7 +147,7 @@ productSchema.pre('save', async function (next) {
         this.ranking = lastCategory ? lastCategory.ranking + 1 : 1;
     }
     next();
-});
+});*/
 
 const validationProduct = (product) => {
     const schema = Joi.object({
@@ -173,6 +177,7 @@ const validationProduct = (product) => {
         provider: Joi.array()
         .items(
             Joi.object({
+                idProvider: Joi.string().required(),
                 name: Joi.string().required(),
                 nameProduct: Joi.string().required(),
                 costPrice: Joi.number().required(),

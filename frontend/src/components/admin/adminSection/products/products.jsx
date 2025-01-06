@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
-import { getMethode, patchMethode } from '../../../../utils/apiFetchs';
-import { getCategoriesRoute, getFileRoute, getProductsRoute, getTypeServicesRoute, host, updateProductsShowRoute } from '../../../../utils/apiRoutes';
+import { getMethode, patchMethode, putMethode } from '../../../../utils/apiFetchs';
+import { getCategoriesRoute, getFileRoute, getProductsRoute, getTypeServicesRoute, updatePriceCategorieRoute, updateProductPriceRoute, updateProductsShowAvailableRoute } from '../../../../utils/apiRoutes';
 import LoadingScreen from '../../../loadingScreen';
 import Alert from '../../../alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck, faMoneyBill, faPen, faPercent, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faCircleCheck, faMagnifyingGlass, faMoneyBill, faPen, faPercent, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { handleSelectAll, handleSelectItem, randomColor } from '../../../../utils/constants';
 import RowsPerPage from '../rowsPerPage';
 import Loading from '../../../loading';
-import { DeleteProducts } from '../modal';
+import { ChangeTypeServiceModel, DeleteProducts } from '../modal';
 
 function Products() {
   const navigate = useNavigate();
@@ -19,7 +19,8 @@ function Products() {
   const [loadingSave, setLoadingSave] = useState(false);
   const [listProductsSelected, setListProductsSelected] = useState([]);
   const [listProductsShowSelected, setListProductsShowSelected] = useState([]);
-  const [updateProductsShow, setUpdateProductsShow] = useState(false);
+  const [listProductsAvailableSelected, setListProductsAvailableSelected] = useState([]);
+  const [updateProducts, setUpdateProducts] = useState(false);
   const [loadingCategorie, setLoadingCategorie] = useState(false);
   const [listeTypeService, setListTypeService] = useState([]);
   const [categories, setCategories] = useState(false);
@@ -32,23 +33,27 @@ function Products() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
+  const [startTyping, setStartTyping] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [alert, setAlert] = useState({
     display: false,
   });
+
   const saveUpdate = async () => {
     setLoadingSave(true);
     setAlert({
       display: false,
     });
     try {
-      const response = await patchMethode(updateProductsShowRoute, {
-        productIds: listProductsShowSelected,
+      const response = await patchMethode(updateProductsShowAvailableRoute, {
+        productIdsShow: listProductsShowSelected,
+        productIdsAvailable: listProductsAvailableSelected,
         idCategorie
       });
       setAlert({
-          display: true,
-          status: true,
-          text: response.data.msg
+        display: true,
+        status: true,
+        text: response.data.msg
       });
     } catch (err) {
       if (err.response.status == 401 || err.response.status == 403) {
@@ -65,14 +70,17 @@ function Products() {
   }
   const getProducts = () => {
     setLoading(true);
-    getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&page=${page}&limit=${limit}`).then((response) => {
+    getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&page=${page}&limit=${limit}&searchText=${searchText}`).then((response) => {
       const { products, groupMoney, total, totalPages } = response.data;
       let listProductsShow = [];
+      let listProductsAvailable = [];
       for (let i = 0; i < products.length; i++) {
-        if (products[i].show) listProductsShow.push(products[i]._id)
+        if (products[i].show) listProductsShow.push(products[i]._id);
+        if (products[i].availableQuantity) listProductsAvailable.push(products[i]._id);
 
       }
-      setListProductsShowSelected(listProductsShow)
+      setListProductsShowSelected(listProductsShow);
+      setListProductsAvailableSelected(listProductsAvailable);
       setProducts(products);
       setGroupMoney(groupMoney);
       setTotalProducts(total);
@@ -85,6 +93,67 @@ function Products() {
       setLoading(false);
     })
   }
+
+  const updateProductPrice = async (productPrice) => {
+    setAlert({
+      display: false,
+    });
+    try {
+      const response = await putMethode(updateProductPriceRoute, productPrice);
+      setAlert({
+        display: true,
+        status: true,
+        text: response.data.msg
+      });
+    } catch (err) {
+      if (err.response.status == 401 || err.response.status == 403) {
+        return navigate("/admin/auth")
+      }
+      setAlert({
+        display: true,
+        status: false,
+        text: err.response.data.msg
+      });
+    }
+  }
+
+  const updatePriceCategorie = async (data) => {
+    setAlert({
+      display: false,
+    });
+    try {
+      const response = await putMethode(updatePriceCategorieRoute, {
+        ...data,
+        products,
+      });
+      setAlert({
+        display: true,
+        status: true,
+        text: response.data.msg
+      });
+      setProducts(response.data.products);
+    } catch (err) {
+      if (err.response.status == 401 || err.response.status == 403) {
+        return navigate("/admin/auth")
+      }
+      setAlert({
+        display: true,
+        status: false,
+        text: err.response.data.msg
+      });
+    }
+  }
+  useEffect(() => {
+    // Debounce effect to delay search until user stops typing
+    const delayDebounce = setTimeout(() => {
+        if (startTyping) {
+            getProducts();// Function to fetch all users
+        }
+    }, 500); // Delay time in ms
+
+    return () => clearTimeout(delayDebounce); // Clean up the timeout
+}, [searchText]);
+
   useEffect(() => {
     setLoadingCategorie(true);
     getMethode(`${getCategoriesRoute}?type=${params}&query=${query}`).then((response) => {
@@ -113,16 +182,6 @@ function Products() {
     if (socket) {
       socket.on('receive-notification', (notification) => {
 
-        if (notification.name == "add Products") {
-          if (notification.idCategorie.toString() == idCategorie.toString()) {
-            setProducts((prevProducts) => {
-              return [...prevProducts, ...notification.products]
-            })
-          }
-        } else if (notification.name == "delete Products") {
-          getProducts();
-        }
-
       });
       return () => {
         // Clean up event listeners when component unmounts
@@ -130,7 +189,6 @@ function Products() {
       };
     }
   }, [socket, idCategorie, products]);
-
   return (
     <div>
       <h1 className='text-3xl font-[900]'>المنتجات</h1>
@@ -156,10 +214,25 @@ function Products() {
           }
         </select>} />
       </div>
+      <div className="join mt-[1rem]">
+        <div>
+          <div>
+            <input className="input bg-black text-white input-bordered join-item" placeholder="بحث"
+              value={searchText}
+              onChange={(e) => {
+                setStartTyping(true);
+                setSearchText(e.target.value)
+              }} />
+          </div>
+        </div>
+        <div className="indicator">
+          <button className="btn join-item"><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
+        </div>
+      </div>
       {alert.display && <Alert msg={alert} />}
       <LoadingScreen loading={loading} component={
         <div className="overflow-x-auto">
-          <table className="table w-[2000px]">
+          <table className="table w-[2200px]">
             {/* head */}
             <thead className='text-[1rem]'>
               <tr>
@@ -176,8 +249,20 @@ function Products() {
                 <th>الكلفة</th>
                 {
                   groupMoney && groupMoney.map((item) => {
+                    let value;
                     return (
-                      <th>{item.name} {item.pricingType == "Increase" ? <FontAwesomeIcon icon={faMoneyBill} /> : <FontAwesomeIcon icon={faPercent} />}</th>
+                      <th>
+                        <div className='w-fit flex gap-[0.5rem]'>
+                          <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
+                            {item.name} {item.pricingType == "Increase" ? <FontAwesomeIcon icon={faMoneyBill} /> : <FontAwesomeIcon icon={faPercent} />}
+                            <input type="number" className="w-[70px] grow font-[900]" onChange={(event) => value = event.target.value} />
+                          </label>
+                          <button className='btn btn-secondary btn-sm' onClick={() => updatePriceCategorie({
+                            value,
+                            groupMoney: item
+                          })}><FontAwesomeIcon icon={faCheck} /></button>
+                        </div>
+                      </th>
                     )
                   })
                 }
@@ -187,20 +272,31 @@ function Products() {
                     <label className="label cursor-pointer w-fit gap-[0.5rem]">
                       <input type="checkbox" className="checkbox"
                         onChange={(event) => {
-                          setUpdateProductsShow(true);
+                          setUpdateProducts(true);
                           handleSelectAll(event, setListProductsShowSelected, products)
                         }} />
                       <span className="label-text">الظهور</span>
                     </label>
                   </div>
                 </th>
-                <th>متوفر</th>
+                <th>
+                  <div className="form-control">
+                    <label className="label cursor-pointer w-fit gap-[0.5rem]">
+                      <input type="checkbox" className="checkbox"
+                        onChange={(event) => {
+                          setUpdateProducts(true);
+                          handleSelectAll(event, setListProductsAvailableSelected, products)
+                        }} />
+                      <span className="label-text">متوفر</span>
+                    </label>
+                  </div>
+                </th>
                 <th>السعر API</th>
               </tr>
             </thead>
             <tbody className='text-[1rem]'>
               {
-                products && products.map((product) => {
+                products && products.map((product, indexProducts) => {
                   return (
                     <tr>
                       <th>
@@ -236,46 +332,83 @@ function Products() {
                       </td>
                       <td>USD</td>
                       <td>{product.forQuantity}</td>
-                      <td>{product.costPrice}</td>
+                      <td>{product.costPrice.toFixed(5)}</td>
                       {
-                        groupMoney && groupMoney.map((item) => {
-                          let price, agentProfit;
-                          if (item.pricingType == "Increase") {
+                        product.productsPrice && product.productsPrice.map((item, indexProductsPrice) => {
+                          let price, priceNegative, agentProfit;
+                          if (groupMoney[indexProductsPrice].pricingType == "Increase") {
                             price = item.value + product.costPrice;
+                            priceNegative = item.negativeBalance + product.costPrice;
                             agentProfit = ((item.agentRatio / 100) * item.value);
                           } else {
                             price = ((item.value / 100) * product.costPrice) + product.costPrice;
+                            priceNegative = ((item.negativeBalance / 100) * product.costPrice) + product.costPrice;
                             agentProfit = ((item.agentRatio / 100) * (price - product.costPrice));
                           }
                           return (
                             <td>
-                              <div className='flex flex-col gap-[0.5rem]'>
-                                <label className="input input-sm input-bordered flex items-center gap-2">
-                                  {item.pricingType == "Increase" ? "مبلغ الربح" : "نسبة الربح"}
-                                  <input type="text" className="grow w-[50%] font-[900]" value={item.value} disabled />
+                              <div className='w-fit flex flex-col gap-[0.5rem]'>
+                                <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
+                                  {groupMoney[indexProductsPrice].pricingType == "Increase" ? "مبلغ الربح" : "نسبة الربح"}
+                                  <input type="number" className="w-[70px] grow font-[900]" value={products[indexProducts].productsPrice[indexProductsPrice].value} onChange={(event) => {
+                                    let newListProducts = [...products];
+                                    newListProducts[indexProducts].productsPrice[indexProductsPrice].value = Number(event.target.value);
+                                    setProducts(newListProducts)
+                                  }} />
                                 </label>
-                                <label className="input input-sm input-bordered flex items-center gap-2">
+                                <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
                                   السعر
-                                  <input type="text" className="grow w-[50%] font-[900]" value={price} disabled />
+                                  <input type="number" className="w-[70px] grow font-[900]" value={price.toFixed(5)} disabled />
                                 </label>
-                                <label className="input input-sm input-bordered flex items-center gap-2">
+                                <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
+                                  {groupMoney[indexProductsPrice].pricingType == "Increase" ? "مبلغ الرصيد السالب" : "نسبة الرصيد السالب"}
+                                  <input type="number" className="w-[50px] grow font-[900]" value={products[indexProducts].productsPrice[indexProductsPrice].negativeBalance} onChange={(event) => {
+                                    let newListProducts = [...products];
+                                    newListProducts[indexProducts].productsPrice[indexProductsPrice].negativeBalance = Number(event.target.value);
+                                    setProducts(newListProducts)
+                                  }} />
+                                </label>
+                                <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
+                                  السعر
+                                  <input type="number" className="w-[70px] grow font-[900]" value={priceNegative.toFixed(5)} disabled />
+                                </label>
+                                <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
+                                  نسبة الوكيل
+                                  <input type="number" className="w-[70px] grow font-[900]" value={products[indexProducts].productsPrice[indexProductsPrice].agentRatio} onChange={(event) => {
+                                    let newListProducts = [...products];
+                                    newListProducts[indexProducts].productsPrice[indexProductsPrice].agentRatio = Number(event.target.value);
+                                    setProducts(newListProducts)
+                                  }} />
+                                </label>
+                                <label className="w-[200px] input input-sm input-bordered flex items-center gap-2">
                                   ربح الوكيل
-                                  <input type="text" className="grow w-[50%] font-[900]" value={agentProfit} disabled />
+                                  <input type="number" className="w-[70px] grow font-[900]" value={agentProfit.toFixed(7)} disabled />
                                 </label>
+                                <div className='flex justify-center mt-[0.5rem]'>
+                                  <button className='btn btn-secondary' onClick={() => updateProductPrice(products[indexProducts].productsPrice[indexProductsPrice])}><FontAwesomeIcon icon={faCheck} /></button>
+                                </div>
                               </div>
                             </td>
                           )
                         })
                       }
-                      <td>{product.provider.forEach((item) => {
-                        if (item.isActive) return item.name
+                      <td>{product.provider.map((item) => {
+                        if (item.isActive) return (<>{item.name}</>)
                       })}</td>
-                      <td><input type="checkbox" className="checkbox" checked={listProductsShowSelected.includes(product._id)}
-                        onChange={() => {
-                          setUpdateProductsShow(true)
-                          handleSelectItem(product._id, setListProductsShowSelected)
-                        }} /></td>
-                      <td><input type="checkbox" checked={product.availableQuantity} className="checkbox" /></td>
+                      <td>
+                        <input type="checkbox" className="checkbox" checked={listProductsShowSelected.includes(product._id)}
+                          onChange={() => {
+                            setUpdateProducts(true)
+                            handleSelectItem(product._id, setListProductsShowSelected)
+                          }} />
+                      </td>
+                      <td>
+                        <input type="checkbox" className="checkbox" checked={listProductsAvailableSelected.includes(product._id)}
+                          onChange={() => {
+                            setUpdateProducts(true)
+                            handleSelectItem(product._id, setListProductsAvailableSelected)
+                          }} />
+                      </td>
                       <td><FontAwesomeIcon icon={faCircleCheck} className='text-success mx-1' />{product.costPrice} / {product.forQuantity}</td>
                       <td>
                         <Link to={`/admin/productDetails?id=${product._id}`} className='btn btn-warning text-white'><FontAwesomeIcon icon={faPen} /></Link>
@@ -289,16 +422,20 @@ function Products() {
         </div>
       } />
       {
-        updateProductsShow && <button className='btn btn-primary w-full mt-[1rem]' disabled={loadingSave} onClick={saveUpdate}>{loadingSave ? <Loading /> : "حفظ" }</button>
+        updateProducts && <button className='btn btn-primary w-full mt-[1rem]' disabled={loadingSave} onClick={saveUpdate}>{loadingSave ? <Loading /> : "حفظ"}</button>
       }
       <div className='mt-[1rem] flex justify-between'>
         <button className='btn btn-error text-white' onClick={() => {
           if (listProductsSelected.length > 0) document.getElementById('deleteProducts').showModal()
         }}><FontAwesomeIcon icon={faTrash} /></button>
+        <button className='btn btn-warning text-white mr-[0.5rem]' onClick={() => {
+          if (listProductsSelected.length > 0) document.getElementById('changeTypeServiceModel').showModal()
+        }}><FontAwesomeIcon icon={faPen} /></button>
         <div className='w-full'>
           <RowsPerPage page={page} setPage={setPage} limit={limit} setLimit={setLimit} totalPages={totalPages} setTotalPages={setTotalPages} totalItem={totalProducts} />
         </div>
       </div>
+      <ChangeTypeServiceModel listProductsSelected={listProductsSelected} listeTypeService={listeTypeService} getProducts={getProducts} />
       <DeleteProducts listProductsSelected={listProductsSelected} getProducts={getProducts} />
     </div>
   )

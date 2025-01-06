@@ -7,6 +7,7 @@ export { default as TicketsInformations } from "./adminSection/ticketsInformatio
 export { default as ReportsInformations } from "./adminSection/reportsInformations/reportsInformations";
 export { default as TransferMoney } from "./adminSection/transferMoney/transferMoney";
 export { default as GroupMoney } from "./adminSection/groupMoney/groupMoney";
+export { default as UsersLevel } from "./adminSection/usersInformations/usersLevel";
 export { default as TypeServices } from "./adminSection/typeServices/typeServices";
 export { default as CategoriesServices } from "./adminSection/categoriesServices/categoriesServices";
 export { default as Products } from "./adminSection/products/products";
@@ -26,6 +27,7 @@ export { default as ProductDetailsRequired } from "./adminSection/products/produ
 export { default as ProductDetailsApi } from "./adminSection/products/productDetailsApi";
 export { default as Editor } from "./adminSection/editor/editor";
 export { default as ClientDetails } from "./adminSection/usersInformations/clientDetails";
+export { default as CustomPrices } from "./adminSection/usersInformations/customPrices";
 export { default as OrderInformation } from "./adminSection/orders/orderInformation";
 export { default as Article } from "./adminSection/article/article";
 export { default as GenerateRechargeCards } from "./adminSection/rechargeCards/generateRechargeCards";

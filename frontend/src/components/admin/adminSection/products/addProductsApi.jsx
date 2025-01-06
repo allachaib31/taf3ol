@@ -24,6 +24,7 @@ function AddProductsApi() {
     const [query, setQuery] = useState("");
     const [submit, setSubmit] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingCategorie, setLoadingCategorie] = useState(false);
     const [loadingService, setLoadingService] = useState(false);
     const [alert, setAlert] = useState({
         display: false,
@@ -32,7 +33,7 @@ function AddProductsApi() {
     const handleSearch = (catSelected) => {
         setLoadingService(true);
         setAlert({ display: false });
-        getMethode(`${getServicesApiRoute}?apiName=${apiSelected}&categorieName=${catSelected}`)
+        getMethode(`${getServicesApiRoute}?apiId=${apiSelected}&categorieName=${catSelected}`)
             .then((response) => {
                 const servicesWithChecked = response.data.map((service) => ({
                     ...service,
@@ -120,7 +121,7 @@ function AddProductsApi() {
         if (apiSelected !== "") {
             setLoading(true);
             setAlert({ display: false });
-            getMethode(`${getCategorieServicesApiRoute}?apiName=${apiSelected}`)
+            getMethode(`${getCategorieServicesApiRoute}?apiId=${apiSelected}`)
                 .then((response) => {
                     setCategoriesApi(response.data);
                 })
@@ -143,7 +144,8 @@ function AddProductsApi() {
     }, [apiSelected]);
 
     useEffect(() => {
-        if(idService !== "") {
+        if (idService !== "") {
+            setLoadingCategorie(true);
             getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
                 setCategories(response.data);
             }).catch((err) => {
@@ -157,6 +159,8 @@ function AddProductsApi() {
                 if (err.response.status == 401 || err.response.status == 403) {
                     navigate("/admin/auth")
                 }
+            }).finally(() => {
+                setLoadingCategorie(false);
             });
         }
     }, [idService, query]);
@@ -193,7 +197,7 @@ function AddProductsApi() {
                     {
                         apiList && apiList.map((api) => {
                             return (
-                                <option value={api.name}>{api.name}</option>
+                                <option value={api._id}>{api.name}</option>
                             )
                         })
                     }
@@ -219,17 +223,17 @@ function AddProductsApi() {
                 />
             </div>
             <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
-                    <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
-                        setIdService(event.target.value)
-                    }}>
-                        <option disabled selected>اختار نوع الخدمة</option>
-                        {
-                            listeTypeService && listeTypeService.map((item) => {
-                                return <option value={item._id} key={item._id}>{item.nameAr}</option>
-                            })
-                        }
-                    </select>
-
+                <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
+                    setIdService(event.target.value)
+                }}>
+                    <option disabled selected>اختار نوع الخدمة</option>
+                    {
+                        listeTypeService && listeTypeService.map((item) => {
+                            return <option value={item._id} key={item._id}>{item.nameAr}</option>
+                        })
+                    }
+                </select>
+                <LoadingScreen loading={loadingCategorie} component={
                     <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
                         setIdCategorie(event.target.value)
                     }}>
@@ -240,7 +244,8 @@ function AddProductsApi() {
                             })
                         }
                     </select>
-                </div>
+                } />
+            </div>
             <LoadingScreen
                 loading={loadingService}
                 component={
