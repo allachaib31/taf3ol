@@ -6,8 +6,10 @@ import { handleFileChange, handleFileClick } from '../../../../../utils/constant
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import Loading from '../../../../loading';
+import { postMethode } from '../../../../../utils/apiFetchs';
+import { addGroupCardsRoute } from '../../../../../utils/apiRoutes';
 
-function CardsTitleModel() {
+function CardsTitleModel( {setCardTitles} ) {
     const navigate = useNavigate();
     const socket = useSocket();
     const fileInputRef = useRef(null);
@@ -21,7 +23,43 @@ function CardsTitleModel() {
     });
 
     const handleSubmit = async (e) => {
-
+        e.preventDefault();
+        setLoading(true);
+        setAlert({
+            display: false,
+        });
+        try {
+            const form = new FormData();
+            form.append("name", inputs.name);
+            form.append("image", inputs.image);
+            const response = await postMethode(addGroupCardsRoute, form);
+            setAlert({
+                display: true,
+                status: true,
+                text: response.data.msg
+            });
+            setCardTitles((prevCardTitle) => {
+                return [
+                    ...prevCardTitle,
+                    response.data.newGroup
+                ]
+            })
+            socket.emit('broadcast-notification', {
+                msg: response.data.contentNotification,
+                name: "add Card title",
+            });
+        } catch (err) {
+            if (err.response.status == 401 || err.response.status == 403) {
+                return navigate("/admin/auth")
+            }
+            setAlert({
+                display: true,
+                status: false,
+                text: err.response.data.msg
+            });
+        } finally {
+            setLoading(false);
+        }
     }
     return (
         <dialog id="cardsTitleModel" className="modal">

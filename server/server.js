@@ -73,7 +73,11 @@ conn.once('open', () => {
     const manageAdminRoute = require("./routes/admin/manage_admin_route");
     const manageUserRoute = require("./routes/admin/manage_user_route");
     const manageServices = require("./routes/admin/manage_services_routes");
+    const manageRechargeCards = require("./routes/admin/manage_rechargeCards_route");
     const manageApi = require("./routes/admin/manage_api_route");
+    const manageCoins = require("./routes/admin/manage_coins_route");
+    const manageStock = require("./routes/admin/manage_stock_routes");
+    const managePaymentGateway = require("./routes/admin/manage_paymentGateway_routes");
     const notificationRoute = require("./routes/notification/notification_route");
     const fileRoute = require("./routes/files/files_routes");
     app
@@ -81,7 +85,11 @@ conn.once('open', () => {
         .use(manageAdminRoute)
         .use(manageUserRoute)
         .use(manageServices)
+        .use(manageRechargeCards)
         .use(manageApi)
+        .use(manageCoins)
+        .use(manageStock)
+        .use(managePaymentGateway)
         .use(notificationRoute)
         .use(fileRoute);
 

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBarcode, faBell, faChartLine, faCommentDots, faCubes, faDollarSign, faFileCirclePlus, faGear, faGears, faHandHoldingDollar, faHeadset, faHouse, faMoneyCheckDollar, faMoon, faNewspaper, faRightFromBracket, faUser, faUserTie, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { faBank, faBarcode, faBell, faChartLine, faCommentDots, faCubes, faDollarSign, faFileCirclePlus, faGear, faGears, faHandHoldingDollar, faHeadset, faHouse, faMoneyCheckDollar, faMoon, faNewspaper, faRightFromBracket, faUser, faUserTie, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import headerWave from "../../images/headerWave.svg";
 import notificationAudio from "../../audio/notifucation.wav";
 import logo from "../../images/Logo.png";
@@ -324,7 +324,7 @@ function HomeAdmin() {
                   </details>
                 </li>
                 <li onClick={() => setActive("/admin/currencies")} className={`hover:text-black hover:bg-primary ${active == "/admin/currencies" || active == "/admin/currencies/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/currencies"><FontAwesomeIcon icon={faDollarSign} /> العملات</Link></li>
-
+                <li onClick={() => setActive("/admin/paymentGateway")} className={`hover:text-black hover:bg-primary ${active == "/admin/paymentGateway" || active == "/admin/paymentGateway/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/paymentGateway"><FontAwesomeIcon icon={faBank} /> بوابة الدفع</Link></li>
                 <li onClick={() => setActive("/admin/tickets")} className={`hover:text-black hover:bg-primary ${active == "/admin/tickets" || active == "/admin/tickets/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/tickets"><FontAwesomeIcon icon={faHeadset} /> تذاكر</Link></li>
                 {/*<li onClick={() => setActive("/admin/reports")} className={`hover:text-black hover:bg-primary ${active == "/admin/reports" || active == "/admin/reports/" ? "text-black bg-primary" : "text-black"}`}><Link to="/admin/reports"><FontAwesomeIcon icon={faChartLine} /> التقارير</Link></li>*/}
                 {/*<li className='hover:text-primary'><a><FontAwesomeIcon icon={faNewspaper} /> المظهر</a></li>*/}

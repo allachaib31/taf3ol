@@ -10,12 +10,12 @@ const productSchema = new mongoose.Schema({
     idService: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'TypeServices',
-        required: true 
+        required: true
     },
     idCategorie: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Categorie',
-        required: true 
+        required: true
     },
     nameAr: {
         type: String,
@@ -120,9 +120,13 @@ const productSchema = new mongoose.Schema({
         required: true,
         default: true,
     },
-    isDeleted: { 
+    stockId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Stock'
+    },
+    isDeleted: {
         type: Boolean,
-        default: false 
+        default: false
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -175,25 +179,26 @@ const validationProduct = (product) => {
         maximumQuantity: Joi.number().optional().allow(null, ""),
         availableQuantity: Joi.boolean().required(),
         provider: Joi.array()
-        .items(
-            Joi.object({
-                idProvider: Joi.string().required(),
-                name: Joi.string().required(),
-                nameProduct: Joi.string().required(),
-                costPrice: Joi.number().required(),
-                service: Joi.string().optional().allow(null, ""),
-                country: Joi.string().optional().allow(null, ""),
-                serverNumber: Joi.string().optional().allow(null, ""),
-                isAvailable: Joi.boolean().required(),
-                isActive: Joi.boolean().required()
-            })
-        )
-        .required()
-        .messages({
-            'array.base': 'provider must be an array.',
-            'array.includesRequiredUnknowns': 'Each provider object must include name, service, and costPrice.',
-        }),
+            .items(
+                Joi.object({
+                    idProvider: Joi.string().required(),
+                    name: Joi.string().required(),
+                    nameProduct: Joi.string().required(),
+                    costPrice: Joi.number().required(),
+                    service: Joi.string().optional().allow(null, ""),
+                    country: Joi.string().optional().allow(null, ""),
+                    serverNumber: Joi.string().optional().allow(null, ""),
+                    isAvailable: Joi.boolean().required(),
+                    isActive: Joi.boolean().required()
+                })
+            )
+            .required()
+            .messages({
+                'array.base': 'provider must be an array.',
+                'array.includesRequiredUnknowns': 'Each provider object must include name, service, and costPrice.',
+            }),
         ranking: Joi.number().optional().allow(null, ""),
+        stockId: Joi.string().optional(),
         show: Joi.boolean().required(),
         isDeleted: Joi.boolean().optional().allow(null, ""),
         createdBy: Joi.string().optional().allow(null, ""),
@@ -204,7 +209,7 @@ const validationProduct = (product) => {
 };
 
 
-module.exports = { 
+module.exports = {
     Product: mongoose.model("Product", productSchema),
     validationProduct
 };

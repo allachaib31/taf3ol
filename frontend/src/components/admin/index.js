@@ -41,3 +41,4 @@ export { default as Notifications } from "./adminSection/settings/notifications"
 export { default as PopUpMessages } from "./adminSection/settings/popUpMessages";
 export { default as Account } from "./adminSection/settings/account";
 export { default as Api } from "./adminSection/settings/api";
+export { default as PaymentGateway } from "./adminSection/paymentGateway/paymentGateway"

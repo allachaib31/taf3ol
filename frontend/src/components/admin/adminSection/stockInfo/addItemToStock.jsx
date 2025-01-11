@@ -1,49 +1,82 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useSocket } from '../../../../screens/admin/homeAdmin';
+import { postMethode } from '../../../../utils/apiFetchs';
+import { addItemStockRoute } from '../../../../utils/apiRoutes';
+import Alert from '../../../alert';
+import Loading from '../../../loading';
 
 function AddItemToStock() {
+    const navigate = useNavigate();
+    const socket = useSocket();
+    const stockInfo = useOutletContext();
+    const [loading, setLoading] = useState(false);
+    const [inputs, setInputs] = useState({
+        textLines: "",
+        note: "",
+    });
+    const [alert, setAlert] = useState({
+        display: false,
+    });
+
+    const handleSubmit = async () => {
+        console.log(stockInfo)
+        console.log(stockInfo._id)
+        setLoading(true);
+        setAlert({
+            display: false,
+        });
+        try {
+            const response = await postMethode(addItemStockRoute, {
+                ...inputs,
+                idStock: stockInfo._id
+            });
+            setAlert({
+                display: true,
+                status: true,
+                text: response.data.msg
+            });
+            socket.emit('broadcast-notification', {
+                msg: response.data.notificationMsg,
+                name: "add Item Stock",
+            });
+        } catch (err) {
+            if (err.response.status == 401 || err.response.status == 403) {
+                return navigate("/admin/auth")
+            }
+            setAlert({
+                display: true,
+                status: false,
+                text: err.response.data.msg
+            });
+        } finally {
+            setLoading(false);
+        }
+    }
     return (
         <div className='flex flex-col gap-[0.5rem]'>
+            {alert.display && <Alert msg={alert} />}
             <label htmlFor="carts">* قم بترتيب البطاقات كل بطاقة ضمن سطر ولا تترك اسطر فارغة</label>
-            <textarea name="carts" className="textarea textarea-bordered"></textarea>
+            <textarea name="carts" className="textarea textarea-bordered" onChange={(event) => {
+                setInputs((prevInputs) => {
+                    return {
+                        ...prevInputs,
+                        textLines: event.target.value
+                    }
+                })
+            }}></textarea>
             <label className="input input-bordered flex items-center gap-2">
                 ملاحظة
-                <input type="text" className="grow" />
+                <input type="text" className="grow" onChange={(event) => {
+                setInputs((prevInputs) => {
+                    return {
+                        ...prevInputs,
+                        note: event.target.value
+                    }
+                })
+            }}/>
             </label>
-            <label className="input input-bordered flex items-center gap-2">
-                كلفة الواحدة
-                <input type="text" className="grow" />
-            </label>
-            <div className="form-control">
-                <label className="label gap-[1rem] cursor-pointer w-fit">
-                    <input type="checkbox" defaultChecked className="checkbox" />
-                    <span className="label-text text-[1rem]">ارسال اشعار</span>
-                </label>
-            </div>
-            <div className="form-control">
-                <label className="label gap-[1rem] cursor-pointer w-fit">
-                    <input type="radio" name="radio-10" className="radio" defaultChecked />
-                    <span className="label-text text-[1rem]">كل المستخدمين</span>
-                </label>
-            </div>
-            <div className="form-control">
-                <label className="label gap-[1rem] cursor-pointer w-fit">
-                    <input type="radio" name="radio-10" className="radio" />
-                    <span className="label-text text-[1rem]">تحديد المستخدمين</span>
-                </label>
-            </div>
-            <div className="form-control">
-                <label className="label gap-[1rem] cursor-pointer w-fit">
-                    <input type="radio" name="radio-10" className="radio" />
-                    <span className="label-text text-[1rem]">تحديد مجموعة</span>
-                </label>
-            </div>
-            <label className="input input-bordered flex items-center gap-2">
-                العنوان
-                <input type="text" className="grow" />
-            </label>
-            <label htmlFor="msg">الرسالة</label>
-            <textarea name="msg" className="textarea textarea-bordered">المنتج متوفر الان</textarea>
-            <button className='btn btn-primary'>ارسال</button>
+            <button className='btn btn-primary' disabled={loading} onClick={handleSubmit}>{loading ? <Loading /> : 'ارسال'}</button>
         </div>
     )
 }

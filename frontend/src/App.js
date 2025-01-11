@@ -4,7 +4,7 @@ import './App.css';
 import './index.css';
 import { AdminScreen, AuthAdmin, HomeAdmin, ResetPassword } from "./screens/admin";
 import { LandingPage, ClientPage } from "./screens/client"
-import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CardTitles, CategoriesServices, ClientDetails, Currencies, CustomPrices, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentsInformations, PopUpMessages, ProductDetails, ProductDetailsApi, ProductDetailsGeneral, ProductDetailsRequired, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations, UsersLevel } from "./components/admin";
+import {  Account, AddItemToStock, AddProducts, AddProductsApi, AdminsInformations, Advertisement, AllRechargeCards, Api, Article, AvailableInStock, CardTitles, CategoriesServices, ClientDetails, Currencies, CustomPrices, DamagedItemInStock, General, GenerateRechargeCards, GroupMoney, Notifications, OrderInformation, OrdersInformations, PaymentGateway, PaymentsInformations, PopUpMessages, ProductDetails, ProductDetailsApi, ProductDetailsGeneral, ProductDetailsRequired, Products, ProductSort, RecordSoldItemStock, Registration, ReportsInformations, RequiresReviewItemStock, SettingsInformations, Stock, StockInfo, TicketsInformations, TransferMoney, TypeServices, UsersInformations, UsersLevel } from "./components/admin";
 import { AddMoney, CommonQuestions, ConditionsService, Home, Orders, PrincipalPage, Profile, ProfitMoney, Services, Settings, Support, UpdatePassword } from "./components/client";
 import AppWeb from "./screens/AppWeb";
 import SignUp from "./screens/client/signUp";
@@ -79,6 +79,7 @@ function App() {
                   <Route path="/admin/allRechargeCards" element={<AllRechargeCards />}/>
                   <Route path="/admin/cardTitles" element={<CardTitles />}/>
                   <Route path="/admin/currencies" element={<Currencies />}/>
+                  <Route path="/admin/paymentGateway" element={<PaymentGateway />}/>
                   <Route path="/admin/tickets" element={<TicketsInformations />} />
                   <Route path="/admin/general" element={<General />}/>
                   <Route path="/admin/advertisement" element={<Advertisement />}/>

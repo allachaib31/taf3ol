@@ -58,27 +58,28 @@ function DeleteProducts({ listProductsSelected, getProducts }) {
     }
     return (
         <dialog id="deleteProducts" className="modal">
-        <div className="modal-box">
-            <h1 className="font-bold text-lg">حذف المنتج</h1>
-            {alert.display && <Alert msg={alert} />}
-            <p>هل انت متاكد من انك تريد حذف المنتج؟</p>
-            <div className="modal-action">
-                <form method="dialog">
-                    {/* Closing modal */}
-                    <button className="btn ml-[0.5rem]">اغلاق</button>
-                    {/* Submit button */}
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
-                        {loading ? <Loading /> : "حذف"}
-                    </button>
-                </form>
+            <div className="modal-box">
+                <h1 className="font-bold text-lg">حذف المنتج</h1>
+                <hr />
+                {alert.display && <Alert msg={alert} />}
+                <p className='font-bold text-error text-xl'>هل انت متاكد من انك تريد حذف المنتج؟</p>
+                <div className="modal-action">
+                    <form method="dialog">
+                        {/* Closing modal */}
+                        <button className="btn ml-[0.5rem]">اغلاق</button>
+                        {/* Submit button */}
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
+                            {loading ? <Loading /> : "حذف"}
+                        </button>
+                    </form>
+                </div>
             </div>
-        </div>
-    </dialog>
+        </dialog>
     )
 }
 

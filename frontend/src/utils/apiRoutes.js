@@ -66,11 +66,38 @@ export const addGroupMoneyRoute = `${host}api/v1.0/admin/addGroupMoney`;
 export const updateGroupMoneyRoute = `${host}api/v1.0/admin/updateGroupMoney`;
 export const deleteGroupMoneyRoute = `${host}api/v1.0/admin/deleteGroupMoney`;
 export const getGroupMoneyRoute = `${host}api/v1.0/admin/getGroupMoney`;
+// manage recharge cards
+export const addGroupCardsRoute = `${host}api/v1.0/admin/addGroupCards`;
+export const deleteGroupCardsRoute = `${host}api/v1.0/admin/deleteGroupCards`;
+export const getGroupCardsRoute = `${host}api/v1.0/admin/getGroupCards`;
+export const generateRechargeCardsRoute = `${host}api/v1.0/admin/generateRechargeCards`;
+export const getCardsRoute = `${host}api/v1.0/admin/getCards`;
+export const deleteCardsRoute = `${host}api/v1.0/admin/deleteCards`;
+// manage coins
+export const addCoinsRoute = `${host}api/v1.0/admin/addCoins`;
+export const updateCoinsRoute = `${host}api/v1.0/admin/updateCoins`;
+export const deleteCoinsRoute = `${host}api/v1.0/admin/deleteCoins`;
+export const getCoinsRoute = `${host}api/v1.0/admin/getCoins`;
+// manage Stock
+export const addStockRoute = `${host}api/v1.0/admin/addStock`;
+export const deleteStockRoute = `${host}api/v1.0/admin/deleteStock`;
+export const getStockRoute = `${host}api/v1.0/admin/getStock`;
+export const getStockInfoRoute = `${host}api/v1.0/admin/stockInfo`;
+export const addItemStockRoute = `${host}api/v1.0/admin/addItemStock`;
+export const deleteItemStockRoute = `${host}api/v1.0/admin/deleteItemStock`;
+export const getItemStockSoldRoute = `${host}api/v1.0/admin/getItemStockSold`;
+export const getItemStockAvailableRoute = `${host}api/v1.0/admin/getItemStockAvailable`;
+export const getItemStockDamagedRoute = `${host}api/v1.0/admin/getItemStockDamaged`;
 // manage api
 export const addApiRoute = `${host}api/v1.0/admin/addApi`;
 export const updateApiRoute = `${host}api/v1.0/admin/updateApi`;
 export const deleteApiRoute = `${host}api/v1.0/admin/deleteApi`;
 export const getApiRoute = `${host}api/v1.0/admin/getApi`;
+// manage payment gateway
+export const addPaymentGatewayRoute = `${host}api/v1.0/admin/addPaymentGateway`;
+export const updatePaymentGatewayRoute = `${host}api/v1.0/admin/updatePaymentGateway`;
+export const deletePaymentGatewayRoute = `${host}api/v1.0/admin/deletePaymentGateway`;
+export const getPaymentGatewayRoute = `${host}api/v1.0/admin/getPaymentGateway`;
 // manage notification
 export const getNotificationAdminRoute = `${host}api/v1.0/admin/getNotificationAdmin`;
 export const getMessageRoute = `${host}api/v1.0/admin/getMessage`;
