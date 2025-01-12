@@ -13,7 +13,7 @@ import { DeleteItemStock } from '../modal';
 function AvailableInStock() {
   const navigate = useNavigate();
   const socket = useSocket();
-  const stockInfo = useOutletContext();
+  const {stockInfo, setStockInfo} = useOutletContext();
   const [loading, setLoading] = useState(false);
   const [availableItems, setAvailableItems] = useState(false);
   const [listAvailableItemsSelected, setListAvailableItemsSelected] = useState([]);
@@ -88,7 +88,7 @@ function AvailableInStock() {
           <RowsPerPage age={page} setPage={setPage} limit={limit} setLimit={setLimit} totalPages={totalPages} setTotalPages={setTotalPages} totalItem={totalAvailable} />
         </div>
       </div>
-      <DeleteItemStock listAvailableItemsSelected={listAvailableItemsSelected} availableItems={availableItems} setAvailableItems={setAvailableItems}/>
+      <DeleteItemStock listAvailableItemsSelected={listAvailableItemsSelected} availableItems={availableItems} setAvailableItems={setAvailableItems} stockInfo={stockInfo} setStockInfo={setStockInfo}/>
     </div>
   )
 }

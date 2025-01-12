@@ -67,7 +67,7 @@ function StockInfo() {
                             <Link onClick={() => setActive("/admin/stocksInfo/requiresReview")} to={`/admin/stocksInfo/requiresReview?id=${stockInfo._id}`} className={`px-[1rem] py-[0.5rem] text-[1.2rem] hover:bg-primary border rounded-l-full ${active == "/admin/stocksInfo/requiresReview" || active == "/admin/stocksInfo/requiresReview/" ? " bg-primary" : ""} `}> يتطلب مراجعة </Link>
                         </div>
                     </div>
-                    <Outlet context={stockInfo}/>
+                    <Outlet context={{stockInfo, setStockInfo}}/>
                 </>
             } />
 

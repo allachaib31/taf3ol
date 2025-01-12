@@ -9,7 +9,7 @@ import LoadingScreen from '../../../loadingScreen';
 function RecordSoldItemStock() {
   const navigate = useNavigate();
   const socket = useSocket();
-  const stockInfo = useOutletContext();
+  const {stockInfo} = useOutletContext();
   const [loading, setLoading] = useState(false);
   const [soldItems, setSoldItems] = useState(false);
   const [totalSold, setTotalSold] = useState(0);

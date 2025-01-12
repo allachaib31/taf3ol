@@ -8,7 +8,7 @@ import LoadingScreen from '../../../loadingScreen';
 function DamagedItemInStock() {
   const navigate = useNavigate();
   const socket = useSocket();
-  const stockInfo = useOutletContext();
+  const {stockInfo} = useOutletContext();
   const [loading, setLoading] = useState(false);
   const [damagedItems, setDamagedItems] = useState(false);
   const [totalDamaged, setTotalDamaged] = useState(0);

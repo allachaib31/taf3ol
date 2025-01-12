@@ -198,7 +198,7 @@ exports.addItemStock = async (req, res) => {
         const admin = req.admin;
 
         // Check if the referenced stock exists
-        const stock = await Stock.findById(idStock).session(session);
+        const stock = await Stock.findById(idStock).populate("idProduct").session(session);
         if (!stock) {
             await session.abortTransaction();
             session.endSession();
@@ -235,6 +235,8 @@ exports.addItemStock = async (req, res) => {
             await newItemStock.save({ session });
             savedItemStocks.push(newItemStock);
         }
+        stock.quantityAvailable += savedItemStocks.length;
+        await stock.save({ session })
 
         const adminData = await Admin.findById(admin._id).session(session);
         const content = `${adminData.username} قام بإضافة ${savedItemStocks.length} عنصر جديد إلى المخزون`;
@@ -247,6 +249,7 @@ exports.addItemStock = async (req, res) => {
         return res.status(httpStatus.CREATED).json({
             msg: "تمت إضافة عناصر المخزون بنجاح",
             newItemStocks: savedItemStocks,
+            stock,
             notificationMsg: content,
         });
     } catch (err) {
@@ -267,7 +270,7 @@ exports.deleteItemStock = async (req, res) => {
     session.startTransaction();
 
     try {
-        const { stocksId } = req.body;
+        const { stocksId, idStock } = req.body;
 
         // Validate that stocksId is provided and is an array
         if (!Array.isArray(stocksId) || stocksId.length === 0) {
@@ -275,9 +278,19 @@ exports.deleteItemStock = async (req, res) => {
                 msg: "يجب إرسال معرفات العناصر المراد حذفها",
             });
         }
+        const stock = await Stock.findById(idStock).populate("idProduct").session(session);
+        if (!stock) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(httpStatus.NOT_FOUND).json({
+                msg: "المخزن غير موجود",
+            });
+        }
 
         // Perform deletion of the provided stocks
-        const deletedItems = await ItemStock.deleteMany({ _id: { $in: stocksId } }).session(session);
+        const deletedItems = await ItemStock.deleteMany({ _id: { $in: stocksId }, sold: false }).session(session);
+        stock.quantityAvailable -= deletedItems.deletedCount;
+        await stock.save({ session });
 
         // Add notification for the admin
         const admin = req.admin; // Assuming `req.admin` contains authenticated admin info
@@ -302,6 +315,7 @@ exports.deleteItemStock = async (req, res) => {
 
         return res.status(httpStatus.OK).json({
             msg: `${deletedItems.deletedCount} عناصر مخزون تم حذفها بنجاح`,
+            stock
         });
     } catch (err) {
         console.error(err);
@@ -319,15 +333,21 @@ exports.deleteItemStock = async (req, res) => {
 exports.getItemStockSold = async (req, res) => {
     try {
         const idStock = req.query.idStock;
-        const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 10;
+        const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+        const limit = (req.query.limit == "ALL") ? "ALL" : (parseInt(req.query.limit, 10) || 10); // Default to 10 items per page
         const skip = (page - 1) * limit;
 
+        let soldItems;
         // Query for sold items
-        const soldItems = await ItemStock.find({ idStock, sold: true })
+        if (limit == "ALL") {
+            soldItems = await ItemStock.find({ idStock, sold: true })
+            .populate("idStock");
+        } else {
+            soldItems = await ItemStock.find({ idStock, sold: true })
             .skip(skip)
             .limit(limit)
             .populate("idStock");
+        }
 
         const totalSold = await ItemStock.countDocuments({ sold: true });
 
@@ -351,15 +371,21 @@ exports.getItemStockSold = async (req, res) => {
 exports.getItemStockAvailable = async (req, res) => {
     try {
         const idStock = req.query.idStock;
-        const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 10;
+        const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+        const limit = (req.query.limit == "ALL") ? "ALL" : (parseInt(req.query.limit, 10) || 10); // Default to 10 items per page
         const skip = (page - 1) * limit;
 
         // Query for available items
-        const availableItems = await ItemStock.find({ idStock, sold: false, damaged: false })
+        let availableItems;
+        if (limit == "ALL") {
+            availableItems = await ItemStock.find({ idStock, sold: false, damaged: false })
+            .populate("idStock");
+        } else { 
+            availableItems = await ItemStock.find({ idStock, sold: false, damaged: false })
             .skip(skip)
             .limit(limit)
             .populate("idStock");
+        }
 
         const totalAvailable = await ItemStock.countDocuments({ sold: false, damaged: false });
 
@@ -383,15 +409,22 @@ exports.getItemStockAvailable = async (req, res) => {
 exports.getItemStockDamaged = async (req, res) => {
     try {
         const idStock = req.query.idStock;
-        const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 10;
+        const page = parseInt(req.query.page, 10) || 1; // Default to page 1
+        const limit = (req.query.limit == "ALL") ? "ALL" : (parseInt(req.query.limit, 10) || 10); // Default to 10 items per page
         const skip = (page - 1) * limit;
 
+        let damagedItems;
         // Query for damaged items
-        const damagedItems = await ItemStock.find({ idStock, damaged: true })
+        if (limit == "ALL") {
+            damagedItems = await ItemStock.find({ idStock, damaged: true })
+            .populate("idStock");
+        }else {
+            damagedItems = await ItemStock.find({ idStock, damaged: true })
             .skip(skip)
             .limit(limit)
             .populate("idStock");
+        }
+        
 
         const totalDamaged = await ItemStock.countDocuments({ damaged: true });
 

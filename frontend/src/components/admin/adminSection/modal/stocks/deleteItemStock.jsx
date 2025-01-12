@@ -6,7 +6,7 @@ import Loading from '../../../../loading';
 import { deleteItemStockRoute } from '../../../../../utils/apiRoutes';
 import Alert from '../../../../alert';
 
-function DeleteItemStock({ listAvailableItemsSelected, availableItems, setAvailableItems }) {
+function DeleteItemStock({ listAvailableItemsSelected, availableItems, setAvailableItems, stockInfo, setStockInfo }) {
     const navigate = useNavigate();
     const socket = useSocket();
     const [loading, setLoading] = useState(false);
@@ -21,12 +21,13 @@ function DeleteItemStock({ listAvailableItemsSelected, availableItems, setAvaila
         setAlert({ display: false });
 
         try {
-            const response = await patchMethode(`${deleteItemStockRoute}`, { stocksId: listAvailableItemsSelected });
+            const response = await patchMethode(`${deleteItemStockRoute}`, { stocksId: listAvailableItemsSelected, idStock: stockInfo._id });
 
             const updatedItemStockList = availableItems.filter(
                 (stock) => !listAvailableItemsSelected.includes(stock._id)
             );
             setAvailableItems(updatedItemStockList);
+            setStockInfo(response.data.stock)
 
             // Notify success
             setAlert({
