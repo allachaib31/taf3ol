@@ -118,7 +118,6 @@ exports.updateCategorie = async (req, res) => {
                 const findFile = await File.findById(categorie.image).session(session);
                 await bucket.delete(findFile.id); // Delete the old file from GridFS
             } catch (deleteError) {
-                console.log(deleteError);
                 console.error('Error while deleting file from GridFS:', deleteError.message);
             }
         }
@@ -206,7 +205,6 @@ exports.deleteCategorie = async (req, res) => {
 
 exports.getCategories = async (req, res) => {
     const { type, query } = req.query;
-    console.log(query)
     try {
         const searchCondition = query
             ? {
@@ -713,7 +711,6 @@ exports.addProductsApi = async (req, res) => {
             }).session(session); // Pass session explicitly
 
             if (existingProduct) {
-                console.log(`المنتج "${currentProduct.name || currentProduct.Title}" موجود بالفعل`);
                 await session.abortTransaction(); // Rollback transaction if product exists
                 return res.status(httpStatus.CONFLICT).json({
                     msg: `المنتج "${currentProduct.name || currentProduct.Title}" موجود بالفعل`,

@@ -43,7 +43,6 @@ exports.addApi = async (req, res) => {
         await session.abortTransaction(); // Rollback the transaction if an error occurs
         session.endSession();
 
-        console.log(err);
         if (err.code === 11000 && err.keyPattern && err.keyPattern.nameAr) {
             return res.status(httpStatus.CONFLICT).json({
                 msg: "هذا API موجود بالفعل",
@@ -108,7 +107,6 @@ exports.updateApi = async (req, res) => {
         await session.abortTransaction(); // Rollback if an error occurs
         session.endSession();
 
-        console.log(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم أثناء تحديث API",
             error: err.message,
@@ -157,7 +155,6 @@ exports.deleteApi = async (req, res) => {
         await session.abortTransaction(); // Rollback if an error occurs
         session.endSession();
 
-        console.log(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم أثناء حذف API",
             error: err.message,

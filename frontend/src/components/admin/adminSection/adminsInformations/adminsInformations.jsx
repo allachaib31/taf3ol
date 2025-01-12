@@ -57,6 +57,7 @@ function AdminsInformations() {
       name: admin.name,
       username: admin.username,
       email: admin.email,
+      permission: admin.permission
     });
     setIndexAdmin(index);
     setUpdatePassword({
@@ -76,6 +77,7 @@ function AdminsInformations() {
       display: false,
     });
     getMethode(getAdminsRoute).then((response) => {
+      console.log(response.data)
       setAdmins(response.data);
     }).catch((err) => {
       if (err.response.status == 500) {
@@ -134,7 +136,7 @@ function AdminsInformations() {
         {alert.display && <Alert msg={alert} />}
       </div>
       <LoadingScreen loading={loading} component={
-        <div id='table' className="overflow-x-auto mt-[1rem]">
+        <div id='table' className="overflow-x-auto mt-[1rem] min-h-[70vh]">
           <table className="table bg-white xl:w-full w-[1900px]">
             {/* head */}
             <thead>

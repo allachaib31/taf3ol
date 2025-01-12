@@ -175,7 +175,6 @@ exports.stockInfo = async (req, res) => {
                 msg: "لم يتم العثور على المخزون",
             });
         }
-        console.log(stock)
         return res.status(httpStatus.OK).json({
             stock,
             msg: "تم جلب تفاصيل المخزون بنجاح",
@@ -196,7 +195,6 @@ exports.addItemStock = async (req, res) => {
     try {
         // Ensure the input contains the necessary fields
         const { idStock, textLines, note } = req.body;
-        console.log(req.body)
         const admin = req.admin;
 
         // Check if the referenced stock exists

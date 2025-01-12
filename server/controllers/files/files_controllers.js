@@ -17,7 +17,6 @@ exports.getFile = async (req, res) => {
         const downloadStream = bucket.openDownloadStream(file.id);
 
         downloadStream.on('error', (error) => {
-            console.log(error);
             return res.status(500).send("Error occurred while retrieving the file.");
         });
 

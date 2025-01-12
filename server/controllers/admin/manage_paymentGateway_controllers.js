@@ -60,7 +60,6 @@ exports.addPaymentGateway = async (req, res) => {
     } catch (err) {
         // Abort the transaction on error
         await session.abortTransaction();
-        console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
             error: err.message,
@@ -75,7 +74,6 @@ exports.updatePaymentGateway = async (req, res) => {
     const admin = req.admin;
     const { id } = req.query;
     let { body, file } = req;
-    console.log(body)
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -123,7 +121,6 @@ exports.updatePaymentGateway = async (req, res) => {
     } catch (err) {
         // Abort the transaction on error
         await session.abortTransaction();
-        console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
             error: err.message,
@@ -169,7 +166,6 @@ exports.deletePaymentGateway = async (req, res) => {
     } catch (err) {
         // Abort the transaction on error
         await session.abortTransaction();
-        console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
             error: err.message,
@@ -191,7 +187,6 @@ exports.getPaymentGateway = async (req, res) => {
             paymentGateways,
         });
     } catch (err) {
-        console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
             error: err.message,

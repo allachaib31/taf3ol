@@ -8,7 +8,7 @@ import { postMethode } from '../../../../../utils/apiFetchs';
 import { useSocket } from '../../../../../screens/admin/homeAdmin';
 import Alert from '../../../../alert';
 
-function AddAdmin({  setAdmins, direction}) {
+function AddAdmin({ setAdmins, direction }) {
     const navigate = useNavigate();
     const socket = useSocket();
     const [inputs, setInputs] = useState({
@@ -24,8 +24,21 @@ function AddAdmin({  setAdmins, direction}) {
     const [alert, setAlert] = useState({
         display: false,
     });
+    const [isOpen, setIsOpen] = useState(false);
+    const [permissions, setPermissions] = useState({
+        customerControl: false,
+        adminControl: false,
+        sections: false,
+        inventory: false,
+        orders: false,
+        settings: false,
+        balance: false,
+    });
 
-    
+    const togglePermission = (key) => {
+        setPermissions((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
+
     const handleFileClick = () => {
         fileInputRef.current.click();
     };
@@ -53,14 +66,15 @@ function AddAdmin({  setAdmins, direction}) {
             form.append("email", inputs.email);
             form.append("password", inputs.password);
             form.append("image", inputs.image);
+            form.append("permission", JSON.stringify(permissions));
             const response = await postMethode(addAdminRoute, form);
             setAlert({
                 display: true,
                 status: true,
                 text: response.data.msg
             });
-            if(direction == "down") setAdmins(prevAdmins => [...prevAdmins, response.data.newAdmin]);
-            else setAdmins(prevAdmins => [response.data.newAdmin ,...prevAdmins]);
+            if (direction == "down") setAdmins(prevAdmins => [...prevAdmins, response.data.newAdmin]);
+            else setAdmins(prevAdmins => [response.data.newAdmin, ...prevAdmins]);
             socket.emit('broadcast-notification', {
                 msg: `${response.data.newAdmin.createdBy.username} قام باضافة مسؤول جديد (${inputs.username})`,
                 name: "add Admin",
@@ -79,6 +93,7 @@ function AddAdmin({  setAdmins, direction}) {
             setLoading(false);
         }
     }
+
     return (
         <dialog id="addAdmin" className="modal">
             <div className="modal-box">
@@ -86,7 +101,7 @@ function AddAdmin({  setAdmins, direction}) {
                 <hr />
 
                 <form className='flex flex-col gap-[1rem] mt-[1rem]'>
-                {alert.display && <Alert msg={alert} />}
+                    {alert.display && <Alert msg={alert} />}
                     <label className="input input-bordered flex items-center gap-2">
                         الاسم
                         <input type="text" className="grow" onChange={(event) => {
@@ -131,6 +146,50 @@ function AddAdmin({  setAdmins, direction}) {
                             })
                         }} />
                     </label>
+                    <div className="relative">
+                        {/* Dropdown Toggle Button */}
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setIsOpen(!isOpen)
+                            }}
+                            className="select select-bordered w-full flex items-center"
+                        >
+                            <span>الصلاحيات</span>
+                        </button>
+
+                        {/* Dropdown Content */}
+                        {isOpen && (
+                            <div className="absolute top-full mt-2 bg-white shadow-lg rounded-lg w-full p-4">
+                                {/* Other Checkboxes */}
+                                {[
+                                    { key: "customerControl", label: "التحكم بالزبائن"},
+                                    { key: "adminControl", label: "التحكم بالادمن"},
+                                    { key: "sections", label: "الأقسام والمنتجات" },
+                                    { key: "inventory", label: "المخزون" },
+                                    { key: "orders", label: "الطلبات" },
+                                    { key: "settings", label: "اعدادات" },
+                                    { key: "balance", label: "تحويل رصيد" },
+                                ].map((item) => (
+                                    <div key={item.key} className="form-control">
+                                        <label className="label w-fit gap-[0.5rem] cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={permissions[item.key]}
+                                                onChange={(e) => {
+                                                    e.preventDefault();
+                                                    togglePermission(item.key)
+                                                }}
+                                                className="checkbox"
+                                            />
+                                            <span className="ml-2 text-gray-700">{item.label}</span>
+                                        </label>
+                                    </div>
+
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <button className='btn btn-secondary w-full' type="button" onClick={handleFileClick}>
                         <FontAwesomeIcon icon={faUpload} /> تحميل صورة
                     </button>

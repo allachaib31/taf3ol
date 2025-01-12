@@ -41,7 +41,6 @@ exports.getAllNotificationsForAdmin = async (req, res) => {
             limit: req.query.limit || 20 // Limit of notifications per page
         });
     } catch (err) {
-        console.log(err); // Log the error for debugging
         // Handle errors gracefully
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ success: false, msg: 'Error fetching notifications' });
     }
@@ -112,7 +111,6 @@ exports.getMessage = async (req, res) => {
             limit: req.query.limit || 20 // Limit of notifications per page
         });
     } catch (err) {
-        console.log(err); // Log the error for debugging
         // Handle errors gracefully
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ success: false, msg: 'Error fetching notifications' });
     }

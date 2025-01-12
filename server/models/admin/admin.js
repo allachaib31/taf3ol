@@ -35,6 +35,10 @@ const adminSchema = new mongoose.Schema({
     lastLogin: {
         type: Date,
     },
+    permission: {
+        type: Object,
+        default: {}
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
@@ -62,6 +66,7 @@ const validateAdmin = (admin) => {
         image: Joi.string().optional().allow(null, ""),
         isBlocked: Joi.boolean().optional(),
         lastLogin: Joi.date().optional(),
+        permission: Joi.object().optional(),
         createdBy: Joi.string().optional(),
         createdAt: Joi.date().optional(),
     });
