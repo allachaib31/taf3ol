@@ -18,6 +18,7 @@ const { validationOrderRequirements, OrderRequirements } = require("../../models
 const { LevelUserGroup } = require("../../models/levelUserGroup/levelUserGroup");
 const { User } = require("../../models/user/user");
 const { generateNextId } = require("../../utils/generateNextId");
+const { Stock } = require("../../models/stock/stock");
 
 
 exports.addCategorie = async (req, res) => {
@@ -692,7 +693,7 @@ exports.addProductsApi = async (req, res) => {
             });
         }
 
-        const findApi = await Api.findById(provider).session(session); // Pass session explicitly
+        const findApi = await Api.findById(provider).populate("idCoin").session(session); // Pass session explicitly
         if (!findApi) {
             await session.abortTransaction(); // Rollback transaction if API not found
             return res.status(httpStatus.BAD_REQUEST).send({
@@ -728,7 +729,7 @@ exports.addProductsApi = async (req, res) => {
                 service: currentProduct.id || currentProduct.service || categorieSelected,
                 country: currentProduct.CountryCode || "",
                 serverNumber: currentProduct.ServerNumber || "",
-                costPrice: currentProduct.Price || currentProduct.price || currentProduct.rate,
+                costPrice: (currentProduct.Price / findApi.idCoin.price) || (currentProduct.price / findApi.idCoin.price) || (currentProduct.rate / findApi.idCoin.price),
                 descriptionAr: "<div></div>",
                 descriptionEn: "<div></div>",
                 forQuantity: (currentProduct.qty_values && currentProduct.qty_values.min) || currentProduct.min || 1,
@@ -743,7 +744,7 @@ exports.addProductsApi = async (req, res) => {
                         nameProduct: currentProduct.name || currentProduct.Title,
                         isAvailable: true,
                         isActive: true,
-                        costPrice: currentProduct.Price || currentProduct.price || currentProduct.rate,
+                        costPrice: (currentProduct.Price / findApi.idCoin.price) || (currentProduct.price / findApi.idCoin.price) || (currentProduct.rate / findApi.idCoin.price),
                         service: currentProduct.id || currentProduct.service || categorieSelected,
                         country: currentProduct.CountryCode || "",
                         serverNumber: currentProduct.ServerNumber || "",
@@ -758,9 +759,9 @@ exports.addProductsApi = async (req, res) => {
             await product.save({ session }); // Save product within the transaction
 
             for (let j = 0; j < groupMoney.length; j++) {
-                const id = await generateNextId("ProductsPrice", "PP", session);
+                //const id = await generateNextId("ProductsPrice", "PP", session);
                 const productPrice = new ProductsPrice({
-                    id,
+                    //id,
                     idProducts: product._id,
                     idGroupMoney: groupMoney[j]._id,
                     value: groupMoney[j].value,
@@ -997,7 +998,7 @@ exports.addProduct = async (req, res) => {
     const admin = req.admin;
     const { file } = req;
     let { idService, idCategorie, nameAr, nameEn, service, country, serverNumber, costPrice, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, show } = req.body;
-    provider = [
+    provider = provider == "stock" ? provider :[
         {
             ...JSON.parse(provider),
         }
@@ -1007,15 +1008,18 @@ exports.addProduct = async (req, res) => {
 
     try {
         await session.startTransaction(); // Start the transaction
-
-        const findApi = await Api.findById(provider[0].idProvider).session(session);
-        if (!findApi) {
-            await session.abortTransaction(); // Rollback transaction if API is not found
-            return res.status(httpStatus.BAD_REQUEST).send({
-                msg: "API غير موجود"
-            });
+        let findApi;
+        console.log(provider)
+        if(provider != "stock") {
+            findApi = await Api.findById(provider[0].idProvider).session(session);
+            if (!findApi) {
+                await session.abortTransaction(); // Rollback transaction if API is not found
+                return res.status(httpStatus.BAD_REQUEST).send({
+                    msg: "API غير موجود"
+                });
+            }
+            provider[0].name = findApi.name;
         }
-        provider[0].name = findApi.name;
 
         const groupMoney = await GroupMoney.find({ idService }).session(session);
         if (groupMoney.length == 0) {
@@ -1033,7 +1037,7 @@ exports.addProduct = async (req, res) => {
         }
 
         const newFile = await saveFile(file, File, Readable, bucket);
-        const { error } = validationProduct({ ...req.body, provider, image: newFile._id.toString() });
+        const { error } = validationProduct({ ...req.body, provider: provider == "stock" ? null : provider, image: newFile._id.toString() });
         if (error) {
             await session.abortTransaction(); // Rollback transaction if validation fails
             console.log(error);
@@ -1043,13 +1047,26 @@ exports.addProduct = async (req, res) => {
         }
         const id = await generateNextId("Product", "P", session);
         const lastCategory = await mongoose.model('Product').findOne().sort('-ranking').session(session).exec();
-        const product = new Product({
-            id, idService, idCategorie, nameAr, nameEn, service, country, serverNumber, costPrice, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider, image: newFile._id, show, ranking: lastCategory ? lastCategory.ranking + 1 : 1, createdBy: admin._id
-        });
+        let product;
+        if(provider == "stock") {
+            product = new Product({
+                id, idService, idCategorie, nameAr, nameEn, service, country, serverNumber, costPrice, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, image: newFile._id, show, ranking: lastCategory ? lastCategory.ranking + 1 : 1, createdBy: admin._id
+            });
+            const newStock = new Stock({
+                idProduct: product._id,
+                cost: costPrice,
+            });
+            await newStock.save({ session }); 
+            product.stockId = newStock._id;
+        } else {
+            product = new Product({
+                id, idService, idCategorie, nameAr, nameEn, service, country, serverNumber, costPrice, forQuantity, descriptionAr, descriptionEn, quantityQuality, minimumQuantity, maximumQuantity, availableQuantity, provider,image: newFile._id, show, ranking: lastCategory ? lastCategory.ranking + 1 : 1, createdBy: admin._id
+            });
+        }
         await product.save({ session }); // Save product with session
 
         for (let i = 0; i < groupMoney.length; i++) {
-            const id = await generateNextId("ProductsPrice", "PP", session);
+            //const id = await generateNextId("ProductsPrice", "PP", session);
             const productPrice = new ProductsPrice({
                 idProducts: product._id,
                 idGroupMoney: groupMoney[i]._id,
@@ -1057,7 +1074,7 @@ exports.addProduct = async (req, res) => {
                 negativeBalance: groupMoney[i].negativeBalance,
                 agentRatio: groupMoney[i].agentRatio,
                 meritValue: groupMoney[i].meritValue,
-                id,
+                //id,
                 createdBy: admin._id
             });
             await productPrice.save({ session }); // Save product price with session
@@ -1145,9 +1162,9 @@ exports.updateProductGeneral = async (req, res) => {
             const groupMoney = await GroupMoney.find({ idService }).session(session);
             await ProductsPrice.deleteMany({ idProducts: product._id }).session(session);
             for (let i = 0; i < groupMoney.length; i++) {
-                const id = await generateNextId("ProductsPrice", "PP", session);
+                //const id = await generateNextId("ProductsPrice", "PP", session);
                 const productPrice = new ProductsPrice({
-                    id,
+                   // id,
                     idProducts: product._id,
                     idGroupMoney: groupMoney[i]._id,
                     value: groupMoney[i].value,
@@ -1305,7 +1322,7 @@ exports.updateProductRanking = async (req, res) => {
 
 exports.updateProductsShowAvailable = async (req, res) => {
     const admin = req.admin;
-    const { productIdsShow, productIdsAvailable, idCategorie } = req.body;
+    const { productIdsShow, productIdsAvailable, idCategorie, idService } = req.body;
 
     if ((!productIdsShow || !Array.isArray(productIdsShow)) &&
         (!productIdsAvailable || !Array.isArray(productIdsAvailable))) {
@@ -1319,42 +1336,39 @@ exports.updateProductsShowAvailable = async (req, res) => {
     try {
         await session.startTransaction(); // Begin transaction
 
+        let query = {
+            _id: { $in: productIdsShow },
+            idService
+        };
+        if(idCategorie != "All"){
+            query.idCategorie = idCategorie;
+        }
         // Update products to set `show` to true for productIdsShow
         await Product.updateMany(
-            {
-                _id: { $in: productIdsShow },
-                idCategorie: idCategorie,
-            },
+            query,
             { show: true },
             { session } // Pass the session to the update operation
         );
-
+        query._id = { $nin: productIdsShow };
         // Reset `show` to false for products in the same category not in productIdsShow
         await Product.updateMany(
-            {
-                _id: { $nin: productIdsShow },
-                idCategorie: idCategorie,
-            },
+            query,
             { show: false },
             { session } // Pass the session to the update operation
         );
 
+        query._id = { $in: productIdsAvailable };
         // Update products to set `availableQuantity` to true for productIdsAvailable
         await Product.updateMany(
-            {
-                _id: { $in: productIdsAvailable },
-                idCategorie: idCategorie,
-            },
+            query,
             { availableQuantity: true },
             { session } // Pass the session to the update operation
         );
 
+        query._id = { $nin: productIdsAvailable };
         // Reset `availableQuantity` to false for products in the same category not in productIdsAvailable
         await Product.updateMany(
-            {
-                _id: { $nin: productIdsAvailable },
-                idCategorie: idCategorie,
-            },
+            query,
             { availableQuantity: false },
             { session } // Pass the session to the update operation
         );
@@ -1518,81 +1532,88 @@ exports.updateIdServiceProducts = async (req, res) => {
     session.startTransaction();
 
     try {
-        // Find all products by the provided productIds
-        const products = await Product.find({ '_id': { $in: productIds } }).session(session);
+        // Validate inputs
+        if (!idService || !idCategorie || !Array.isArray(productIds) || productIds.length === 0) {
+            return res.status(httpStatus.BAD_REQUEST).send({ msg: "بيانات غير كاملة أو غير صحيحة" });
+        }
 
+        // Fetch all required data
+        const [products, typeService, categorie] = await Promise.all([
+            Product.find({ '_id': { $in: productIds } }).session(session),
+            TypeService.findById(idService).session(session),
+            Categorie.findById(idCategorie).session(session),
+        ]);
+
+        // Validate products
         if (!products.length) {
-            return res.status(httpStatus.BAD_REQUEST).send({
-                msg: "لا توجد منتجات لتحديثها"
-            });
+            return res.status(httpStatus.BAD_REQUEST).send({ msg: "لا توجد منتجات لتحديثها" });
         }
 
-        if (products[0].idService.toString() == idService.toString()) {
-            return res.status(httpStatus.CONFLICT).send({
-                msg: "لم تختر قسم جديد"
-            })
+        // Validate typeService and categorie
+        if (!typeService) {
+            return res.status(httpStatus.BAD_REQUEST).send({ msg: "نوع الخدمة غير موجود" });
+        }
+        if (!categorie || categorie.idService.toString() !== idService) {
+            return res.status(httpStatus.BAD_REQUEST).send({ msg: "الفئة غير متوافقة مع نوع الخدمة" });
         }
 
-        // Loop through products and update the idService for each
+        // Fetch groupMoney
+        const groupMoney = await GroupMoney.find({ idService }).session(session);
+
+        // Process each product
         for (let product of products) {
-            // Update the idService field
             product.idService = idService;
             product.idCategorie = idCategorie;
 
-            // Update associated prices if idService is changed
-            const groupMoney = await GroupMoney.find({ idService }).session(session);
-
-            // Delete the old product prices
+            // Delete old prices and add new ones
             await ProductsPrice.deleteMany({ idProducts: product._id }).session(session);
 
-            // Add new product prices based on the new idService
-
-            for (let i = 0; i < groupMoney.length; i++) {
-                const id = await generateNextId("ProductsPrice", "PP", session);
+            for (let group of groupMoney) {
                 const productPrice = new ProductsPrice({
-                    id,
                     idProducts: product._id,
-                    idGroupMoney: groupMoney[i]._id,
-                    value: groupMoney[i].value,
-                    negativeBalance: groupMoney[i].negativeBalance,
-                    agentRatio: groupMoney[i].agentRatio,
-                    meritValue: groupMoney[i].meritValue,
-                    createdBy: admin._id
+                    idGroupMoney: group._id,
+                    value: group.value,
+                    negativeBalance: group.negativeBalance,
+                    agentRatio: group.agentRatio,
+                    meritValue: group.meritValue,
+                    createdBy: admin._id,
                 });
                 await productPrice.save({ session });
             }
 
-            // Save the product with the updated idService
             await product.save({ session });
         }
 
-        // Commit the transaction
+        // Commit transaction
         await session.commitTransaction();
 
-        // Send notification to admin
-        const adminData = await Admin.findById(admin._id);
-        let content = `${adminData.username} قام بتحديث خدمات المنتجات `;
-        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true, null, null, session);
+        // Send notification
+        try {
+            const adminData = await Admin.findById(admin._id);
+            const content = `${adminData.username} قام بتحديث خدمات المنتجات `;
+            await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true, null, null, session);
 
-        res.status(httpStatus.OK).send({
-            msg: "تم تحديث خدمات المنتجات بنجاح",
-            contentNotification: content
-        });
-
+            res.status(httpStatus.OK).send({
+                msg: "تم تحديث خدمات المنتجات بنجاح",
+                contentNotification: content,
+            });
+        } catch (notificationErr) {
+            console.warn("Notification failed:", notificationErr);
+        }
     } catch (err) {
-        // Rollback the transaction if any error occurs
+        // Rollback on error
         await session.abortTransaction();
-
         console.error(err);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
             msg: "خطأ في الخادم",
-            error: err.message
+            error: err.message,
         });
     } finally {
-        // End the session
+        // End session
         session.endSession();
     }
 };
+
 
 exports.deleteProducts = async (req, res) => {
     const admin = req.admin;
@@ -1645,17 +1666,19 @@ exports.deleteProducts = async (req, res) => {
 };
 
 exports.getProducts = async (req, res) => {
-    const { idCategorie, searchText } = req.query;
+    const { idCategorie, idService,searchText } = req.query;
     const page = parseInt(req.query.page, 10) || 1; // Default to page 1
     const limit = (req.query.limit == "ALL") ? "ALL" : (parseInt(req.query.limit, 10) || 10); // Default to 10 items per page
     const skip = (page - 1) * limit;
     try {
         let products;
         let query = {
-            idCategorie,
+            //idCategorie,
+            idService,
             isDeleted: false,
         };
-
+        if(idCategorie != "All") query.idCategorie = idCategorie;
+        console.log(query)
         if (searchText) {
             const searchRegex = { $regex: searchText, $options: "i" };
             query.$or = [
@@ -1905,9 +1928,9 @@ exports.addGroupMoney = async (req, res) => {
         // Find products and create associated product prices
         const products = await Product.find({ idService }).session(session);
         for (let i = 0; i < products.length; i++) {
-            const id = await generateNextId("ProductsPrice", "PP", session);
+            //const id = await generateNextId("ProductsPrice", "PP", session);
             const productPrice = new ProductsPrice({
-                id,
+                //id,
                 idProducts: products[i]._id,
                 idGroupMoney: groupMoney._id,
                 value: groupMoney.value,

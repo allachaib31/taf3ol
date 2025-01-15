@@ -240,7 +240,7 @@ exports.deleteUsers = async (req, res) => {
 
 exports.addBalance = async (req, res) => {
     const admin = req.admin;
-    const { idUser, amount } = req.body;
+    const { idUser, amount, paymentId, comment} = req.body;
 
     const session = await mongoose.startSession(); // Start a session for transaction management
 
@@ -280,9 +280,10 @@ exports.addBalance = async (req, res) => {
             value: amount,
             balanceBefore: currentBalance,
             balanceAfter: expenses.balance,
-            reply: "اضافة رصيد",
+            reply: comment,
             type: "Shipping operations",
             orderStatus: "Accepted",
+            idPaymentMethod: paymentId
         });
         await financialMovement.save({ session });
 
@@ -312,6 +313,85 @@ exports.addBalance = async (req, res) => {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "حدث خطأ أثناء معالجة العملية المالية", error: err.message });
     }
 };
+
+exports.reduceBalance = async (req, res) => {
+    const admin = req.admin;
+    const { idUser, amount, comment } = req.body;
+
+    const session = await mongoose.startSession(); // Start a session for transaction management
+
+    try {
+        // Validate the input data
+        if (!idUser || !amount || Number(amount) <= 0) {
+            return res.status(httpStatus.BAD_REQUEST).send({ msg: "بيانات غير صحيحة" });
+        }
+
+        await session.startTransaction(); // Begin the transaction
+
+        // Find the user within the session
+        const user = await User.findById(idUser).session(session);
+        if (!user) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(httpStatus.NOT_FOUND).send({ msg: "المستخدم غير موجود" });
+        }
+
+        // Find the user's expenses within the session
+        const expenses = await Expenses.findOne({ idUser }).session(session);
+        if (!expenses) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(httpStatus.NOT_FOUND).send({ msg: "لم يتم العثور على النفقات" });
+        }
+
+        const currentBalance = expenses.balance;
+
+
+        // Update the expenses balance
+        expenses.balance -= Number(amount);
+        expenses.totalShipping -= Number(amount);
+        await expenses.save({ session });
+
+        // Create a financial movement record within the session
+        const financialMovement = new FinancialMovements({
+            idUser,
+            typeMovement: "خصم رصيد",
+            value: -amount, // Negative value for reduction
+            balanceBefore: currentBalance,
+            balanceAfter: expenses.balance,
+            reply: comment,
+            type: "Shipping operations",
+            orderStatus: "Accepted",
+        });
+        await financialMovement.save({ session });
+
+        // Fetch admin data within the session
+        const adminData = await Admin.findById(admin._id).session(session);
+        const content = `${adminData.username} قام بخصم رصيد (${user.username})`;
+
+        // Save notifications within the session
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true, null, null, session);
+        await saveNotification(admin, 'Admin', 'User', 'reminder', `قام الادمن بخصم رصيد`, false, user._id, "The admin deducted credit", session);
+
+        await session.commitTransaction(); // Commit the transaction if all operations succeed
+        session.endSession();
+
+        // Respond with success
+        res.status(httpStatus.CREATED).send({
+            msg: "تم خصم الرصيد بنجاح",
+            notificationMsg: content,
+            financialMovement,
+            expenses,
+        });
+    } catch (err) {
+        await session.abortTransaction(); // Rollback the transaction in case of an error
+        session.endSession();
+
+        console.error("Error in reduceBalance:", err.message);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "حدث خطأ أثناء معالجة العملية المالية", error: err.message });
+    }
+};
+
 
 exports.addNegativeBalance = async (req, res) => {
     const admin = req.admin;
@@ -602,7 +682,6 @@ exports.getFinancialUser = async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1; // Default to page 1
     const limit = (req.query.limit == "ALL") ? "ALL" : (parseInt(req.query.limit, 10) || 10); // Default to 10 items per page
     const skip = (page - 1) * limit;
-
     try {
         let query = { idUser };
 
@@ -612,8 +691,9 @@ exports.getFinancialUser = async (req, res) => {
 
         if (startDate || endDate) {
             query.createdAt = {};
-            if (startDate) query.createdAt.$gte = new Date(startDate);
-            if (endDate) query.createdAt.$lte = new Date(endDate);
+            
+            if (startDate) query.createdAt.$gte = new Date(startDate).setHours(0, 0, 0, 0);
+            if (endDate) query.createdAt.$lte = new Date(endDate).setHours(23, 59, 59, 999);
         }
 
         if (searchText) {
@@ -695,64 +775,74 @@ exports.getLevelUser = async (req, res) => {
 
 exports.addCustomPrice = async (req, res) => {
     const admin = req.admin;
-    const { idUser, idService, idCategorie, idProduct, cost, value } = req.body;
+    const { idUser, idService, idCategorie, idProduct, pricingType, value } = req.body;
 
     // Start a session for transaction management
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        // Validate the User data using Joi
-        const { error } = validationCustomPrice(req.body);
-        if (error) {
-            return res.status(httpStatus.BAD_REQUEST).send({
-                msg: error.details[0].message,
+
+        let listNewCustomPrice = [];
+
+        for (let id of idProduct) {
+            // Validate the User data using Joi
+            const { error } = validationCustomPrice({ ...req.body, idProduct: id });
+            if (error) {
+                return res.status(httpStatus.BAD_REQUEST).send({
+                    msg: error.details[0].message,
+                });
+            }
+
+            // Check if the user exists
+            const userExists = await User.findById(idUser).session(session);
+            if (!userExists) {
+                return res.status(httpStatus.NOT_FOUND).send({
+                    msg: "المستخدم غير موجود",
+                });
+            }
+
+            // Check if a custom price already exists for the same parameters
+            const existingCustomPrice = await CustomPrice.findOne({
+                idUser,
+                idService,
+                idCategorie,
+                idProduct: id,
+            }).session(session);
+
+            if (existingCustomPrice) {
+                return res.status(httpStatus.CONFLICT).send({
+                    msg: "السعر المخصص موجود بالفعل",
+                    existingCustomPrice,
+                });
+            }
+
+            // Create a new custom price document
+            const newCustomPrice = new CustomPrice({
+                idUser,
+                idService,
+                idCategorie,
+                idProduct: id,
+                //cost,
+                pricingType,
+                value,
             });
+
+            await newCustomPrice.save({ session });
+            listNewCustomPrice.push(newCustomPrice);
+
         }
-
-        // Check if the user exists
-        const userExists = await User.findById(idUser).session(session);
-        if (!userExists) {
-            return res.status(httpStatus.NOT_FOUND).send({
-                msg: "المستخدم غير موجود",
-            });
-        }
-
-        // Check if a custom price already exists for the same parameters
-        const existingCustomPrice = await CustomPrice.findOne({
-            idUser,
-            idService,
-            idCategorie,
-            idProduct,
-        }).session(session);
-
-        if (existingCustomPrice) {
-            return res.status(httpStatus.CONFLICT).send({
-                msg: "السعر المخصص موجود بالفعل",
-                existingCustomPrice,
-            });
-        }
-
-        // Create a new custom price document
-        const newCustomPrice = new CustomPrice({
-            idUser,
-            idService,
-            idCategorie,
-            idProduct,
-            cost,
-            value,
-        });
-
-        await newCustomPrice.save({ session });
-
         // Populate the idUser field with the relevant user data
-        const populatedCustomPrice = await CustomPrice.findById(newCustomPrice._id)
-            .populate("idUser", "username email")
-            .populate("idService", "nameAr")
-            .populate("idCategorie", "nameAr")
-            .populate("idProduct", "nameAr costPrice")
-            .populate("createdBy", "username")
-            .session(session);
+        const populatedCustomPrices = [];
+        for (let newCustomPrice of listNewCustomPrice) {
+            populatedCustomPrices.push(await CustomPrice.findById(newCustomPrice._id)
+                .populate("idUser", "username email")
+                .populate("idService", "nameAr")
+                .populate("idCategorie", "nameAr")
+                .populate("idProduct", "nameAr costPrice")
+                .populate("createdBy", "username")
+                .session(session));
+        }
 
         // Add admin notification
         const adminData = await Admin.findById(admin._id).session(session);
@@ -766,7 +856,7 @@ exports.addCustomPrice = async (req, res) => {
         return res.status(httpStatus.CREATED).send({
             msg: "تم إنشاء السعر المخصص بنجاح",
             notificationMsg: content,
-            newCustomPrice: populatedCustomPrice, // Return the populated document
+            newCustomPrice: populatedCustomPrices, // Return the populated document
         });
     } catch (err) {
         // If any error occurs, abort the transaction

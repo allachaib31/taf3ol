@@ -94,7 +94,7 @@ function PaymentGateway() {
                             {
                                 paymentsGateway && paymentsGateway.map((payment) => {
                                     return (
-                                        <tr>
+                                        <tr key={payment._id}>
                                             <td>
                                                 {payment.name}
                                             </td>

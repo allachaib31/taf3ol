@@ -23,7 +23,7 @@ function ProductSort() {
   const [loadingCategorie, setLoadingCategorie] = useState(false);
   const [listeTypeService, setListTypeService] = useState([]);
   const [categories, setCategories] = useState(false);
-  const [params, setParams] = useState("");
+  const [idService, setIdService] = useState("");
   const [idCategorie, setIdCategorie] = useState("");
   const [products, setProducts] = useState([]);
   const [query, setQuery] = useState("");
@@ -63,7 +63,7 @@ function ProductSort() {
 }
   useEffect(() => {
     setLoadingCategorie(true);
-    getMethode(`${getCategoriesRoute}?type=${params}&query=${query}`).then((response) => {
+    getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
       setCategories(response.data);
     }).catch((err) => {
       if (err.response.status == 401 || err.response.status == 403) {
@@ -72,7 +72,7 @@ function ProductSort() {
     }).finally(() => {
       setLoadingCategorie(false);
     })
-  }, [params, query]);
+  }, [idService, query]);
   useEffect(() => {
     getMethode(`${getTypeServicesRoute}`).then((response) => {
       setListTypeService(response.data);
@@ -84,7 +84,7 @@ function ProductSort() {
   }, []);
   useEffect(() => {
     setLoading(true);
-    getMethode(`${getProductsRoute}?idCategorie=${idCategorie}`).then((response) => {
+    getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&idService=${idService}&page=1&limit=ALL`).then((response) => {
       setProducts(response.data.products);
     }).catch((err) => {
       if (err.response.status == 401 || err.response.status == 403) {
@@ -95,7 +95,7 @@ function ProductSort() {
       setLoading(false);
     })
   }, [idCategorie])
-  useEffect(() => {
+  /*useEffect(() => {
     if (socket) {
         socket.on('receive-notification', (notification) => {
             if (notification.name == "add Products") {
@@ -114,13 +114,13 @@ function ProductSort() {
             socket.off('receive-notification');
         };
     }
-}, [socket, idCategorie]);
+}, [socket, idCategorie]);*/
   return (
     <div>
       <h1 className='text-3xl font-[900]'>ترتيب المنتجات</h1>
       <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
         <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
-          setParams(event.target.value)
+          setIdService(event.target.value)
         }}>
           <option disabled selected>اختار نوع الخدمة</option>
           {
@@ -133,6 +133,7 @@ function ProductSort() {
           setIdCategorie(event.target.value)
         }}>
           <option selected disabled>اختار الفئة</option>
+          <option value="All">الكل</option>
           {
             categories && categories.map((item, index) => {
               return <option value={item._id} key={item._id}>{item.nameAr}</option>

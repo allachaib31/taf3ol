@@ -41,6 +41,10 @@ const financialMovementsSchema = new mongoose.Schema({
         enum: ["Accepted", "Canceled", "In progress", "Failed"],
         required: true,
     },
+    idPaymentMethod: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "PaymentGateway",
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -67,6 +71,7 @@ const validateFinancialMovement = (data) => {
         orderStatus: Joi.string()
             .valid("accepted", "canceled", "in progress", "failed")
             .required(),
+        idPaymentMethod: Joi.string().optional()
     });
 
     return schema.validate(data);

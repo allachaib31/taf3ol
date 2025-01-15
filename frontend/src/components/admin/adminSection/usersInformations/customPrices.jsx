@@ -6,7 +6,7 @@ import { getCustomPriceRoute } from '../../../../utils/apiRoutes';
 import { getMethode } from '../../../../utils/apiFetchs';
 import LoadingScreen from '../../../loadingScreen';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faMoneyBill, faPercent, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function CustomPrices() {
     const navigate = useNavigate();
@@ -55,8 +55,8 @@ function CustomPrices() {
                                             <td>{customPrice.idService.nameAr}</td>
                                             <td>{customPrice.idCategorie.nameAr}</td>
                                             <td>{customPrice.idProduct.nameAr}</td>
-                                            <td>{customPrice.cost}</td>
-                                            <td>{customPrice.value}%</td>
+                                            <td>{customPrice.idProduct.costPrice.toFixed(5)}</td>
+                                            <td>{customPrice.value}<FontAwesomeIcon icon={customPrice.pricingType == "Increase" ? faMoneyBill : faPercent} /></td>
                                             <td><button className='btn btn-error text-white' onClick={() => {
                                                 setIdCustomPrice(customPrice._id);
                                                 document.getElementById('DeleteCustomPrice').showModal()

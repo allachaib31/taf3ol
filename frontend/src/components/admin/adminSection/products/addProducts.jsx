@@ -73,7 +73,7 @@ function AddProducts() {
             form.append("minimumQuantity", inputs.minimumQuantity);
             form.append("maximumQuantity", inputs.maximumQuantity);
             form.append("availableQuantity", inputs.availableQuantity);
-            form.append("provider", JSON.stringify(inputs.provider));
+            form.append("provider", inputs.provider == "stock" ? inputs.provider : JSON.stringify(inputs.provider));
             form.append("show", inputs.show);
             const response = await postMethode(addProductRoute, form);
             setAlert({
@@ -372,6 +372,15 @@ function AddProducts() {
                 </div>
                 <div className='mt-[1rem]'>
                     <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
+                        if(event.target.value == "stock") {
+                            setInputs((prevInputs) => {
+                                return {
+                                    ...prevInputs,
+                                    provider: event.target.value
+                                }
+                            })
+                            return;
+                        }
                         setInputs((prevInputs) => {
                             return {
                                 ...prevInputs,
@@ -385,7 +394,7 @@ function AddProducts() {
                         })
                     }}>
                         <option selected={inputs.provider == ""} disabled>اختر API</option>
-                        {/*<option value="stock">المخزن</option>*/}
+                        <option value="stock">المخزن</option>
                         {
                             apiList && apiList.map((api) => {
                                 return (

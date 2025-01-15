@@ -34,6 +34,10 @@ const coinsSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    show: {
+        type: Boolean,
+        default: true,
+    },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Admin',
@@ -72,6 +76,7 @@ const validateCoins = (coins) => {
             "any.required": "The purchasePrice field is required.",
         }),
         isDollar: Joi.boolean().optional(),
+        show: Joi.boolean().optional(),
         createdBy: Joi.string().optional().messages({
             "string.base": "The createdBy field must be a valid ID.",
         }),

@@ -1,6 +1,6 @@
 const express = require("express");
 const { verifyToken } = require("../../middleware/admin/admin");
-const { addStock, deleteStock, getStock, stockInfo, addItemStock, getItemStockSold, getItemStockAvailable, getItemStockDamaged, deleteItemStock } = require("../../controllers/admin/manage_stock_controllers");
+const { addStock, deleteStock, getStock, stockInfo, addItemStock, getItemStockSold, getItemStockAvailable, getItemStockDamaged, deleteItemStock, updateStockPrice } = require("../../controllers/admin/manage_stock_controllers");
 const httpStatus = require("http-status");
 const Router = express.Router();
 
@@ -19,6 +19,7 @@ Router.post("/api/v1.0/admin/addStock", verifyToken, verifyPermission ,addStock)
 Router.post("/api/v1.0/admin/addItemStock", verifyToken, verifyPermission ,addItemStock)
 
 //PATCH METHODS
+Router.patch("/api/v1.0/admin/updateStockPrice", verifyToken, verifyPermission ,updateStockPrice);
 Router.patch("/api/v1.0/admin/deleteStock", verifyToken, verifyPermission ,deleteStock);
 Router.patch("/api/v1.0/admin/deleteItemStock", verifyToken, verifyPermission ,deleteItemStock);
 

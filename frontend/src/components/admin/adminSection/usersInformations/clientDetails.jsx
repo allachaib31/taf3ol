@@ -1,11 +1,11 @@
-import { faCircleCheck, faCircleXmark, faMagnifyingGlass, faMinus, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faCircleCheck, faCircleXmark, faMagnifyingGlass, faMinus, faPlus, faScaleBalanced } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { getFileRoute, getFinancialUserRoute, getUserDataRoute } from '../../../../utils/apiRoutes';
 import { getMethode } from '../../../../utils/apiFetchs';
 import LoadingScreen from '../../../loadingScreen';
-import { AddBalance, AddNegativeBalance } from '../modal';
+import { AddBalance, AddNegativeBalance, ReduceBalance } from '../modal';
 import RowsPerPage from '../rowsPerPage';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
 import { randomColor } from '../../../../utils/constants';
@@ -77,7 +77,7 @@ function ClientDetails() {
     useEffect(() => {
         if (socket) {
             socket.on('receive-notification', (notification) => {
-                if (notification.name == "add Negative balance" || notification.name == "add balance") {
+                if (notification.name == "add Negative balance" || notification.name == "add balance" || notification.name == "reduce balance" ) {
                     if (queryParams.get("id") == notification.newUser._id.toString()) {
                         setUser(notification.newUser);
                         const newFinancialMovements = [...financialMovements, notification.newFinancialMovements];
@@ -139,7 +139,8 @@ function ClientDetails() {
                         </div>
                         <div className='flex flex-col gap-[0.3rem]'>
                             <button className='btn btn-circle bg-dark hover:bg-primary border-black hover:text-dark text-white' title='اضافة رصيد ' onClick={() => document.getElementById('AddBalance').showModal()}><FontAwesomeIcon icon={faPlus} /></button>
-                            <button className='btn btn-circle bg-dark hover:bg-primary border-black hover:text-dark text-white' title='اضافة رصيد سالب' onClick={() => document.getElementById('AddNegativeBalance').showModal()}><FontAwesomeIcon icon={faMinus} /></button>
+                            <button className='btn btn-circle bg-dark hover:bg-primary border-black hover:text-dark text-white' title='سحب رصيد' onClick={() => document.getElementById('ReduceBalance').showModal()}><FontAwesomeIcon icon={faMinus} /></button>
+                            <button className='btn btn-circle bg-dark hover:bg-primary border-black hover:text-dark text-white' title='اضافة رصيد سالب' onClick={() => document.getElementById('AddNegativeBalance').showModal()}><FontAwesomeIcon icon={faScaleBalanced} /></button>
                         </div>
                     </div>
                     <div className='flex justify-center gap-[0.5rem] flex-wrap mt-[1rem]'>
@@ -271,6 +272,7 @@ function ClientDetails() {
             <RowsPerPage page={page} setPage={setPage} limit={limit} setLimit={setLimit} totalPages={totalPages} setTotalPages={setTotalPages} totalItem={totalFinancialMovements} />
             <AddNegativeBalance idUser={queryParams.get("id")} financialMovements={financialMovements} setFinancialMovements={setFinancialMovements} user={user} setUser={setUser} />
             <AddBalance idUser={queryParams.get("id")} financialMovements={financialMovements} setFinancialMovements={setFinancialMovements} user={user} setUser={setUser} />
+            <ReduceBalance idUser={queryParams.get("id")} financialMovements={financialMovements} setFinancialMovements={setFinancialMovements} user={user} setUser={setUser} />
         </div>
     )
 }

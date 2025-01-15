@@ -3,10 +3,10 @@ const Joi = require("joi");
 const { generateNextId } = require("../../utils/generateNextId");
 
 const productsPriceSchema = new mongoose.Schema({
-    id: {
+    /*id: {
         type: String,
         unique: true,
-    },
+    },*/
     idProducts: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
@@ -57,7 +57,7 @@ const productsPriceSchema = new mongoose.Schema({
 // Create a validation schema using Joi
 const validationProductsPrice = (productsPrice) => {
     const schema = Joi.object({
-        id: Joi.string(),
+        //id: Joi.string(),
         idProducts: Joi.string(),
         idGroupMoney: Joi.string(),
         value: Joi.number().required(),

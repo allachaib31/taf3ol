@@ -28,6 +28,7 @@ export { default as ApiModel } from "./settings/apiModel";
 export { default as DeleteApiModel } from "./settings/deleteApiModel";
 export { default as AddNegativeBalance } from "./user/addNegativeBalance";
 export { default as AddBalance } from "./user/addBalance";
+export { default as ReduceBalance } from "./user/reduceBalance";
 export { default as CardsTitleModel } from "./rechargeCards/cardsTitleModel";
 export { default as DeleteCardsTitleModel } from "./rechargeCards/deleteCardsTitleModel";
 export { default as DeleteCards } from "./rechargeCards/deleteCards";

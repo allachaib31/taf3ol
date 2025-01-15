@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../../../alert";
 import Loading from "../../../../loading";
-import {  postMethode, putMethode } from "../../../../../utils/apiFetchs";
-import { addApiRoute, updateApiRoute } from "../../../../../utils/apiRoutes";
+import { getMethode, postMethode, putMethode } from "../../../../../utils/apiFetchs";
+import { addApiRoute, getCoinsRoute, updateApiRoute } from "../../../../../utils/apiRoutes";
 import { useSocket } from "../../../../../screens/admin/homeAdmin";
 
 function ApiModel({ apiList, setApiList, titleModalApi, inputs, setInputs }) {
     const navigate = useNavigate();
     const socket = useSocket();
     const [loading, setLoading] = useState(false);
+    const [coins, setCoins] = useState(false);
     const [alert, setAlert] = useState({
         display: false,
     });
@@ -66,7 +67,7 @@ function ApiModel({ apiList, setApiList, titleModalApi, inputs, setInputs }) {
             socket.emit('broadcast-notification', {
                 msg: response.data.contentNotification,
                 name: "update Api",
-                apiUpdated: {...response.data.api, index: inputs.index}
+                apiUpdated: { ...response.data.api, index: inputs.index }
             });
         } catch (err) {
             if (err.response.status == 401 || err.response.status == 403) {
@@ -81,6 +82,15 @@ function ApiModel({ apiList, setApiList, titleModalApi, inputs, setInputs }) {
             setLoading(false);
         }
     }
+    useEffect(() => {
+        getMethode(`${getCoinsRoute}`).then((response) => {
+            setCoins(response.data.coins);
+        }).catch((err) => {
+            if (err.response.status == 401 || err.response.status == 403) {
+                navigate("/admin/auth")
+            }
+        })
+    }, []);
     return (
         <dialog id="apiModel" className="modal">
             <div className="modal-box">
@@ -161,6 +171,23 @@ function ApiModel({ apiList, setApiList, titleModalApi, inputs, setInputs }) {
                         </option>
                         <option value="مزودي بطاقات الهدايا" selected={inputs.groupesApi == "مزودي بطاقات الهدايا"}>مزودي بطاقات الهدايا</option>
                         <option value="برمجة خاصة" selected={inputs.groupesApi == "برمجة خاصة"}>برمجة خاصة</option>
+                    </select>
+                    <select className="select select-bordered w-full"                         onChange={(event) => {
+                            setInputs((prevInputs) => {
+                                return {
+                                    ...prevInputs,
+                                    idCoin: event.target.value,
+                                };
+                            });
+                        }}>
+                        <option disabled selected>اختر العملة</option>
+                        {
+                            coins && coins.map((coin) => {
+                                return (
+                                    <option value={coin._id}>{coin.name}</option>
+                                )
+                            })
+                        }
                     </select>
                 </div>
                 <div className="modal-action">

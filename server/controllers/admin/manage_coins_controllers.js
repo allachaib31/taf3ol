@@ -18,7 +18,7 @@ exports.addCoins = async (req, res) => {
             });
         }
 
-        const { name, abbreviation, symbol, price, purchasePrice, isDollar } = req.body;
+        const { name, abbreviation, symbol, price, purchasePrice, isDollar, show } = req.body;
 
         // Check if a Dollar coin already exists
         const dollarCoinExists = await Coins.findOne({ isDollar: isDollar }).session(
@@ -49,6 +49,7 @@ exports.addCoins = async (req, res) => {
             symbol,
             price,
             purchasePrice,
+            show,
             createdBy: admin._id,
         });
 
@@ -94,7 +95,7 @@ exports.addCoins = async (req, res) => {
 
 exports.updateCoins = async (req, res) => {
     const admin = req.admin; // Assuming admin is attached to the request object
-    const { _id, name, abbreviation, symbol, price, purchasePrice, isDollar } = req.body;
+    const { _id, name, abbreviation, symbol, price, purchasePrice, isDollar, show } = req.body;
 
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -116,7 +117,7 @@ exports.updateCoins = async (req, res) => {
 
         const updatedCoin = await Coins.findByIdAndUpdate(
             _id,
-            { name, abbreviation, symbol, price, purchasePrice },
+            { name, abbreviation, symbol, price, purchasePrice, show },
             { new: true, runValidators: true, session }
         );
 

@@ -19,6 +19,7 @@ export const addUserRoute = `${host}api/v1.0/admin/addUser`;
 export const changeStatusUserRoute = `${host}api/v1.0/admin/changeStatus`;
 export const deleteUsersRoute = `${host}api/v1.0/admin/deleteUsers`;
 export const addBalanceRoute = `${host}api/v1.0/admin/addBalance`;
+export const reduceBalanceRoute = `${host}api/v1.0/admin/reduceBalance`;
 export const addNegativeBalanceRoute = `${host}api/v1.0/admin/addNegativeBalance`;
 export const updateLevelUserGroupRoute = `${host}api/v1.0/admin/updateLevelUserGroup`;
 export const addCustomPriceRoute = `${host}api/v1.0/admin/addCustomPrice`;
@@ -80,6 +81,7 @@ export const deleteCoinsRoute = `${host}api/v1.0/admin/deleteCoins`;
 export const getCoinsRoute = `${host}api/v1.0/admin/getCoins`;
 // manage Stock
 export const addStockRoute = `${host}api/v1.0/admin/addStock`;
+export const updateStockPriceRoute = `${host}api/v1.0/admin/updateStockPrice`;
 export const deleteStockRoute = `${host}api/v1.0/admin/deleteStock`;
 export const getStockRoute = `${host}api/v1.0/admin/getStock`;
 export const getStockInfoRoute = `${host}api/v1.0/admin/stockInfo`;

@@ -109,7 +109,7 @@ const productSchema = new mongoose.Schema({
                 }
             }
         ],
-        required: true,
+        //required: true,
     },
     ranking: {
         type: Number,
@@ -192,11 +192,8 @@ const validationProduct = (product) => {
                     isActive: Joi.boolean().required()
                 })
             )
-            .required()
-            .messages({
-                'array.base': 'provider must be an array.',
-                'array.includesRequiredUnknowns': 'Each provider object must include name, service, and costPrice.',
-            }),
+            .optional()
+            .allow(null, ""),
         ranking: Joi.number().optional().allow(null, ""),
         stockId: Joi.string().optional(),
         show: Joi.boolean().required(),

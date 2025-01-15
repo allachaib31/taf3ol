@@ -1,4 +1,4 @@
-import { faPercent } from '@fortawesome/free-solid-svg-icons'
+import { faMoneyBill, faPercent } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +14,7 @@ function AddCustomPrice({ setCustomPrices }) {
     const socket = useSocket();
     const [listeTypeService, setListTypeService] = useState([]);
     const [query, setQuery] = useState("");
-    const [params, setParams] = useState("");
+    const [idService, setIdService] = useState("");
     const [submit, setSubmit] = useState(false);
     const [loadingCategorie, setLoadingCategorie] = useState(false);
     const [loadingProduct, setLoadingProduct] = useState(false);
@@ -27,7 +27,8 @@ function AddCustomPrice({ setCustomPrices }) {
         idService: "",
         idCategorie: "",
         idProduct: "",
-        cost: "",
+        pricingType: "Percent",
+        //cost: "",
         value: ""
     });
     const [alert, setAlert] = useState({
@@ -51,7 +52,7 @@ function AddCustomPrice({ setCustomPrices }) {
             setCustomPrices((prevCustomPrices) => {
                 return [
                     ...prevCustomPrices,
-                    response.data.newCustomPrice
+                    ...response.data.newCustomPrice
                 ]
             })
             socket.emit('broadcast-notification', {
@@ -74,7 +75,7 @@ function AddCustomPrice({ setCustomPrices }) {
 
     const getProducts = () => {
         setLoadingProduct(true);
-        getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&page=1&limit=ALL&searchText=`).then((response) => {
+        getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&idService=${idService}&page=1&limit=ALL&searchText=`).then((response) => {
             const { products } = response.data;
             setProducts(products);
         }).catch((err) => {
@@ -99,7 +100,7 @@ function AddCustomPrice({ setCustomPrices }) {
     }, []);
     useEffect(() => {
         setLoadingCategorie(true);
-        getMethode(`${getCategoriesRoute}?type=${params}&query=${query}`).then((response) => {
+        getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
             setCategories(response.data);
         }).catch((err) => {
             if (err.response.status == 401 || err.response.status == 403) {
@@ -108,7 +109,7 @@ function AddCustomPrice({ setCustomPrices }) {
         }).finally(() => {
             setLoadingCategorie(false);
         })
-    }, [params, query]);
+    }, [idService, query]);
     useEffect(() => {
         getMethode(`${getUsersRoute}?page=1&limit=ALL`).then((response) => {
             const { users } = response.data;
@@ -146,7 +147,7 @@ function AddCustomPrice({ setCustomPrices }) {
                         }
                     </select>
                     <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
-                        setParams(event.target.value);
+                        setIdService(event.target.value);
                         setInputs((prevInputs) => {
                             return {
                                 ...prevInputs,
@@ -181,24 +182,37 @@ function AddCustomPrice({ setCustomPrices }) {
                         setInputs((prevInputs) => {
                             return {
                                 ...prevInputs,
-                                idProduct: products[event.target.value]._id,
-                                cost: products[event.target.value].costPrice,
+                                idProduct: event.target.value == "All" ? products.map(product => product._id) : [products[event.target.value]._id],
+                                //cost: products[event.target.value].costPrice,
                             }
                         })
                     }}>
                         <option selected disabled>اختار المنتج</option>
+                        <option value="All">الكل</option>
                         {
                             products && products.map((item, index) => {
                                 return <option value={index} key={item._id}>{item.nameAr}</option>
                             })
                         }
                     </select>} />
-                    <label className="input input-bordered flex items-center gap-2">
+                    {/*<label className="input input-bordered flex items-center gap-2">
                         الكلفة
                         <input type="number" className="grow" disabled value={inputs.cost} />
-                    </label>
+                    </label>*/}
+                    <select className="select select-bordered" onChange={(event) => {
+                        return setInputs((prevInput) => {
+                            return {
+                                ...prevInput,
+                                pricingType: event.target.value
+                            }
+                        })
+                    }}>
+                        <option disabled>انواع التسعيرة</option>
+                        <option value="Increase" selected={inputs.pricingType == "Increase"}>Increase</option>
+                        <option value="Percent" selected={inputs.pricingType == "Percent"}>Percent</option>
+                    </select>
                     <label className="input input-bordered flex items-center gap-2">
-                        القيمة   <FontAwesomeIcon icon={faPercent} />
+                        القيمة    <FontAwesomeIcon icon={inputs.pricingType == "Increase" ? faMoneyBill : faPercent} />
                         <input type="number" className="grow" onChange={(event) => {
                             setInputs((prevInputs) => {
                                 return {

@@ -132,7 +132,7 @@ function GroupMoneyModel({ titleModalGroupMoney, listTypeService, inputs, setInp
                 </label>
                 <label className="form-control w-full">
                     <div className="label">
-                        <span className="label-text">نواع التسعيرة</span>
+                        <span className="label-text">انواع التسعيرة</span>
                     </div>
                     <select className="select select-bordered" onChange={(event) => {
                         return setInputs((prevInput) => {

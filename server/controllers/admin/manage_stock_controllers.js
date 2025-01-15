@@ -68,6 +68,60 @@ exports.addStock = async (req, res) => {
     }
 };
 
+exports.updateStockPrice = async (req, res) => {
+    const admin = req.admin;
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        // Validate the request body
+        const { stockId, newPrice } = req.body;
+        if (!stockId) {
+            return res.status(httpStatus.BAD_REQUEST).json({
+                msg: "بيانات غير صحيحة. تأكد من إرسال معرف المخزون وسعر صالح.",
+            });
+        }
+
+        // Find the stock by ID
+        const stock = await Stock.findById(stockId).session(session);
+        if (!stock) {
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(httpStatus.NOT_FOUND).json({
+                msg: "المخزون غير موجود",
+            });
+        }
+
+        // Update the stock price
+        stock.cost = newPrice;
+        await stock.save({ session });
+
+        // Add admin notification
+        const adminData = await Admin.findById(admin._id).session(session);
+        let content = `${adminData.username} قام بتحديث الكلفة `;
+        await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true, null, null, session);
+
+        // Commit the transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(httpStatus.OK).json({
+            msg: "تم تحديث السعر بنجاح",
+            updatedStock: stock,
+            notificationMsg: content,
+        });
+    } catch (err) {
+        console.error(err);
+        await session.abortTransaction();
+        session.endSession();
+
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+            msg: "فشل في تحديث السعر",
+            error: err.message,
+        });
+    }
+};
+
 
 exports.deleteStock = async (req, res) => {
     const admin = req.admin;
@@ -341,12 +395,12 @@ exports.getItemStockSold = async (req, res) => {
         // Query for sold items
         if (limit == "ALL") {
             soldItems = await ItemStock.find({ idStock, sold: true })
-            .populate("idStock");
+                .populate("idStock");
         } else {
             soldItems = await ItemStock.find({ idStock, sold: true })
-            .skip(skip)
-            .limit(limit)
-            .populate("idStock");
+                .skip(skip)
+                .limit(limit)
+                .populate("idStock");
         }
 
         const totalSold = await ItemStock.countDocuments({ sold: true });
@@ -379,12 +433,12 @@ exports.getItemStockAvailable = async (req, res) => {
         let availableItems;
         if (limit == "ALL") {
             availableItems = await ItemStock.find({ idStock, sold: false, damaged: false })
-            .populate("idStock");
-        } else { 
+                .populate("idStock");
+        } else {
             availableItems = await ItemStock.find({ idStock, sold: false, damaged: false })
-            .skip(skip)
-            .limit(limit)
-            .populate("idStock");
+                .skip(skip)
+                .limit(limit)
+                .populate("idStock");
         }
 
         const totalAvailable = await ItemStock.countDocuments({ sold: false, damaged: false });
@@ -417,14 +471,14 @@ exports.getItemStockDamaged = async (req, res) => {
         // Query for damaged items
         if (limit == "ALL") {
             damagedItems = await ItemStock.find({ idStock, damaged: true })
-            .populate("idStock");
-        }else {
+                .populate("idStock");
+        } else {
             damagedItems = await ItemStock.find({ idStock, damaged: true })
-            .skip(skip)
-            .limit(limit)
-            .populate("idStock");
+                .skip(skip)
+                .limit(limit)
+                .populate("idStock");
         }
-        
+
 
         const totalDamaged = await ItemStock.countDocuments({ damaged: true });
 

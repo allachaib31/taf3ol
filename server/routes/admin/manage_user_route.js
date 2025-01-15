@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { addUser, changeStatus, deleteUsers, getUsers, searchUser, getUserData, getFinancialUser, addNegativeBalance, addBalance, getLevelUser, addCustomPrice, deleteCustomPrice, getCustomPrice } = require("../../controllers/admin/manage_user_controllers");
+const { addUser, changeStatus, deleteUsers, getUsers, searchUser, getUserData, getFinancialUser, addNegativeBalance, addBalance, getLevelUser, addCustomPrice, deleteCustomPrice, getCustomPrice, reduceBalance } = require("../../controllers/admin/manage_user_controllers");
 const { verifyToken } = require("../../middleware/admin/admin");
 const httpStatus = require("http-status");
 const Router = express.Router();
@@ -28,6 +28,7 @@ Router.delete("/api/v1.0/admin/deleteCustomPrice", verifyToken, verifyPermission
 //PATCH METHODS 
 Router.patch("/api/v1.0/admin/changeStatus", verifyToken, verifyPermission, changeStatus);
 Router.patch("/api/v1.0/admin/addBalance", verifyToken, verifyPermission, addBalance);
+Router.patch("/api/v1.0/admin/reduceBalance", verifyToken, verifyPermission, reduceBalance);
 Router.patch("/api/v1.0/admin/addNegativeBalance", verifyToken, verifyPermission, addNegativeBalance);
 Router.patch("/api/v1.0/admin/deleteUsers", verifyToken, verifyPermission, deleteUsers);
 

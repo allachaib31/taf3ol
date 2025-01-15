@@ -69,7 +69,7 @@ function CurrenciesModel({ setCoins, titleCurrencieMode, inputs, setInputs }) {
                         : item // Keep the rest unchanged
                 )
             );
-    
+
             socket.emit('broadcast-notification', {
                 msg: response.data.notificationMsg,
                 name: "update Coin",
@@ -149,6 +149,19 @@ function CurrenciesModel({ setCoins, titleCurrencieMode, inputs, setInputs }) {
                             })
                         }} />
                     </label>
+                    <div className="form-control">
+                        <label className="label w-fit gap-[1rem] cursor-pointer">
+                            <span className="label-text">عرض</span>
+                            <input type="checkbox" className="toggle" checked={inputs.show} onChange={(event) => {
+                            setInputs((prevInputs) => {
+                                return {
+                                    ...prevInputs,
+                                    show: !inputs.show
+                                }
+                            })
+                        }} />
+                        </label>
+                    </div>
                 </div>
                 <div className="modal-action">
                     <form method="dialog">

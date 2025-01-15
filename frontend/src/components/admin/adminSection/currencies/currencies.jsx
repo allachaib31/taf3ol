@@ -20,6 +20,7 @@ function Currencies() {
         price: "",
         purchasePrice: "",
         isDollar: false,
+        show: true
     });
 
     useEffect(() => {
@@ -38,6 +39,15 @@ function Currencies() {
         <div>
             <button className='btn btn-primary' onClick={() => {
                 setTitleCurrencieMode("عملة جديدة");
+                setInputs({
+                    name: "",
+                    abbreviation: "",
+                    symbol: "",
+                    price: "",
+                    purchasePrice: "",
+                    isDollar: false,
+                    show: true
+                })
                 document.getElementById('currenciesModel').showModal()
             }
             }>عملة جديدة</button>
@@ -60,7 +70,7 @@ function Currencies() {
                             {
                                 coins && coins.map((coin) => {
                                     return (
-                                        <tr>
+                                        <tr key={coin._id}>
                                             <th>{coin.name}</th>
                                             <td>{coin.abbreviation}</td>
                                             <td>{coin.symbol}</td>
@@ -77,6 +87,7 @@ function Currencies() {
                                                             price: coin.price,
                                                             purchasePrice: coin.purchasePrice,
                                                             isDollar: coin.isDollar,
+                                                            show: coin.show
                                                         })
                                                         setTitleCurrencieMode("تحديث عملة");
                                                         document.getElementById('currenciesModel').showModal()

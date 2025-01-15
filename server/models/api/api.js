@@ -32,6 +32,10 @@ const apiSchema = new mongoose.Schema({
         ],
         required: true,
     },
+    idCoin: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Coins',
+    },
     isDeleted: {
         type: Boolean,
         default: false,
@@ -77,7 +81,8 @@ const validateApi = (api) => {
             .messages({
                 "string.empty": "The groupesApi field is required.",
                 "any.only": "Invalid value for groupesApi.",
-            }),
+        }),
+        idCoin: Joi.string().required(),
         isDeleted: Joi.boolean().optional(),
         createdBy: Joi.string().optional(),
         createdAt: Joi.date().optional(),

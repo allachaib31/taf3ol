@@ -7,6 +7,8 @@ import LoadingScreen from '../../../loadingScreen';
 import Loading from '../../../loading';
 import { useSocket } from '../../../../screens/admin/homeAdmin';
 import { getApis } from '../../../../utils/constants';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 function AddProductsApi() {
     const navigate = useNavigate();
@@ -98,8 +100,8 @@ function AddProductsApi() {
             socket.emit('broadcast-notification', {
                 msg: response.data.contentNotification,
                 name: "add Products",
-                idCategorie,
-                products: response.data.listeProducts
+                //idCategorie,
+                //products: response.data.listeProducts
             });
         } catch (err) {
             if (err.response.status == 401 || err.response.status == 403) {
@@ -146,7 +148,7 @@ function AddProductsApi() {
     useEffect(() => {
         if (idService !== "") {
             setLoadingCategorie(true);
-            getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
+            getMethode(`${getCategoriesRoute}?type=${idService}&query=`).then((response) => {
                 setCategories(response.data);
             }).catch((err) => {
                 if (err.response.status == 500) {
@@ -163,7 +165,7 @@ function AddProductsApi() {
                 setLoadingCategorie(false);
             });
         }
-    }, [idService, query]);
+    }, [idService]);
     useEffect(() => {
         getMethode(`${getTypeServicesRoute}`).then((response) => {
             setListTypeService(response.data);
@@ -197,7 +199,7 @@ function AddProductsApi() {
                     {
                         apiList && apiList.map((api) => {
                             return (
-                                <option value={api._id}>{api.name}</option>
+                                <option value={api._id} key={api._id}>{api.name}</option>
                             )
                         })
                     }
@@ -246,6 +248,20 @@ function AddProductsApi() {
                     </select>
                 } />
             </div>
+            <div className="join">
+                <div>
+                    <div>
+                        <input className="input bg-black text-white input-bordered join-item" placeholder="أبحث عن المنتجات"
+                            value={query}
+                            onChange={(e) => {
+                                setQuery(e.target.value)
+                            }} />
+                    </div>
+                </div>
+                <div className="indicator">
+                    <button className="btn join-item"><FontAwesomeIcon icon={faMagnifyingGlass} /></button>
+                </div>
+            </div>
             <LoadingScreen
                 loading={loadingService}
                 component={
@@ -272,27 +288,30 @@ function AddProductsApi() {
                             </thead>
                             {/* Body */}
                             <tbody className="text-[1rem]">
-                                {servicesApi.map((service, index) => (
-                                    <tr key={index}>
-                                        <th>
-                                            <label>
-                                                <input
-                                                    type="checkbox"
-                                                    className="checkbox"
-                                                    checked={service.checked || false}
-                                                    onChange={() => handleCheckboxChange(index)}
-                                                />
-                                            </label>
-                                        </th>
-                                        <td>{service.name || service.Title}</td>
-                                    </tr>
-                                ))}
+                                {servicesApi.map((service, index) => {
+                                    if((service.name || service.Title).toLowerCase().includes(query)) return (
+                                        <tr key={index}>
+                                            <th>
+                                                <label>
+                                                    <input
+                                                        type="checkbox"
+                                                        className="checkbox"
+                                                        checked={service.checked || false}
+                                                        onChange={() => handleCheckboxChange(index)}
+                                                    />
+                                                </label>
+                                            </th>
+                                            <td>{service.name || service.Title}</td>
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </table>
                     </div>
                 }
             />
-            <button className='btn btn-primary mr-[0.5rem] w-full mt-[1rem]' disabled={submit} onClick={handleSubmit}>{submit ? <Loading /> : 'ارسال'}</button>
+            <br />
+            <button className='fixed z-[999] bottom-1 right-0 btn btn-primary mr-[0.5rem] w-[99%] mt-[1rem]' disabled={submit} onClick={handleSubmit}>{submit ? <Loading /> : 'ارسال'}</button>
         </div>
     );
 }

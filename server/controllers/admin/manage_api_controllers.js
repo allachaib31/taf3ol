@@ -6,7 +6,7 @@ const { default: mongoose } = require('mongoose');
 
 exports.addApi = async (req, res) => {
     const admin = req.admin;
-    const { name, link, token, groupesApi } = req.body;
+    const { name, link, token, groupesApi, idCoin } = req.body;
     const session = await mongoose.startSession();
 
     try {
@@ -22,7 +22,7 @@ exports.addApi = async (req, res) => {
 
         // Create a new API
         const api = new Api({
-            name, link, token, groupesApi, createdBy: admin._id,
+            name, link, token, groupesApi, idCoin, createdBy: admin._id,
         });
         await api.save({ session });
 
@@ -31,11 +31,13 @@ exports.addApi = async (req, res) => {
         let content = `${adminData.username} قام باضافة API جديد (${name})`;
         await saveNotification(admin, 'Admin', 'Admin', 'reminder', content, true, null, null, session);
 
+        const apiPopulated = await Api.findById(api._id).populate("idCoin").session(session);
+
         await session.commitTransaction(); // Commit the transaction
 
         res.status(httpStatus.OK).send({
             msg: "تم اضافة API جديد بنجاح",
-            api,
+            api: apiPopulated,
             contentNotification: content
         });
 
@@ -59,13 +61,13 @@ exports.addApi = async (req, res) => {
 };
 
 exports.updateApi = async (req, res) => {
-    const { _id, name, link, token, groupesApi } = req.body;
+    const { _id, name, link, token, groupesApi, idCoin } = req.body;
     const session = await mongoose.startSession();
 
     try {
         // Validate the input data
         const { error } = validateApi({
-            name, link, token, groupesApi
+            name, link, token, groupesApi, idCoin
         });
         if (error) {
             return res.status(httpStatus.BAD_REQUEST).json({
@@ -78,7 +80,7 @@ exports.updateApi = async (req, res) => {
         // Update the API
         const api = await Api.findOneAndUpdate(
             { _id },
-            { name, link, token, groupesApi },
+            { name, link, token, groupesApi, idCoin },
             { new: true, session }
         );
 
@@ -169,7 +171,7 @@ exports.getApi = async (req, res) => {
     try {
         const apis = await Api.find({
             isDeleted: false
-        });
+        }).populate("idCoin");
         res.status(httpStatus.OK).send(apis);
     } catch (err) {
         res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ msg: "خطأ في جلب API" });

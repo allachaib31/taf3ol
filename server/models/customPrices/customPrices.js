@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { generateNextId } = require("../../utils/generateNextId");
+//const { generateNextId } = require("../../utils/generateNextId");
 
 const customPriceSchema = new mongoose.Schema({
-    id: {
+    /*id: {
         type: String,
         unique: true,
-    },
+    },*/
     idUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -27,8 +27,13 @@ const customPriceSchema = new mongoose.Schema({
         ref: "Product",
         required: true,
     },
-    cost: {
+    /*cost: {
         type: Number,
+        required: true,
+    },*/
+    pricingType: {
+        type: String,
+        enum: ["Increase", "Percent"],
         required: true,
     },
     value: {
@@ -45,22 +50,23 @@ const customPriceSchema = new mongoose.Schema({
     }
 });
 
-customPriceSchema.pre('save', async function (next) {
+/*customPriceSchema.pre('save', async function (next) {
     if (this.isNew) { // Check if the document is new
         this.id = await generateNextId("CustomPrice", "CP");
     }
     next();
-});
+});*/
 
 
 const validationCustomPrice = (customPrice) => {
     const schema = Joi.object({
-        id: Joi.string().optional(),
+        //id: Joi.string().optional(),
         idUser: Joi.string().required(), // Assuming this is always required
         idService: Joi.string().required(), // Assuming this is always required
         idCategorie: Joi.string().required(),
         idProduct: Joi.string().required(),
-        cost: Joi.number().required(),
+        //cost: Joi.number().required(),
+        pricingType: Joi.string().valid(...["Increase", "Percent"]).required(),
         value: Joi.number().required(),
         createdBy: Joi.string().optional(), // Adjust based on requirements
         createdAt: Joi.date().optional(), // Allow auto-generated date

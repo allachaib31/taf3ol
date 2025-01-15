@@ -20,6 +20,7 @@ function Api() {
         link: "",
         token: "",
         groupesApi: "",
+        idCoin: ""
     });
     const [alert, setAlert] = useState({
         display: false,
@@ -92,6 +93,7 @@ function Api() {
                                 <th>الاسم</th>
                                 <th>الرابط</th>
                                 <th>المجموعة</th>
+                                <th>العملة</th>
                                 <th>الرمز المميز</th>
                                 <th></th>
                                 <th></th>
@@ -106,6 +108,7 @@ function Api() {
                                             <td>{api.name}</td>
                                             <td>{api.link}</td>
                                             <td>{api.groupesApi}</td>
+                                            <td>{api.idCoin.name}</td>
                                             <td>{api.token}</td>
                                             <td><button className='btn btn-warning text-white' onClick={() => {
                                                 setInputs({
@@ -114,6 +117,7 @@ function Api() {
                                                     link: api.link,
                                                     token: api.token,
                                                     groupesApi: api.groupesApi,
+                                                    idCoin: api.idCoin,
                                                     index
                                                 })
                                                 setTitleModalApi("تعديل API");
