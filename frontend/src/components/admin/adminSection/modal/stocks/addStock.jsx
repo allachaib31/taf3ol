@@ -13,7 +13,7 @@ function AddStock({ setStocks }) {
     const [loading, setLoading] = useState(false);
     const [submit, setSubmit] = useState(false);
     const [loadingCategorie, setLoadingCategorie] = useState(false);
-    const [params, setParams] = useState("");
+    const [idService, setIdService] = useState("");
     const [query, setQuery] = useState("");
     const [idCategorie, setIdCategorie] = useState("");
     const [listeTypeService, setListTypeService] = useState([]);
@@ -59,7 +59,7 @@ function AddStock({ setStocks }) {
     }
     const getProducts = () => {
         setLoading(true);
-        getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&page=1&limit=ALL&searchText=`).then((response) => {
+        getMethode(`${getProductsRoute}?idCategorie=${idCategorie}&idService=${idService}&page=1&limit=ALL&searchText=`).then((response) => {
             const { products } = response.data;
             setProducts(products);
         }).catch((err) => {
@@ -73,7 +73,7 @@ function AddStock({ setStocks }) {
 
     useEffect(() => {
         setLoadingCategorie(true);
-        getMethode(`${getCategoriesRoute}?type=${params}&query=${query}`).then((response) => {
+        getMethode(`${getCategoriesRoute}?type=${idService}&query=${query}`).then((response) => {
             setCategories(response.data);
         }).catch((err) => {
             if (err.response.status == 401 || err.response.status == 403) {
@@ -82,7 +82,7 @@ function AddStock({ setStocks }) {
         }).finally(() => {
             setLoadingCategorie(false);
         })
-    }, [params, query]);
+    }, [idService, query]);
     useEffect(() => {
         getMethode(`${getTypeServicesRoute}`).then((response) => {
             setListTypeService(response.data);
@@ -104,7 +104,7 @@ function AddStock({ setStocks }) {
                 {alert.display && <Alert msg={alert} />}
                 <div className='flex sm:flex-row flex-col gap-[1rem] my-[1rem]'>
                     <select className="select select-bordered w-full font-bold text-[1rem]" onChange={(event) => {
-                        setParams(event.target.value)
+                        setIdService(event.target.value)
                     }}>
                         <option disabled selected>اختار نوع الخدمة</option>
                         {
