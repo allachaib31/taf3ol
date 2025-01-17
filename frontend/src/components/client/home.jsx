@@ -1,84 +1,107 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import largeLogo from "../../images/largeLogo.png";
-import whatDistinguishesUsImage from "../../images/whatDistinguishesUsImage.png";
-import pourcentageImage from "../../images/pourcentageImage.svg";
-import payMethodeImage from "../../images/payMethodeImage.svg";
-import supportImage from "../../images/supportImage.svg";
-import chartImage from "../../images/chartImage.svg";
-import promotionImage from "../../images/promotionImage.svg";
-import marketingImage from "../../images/marketingImage.svg";
-import deliveryImage from "../../images/deliveryImage.svg";
-import updateImage from "../../images/updateImage.svg";
-import paymentImage from "../../images/payment.png";
+import servicesImage1 from "../../images/servicesImage1.png";
 import instagramIcon from "../../images/instagramIcon.svg";
 import { useTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 function Home() {
-    const { t, i18n} = useTranslation();
+    const { t } = useTranslation();
+    const [indexCards, setIndexCards] = useState(0);
+    const [fadeCards, setFadeCards] = useState(true);
+    const [activeCards, setActiveCards] = useState([]);
+
+    const cards = [
+        { id: 1, title: "قسم شحن التطبيقات 1", description: "هذا نص تجريبي 1", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+        { id: 2, title: "قسم شحن التطبيقات 2", description: "هذا نص تجريبي 2", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+        { id: 3, title: "قسم شحن التطبيقات 3", description: "هذا نص تجريبي 3", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+        { id: 4, title: "قسم شحن التطبيقات 4", description: "هذا نص تجريبي 4", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+        { id: 5, title: "قسم شحن التطبيقات 5", description: "هذا نص تجريبي 5", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+        { id: 6, title: "قسم شحن التطبيقات 6", description: "هذا نص تجريبي 6", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+        { id: 7, title: "قسم شحن التطبيقات 7", description: "هذا نص تجريبي 6", img: "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp" },
+    ];
+
+    const goToNextCards = () => {
+        setIndexCards((prevIndex) => (prevIndex + 4) % cards.length); // Move forward by 3 cards
+    };
+
+    const goToPreviousCards = () => {
+        setIndexCards((prevIndex) => (prevIndex - 4 + cards.length) % cards.length); // Move backward by 3 cards
+    };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setFadeCards(false); // Start fade-out
+            setTimeout(() => {
+                setIndexCards((prevIndex) => (prevIndex + 4) % cards.length); // Update index to show the next set
+                setFadeCards(true); // Start fade-in
+            }, 300); // Duration matches fade-out CSS
+        }, 4000);
+
+        return () => clearInterval(interval); // Cleanup interval on component unmount
+    }, [cards.length]);
+
+    useEffect(() => {
+        // Handle wrapping around to ensure the proper number of cards are displayed
+        const updatedActiveCards = [];
+        for (let i = 0; i < 4; i++) {
+            updatedActiveCards.push(cards[(indexCards + i) % cards.length]);
+        }
+        setActiveCards(updatedActiveCards);
+    }, [indexCards, cards]);
+
+
     return (
         <div className='my-[2rem]'>
             <div className='container mx-auto sm:p-0 p-[1rem]'>
-                <form data-aos="fade-up" action="" className='bg-accent rounded-[14px] p-[1rem] sm:p-[2rem]'>
-                    <p className='font-bold text-[1.5rem]'>{t('title_form_sign_up')}</p>
-                    <div className='flex md:flex-row gap-[1rem] md:gap-[2rem] flex-col  py-[0.5rem]'>
-                        <input type="text" placeholder={`${t('username_placeholder')}`} className='w-full md:w-1/3 shadow-lg text-[1.3rem] input bg-base-100 text-black' />
-                        <input type="text" placeholder={`${t('password_placeholder')}`} className='w-full md:w-1/3 shadow-lg text-[1.3rem] input bg-base-100 text-black' />
-                        <div className='flex md:hidden items-center gap-[0.5rem] font-bold'><input type="radio" name="radio-1" className="radio" /> {t('remember_input')}</div>
-                        <button className='w-full md:w-[12rem] btn bg-black hover:bg-white hover:text-black text-white font-[900] text-[1.3rem]'>{t('login_button')}</button>
-                    </div>
-                    <div className='hidden md:flex items-center gap-[0.5rem] font-bold'><input type="radio" name="radio-1" className="radio" /> {t('remember_input')}</div>
-                    <div className='flex sm:flex-row flex-col sm:gap-[1rem]'>
-                        <p className='font-bold '>{t('sign_up_subtitle')}  <Link to="/signUp" className='underline'>{t('sign_up_button')}</Link></p>
-                        <p className='font-bold '>{t('reset_password_text')} <a href="" className='underline'>{t('forget_password_button')}</a></p>
-                    </div>
-                </form>
                 <div data-aos="fade-up" className='mt-[4rem]'>
-                    <h1 className='text-[40px] sm:text-[72px] font-[900]'>{t('what_distinguishes_us_title')}</h1>
-                    <div className='flex lg:flex-row flex-col-reverse gap-[2rem] items-center'>
-                        <div className='flex flex-col gap-[1rem] lg:w-[60%]'>
-                            <div className='flex sm:flex-row flex-col sm:gap-0 gap-[1rem]'>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={pourcentageImage} alt="" /> {t('list_what_makes_us_different_item1')}
-                                </div>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={payMethodeImage} alt="" /> {t('list_what_makes_us_different_item2')}
-                                </div>
-                            </div>
-                            <div className='flex sm:flex-row flex-col sm:gap-0 gap-[1rem]'>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={supportImage} alt="" /> {t('list_what_makes_us_different_item3')}
-                                </div>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={chartImage} alt="" /> {t('list_what_makes_us_different_item4')}
-                                </div>
-                            </div>
-                            <div className='flex sm:flex-row flex-col sm:gap-0 gap-[1rem]'>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={promotionImage} alt="" /> {t('list_what_makes_us_different_item5')}
-                                </div>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={marketingImage} alt="" /> {t('list_what_makes_us_different_item6')}
-                                </div>
-                            </div>
-                            <div className='flex sm:flex-row flex-col sm:gap-0 gap-[1rem]'>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={deliveryImage} alt="" /> {t('list_what_makes_us_different_item7')}
-                                </div>
-                                <div className='flex items-center sm:w-1/2 gap-[1rem] font-bold xl:text-[1.3rem]'>
-                                    <img src={updateImage} alt="" /> {t('list_what_makes_us_different_item8')}
-                                </div>
-                            </div>
-                        </div>
-                        <div className='lg:w-[40%]'>
-                            <img src={whatDistinguishesUsImage} alt="" />
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <div
                 data-aos="fade-up"
-                className="">
-                <img loading="lazy" src={paymentImage} alt="" className='w-[100vw] lg:h-screen' />
+                className={`w-screen h-screen relative`}
+                style={{
+
+                }}>
+                <img src={`${servicesImage1}`} alt="" className={`absolute z-[-2] w-screen h-screen`} />
+                <div className='z-[-1] absolute bg-[#131736] opacity-[65%] w-screen h-screen'></div>
+                <div className='py-[2rem]'>
+                    <h1 className='text-white text-center text-[5rem] font-[900]'>اكتشف خدماتنا</h1>
+                    <div className={`mt-[3rem] flex justify-center items-center gap-[3rem] transition-opacity duration-300 ${fadeCards ? "opacity-100" : "opacity-0"}`}>
+                        {activeCards.map((card) => (
+                            <div
+                                key={card.id}
+                                className="card w-96 relative cursor-pointer bg-white/10 backdrop-blur-sm text-white pt-[1rem] px-[1rem] shadow-lg"
+                            >
+                                <figure>
+                                    <img src={card.img} alt={card.title} />
+                                </figure>
+                                <div className="card-body">
+                                    <h2 className="card-title font-bold">{card.title}</h2>
+                                    <p className="font-bold">{card.description}</p>
+                                    <div className="card-actions">
+                                        <button className="text-[1.2rem] btn btn-sm btn-ghost btn-outline text-white h-auto py-[0.5rem] px-[3rem]">دخول</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                    </div>
+                    <div className="flex gap-[1rem] justify-center mt-4">
+                        <button
+                            onClick={goToNextCards}
+                            className="btn btn-ghost btn-outline text-white text-2xl px-4 py-2">
+                            <FontAwesomeIcon icon={faArrowRight} />
+                        </button>
+                        <button
+                            onClick={goToPreviousCards}
+                            className="btn btn-ghost btn-outline text-white text-2xl px-4 py-2">
+                            <FontAwesomeIcon icon={faArrowLeft} />
+                        </button>
+                    </div>
+                </div>
             </div>
             <div className='container mx-auto mt-[3rem] sm:p-0 p-[1rem]'>
                 <div className='flex items-center justify-center'>

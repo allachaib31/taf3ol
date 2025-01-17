@@ -15,7 +15,7 @@ import Gifts from "./components/client/profitMoney/gifts";
 function App() {
   return (
     <PayPalScriptProvider options={{ "client-id": "ATP0uzxeGHiTOZLfklXU8qo_LuHVi1zF0oFFaHIChJSCnvaIjPX19zjH_1PMYGCwC1QdbBJ2QUsudjdl" }}>
-      <div id='fullScreen' data-theme={"myTheme"} className="custom-scrollbar">
+      <div id='fullScreen' className="custom-scrollbar">
         <Router>
           <Routes>
             <Route path="/" element={<AppWeb />}>

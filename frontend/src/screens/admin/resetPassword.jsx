@@ -56,7 +56,7 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-screen">
+        <div data-theme={"myTheme"} className="flex justify-center items-center h-screen">
             <div className="bg-white p-8 rounded shadow-md max-w-md w-full">
                 <h2 className="text-2xl font-bold mb-6 text-center">Reset Password</h2>
                 {alert.display && <Alert msg={alert} />}

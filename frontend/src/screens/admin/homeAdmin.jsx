@@ -240,7 +240,7 @@ function HomeAdmin() {
 
 
   return (
-    <div>
+    <div data-theme={"myTheme"}>
       <div className="w-full m-0 p-0" style={{
         //backgroundImage: `url(${headerWave})`,
         //backgroundSize: 'cover',

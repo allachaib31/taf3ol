@@ -27,16 +27,17 @@ module.exports = {
     require("daisyui"),
   ],
   daisyui: {
-    themes: [{
-      myTheme: {
-        primary: "#FDF001",
-        secondary: "#fffccc",
-        accent: "#D9D9D9",
-        neutral: "#E8E8E8",
-        "base-100": "#ffffff",
-        dark: "#000000"
-      }
-    }],
+    themes: [
+      {
+        myTheme: {
+          primary: "#FDF001",
+          secondary: "#fffccc",
+          accent: "#D9D9D9",
+          neutral: "#E8E8E8",
+          "base-100": "#ffffff",
+          dark: "#000000"
+        }
+      }],
     base: true,
     styled: true,
     utils: true,

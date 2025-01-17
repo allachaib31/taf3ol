@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMethode, postMethode } from '../../../../utils/apiFetchs';
 import { addProductApiRoute, getCategorieServicesApiRoute, getCategoriesRoute, getServicesApiRoute, getTypeServicesRoute } from '../../../../utils/apiRoutes';
@@ -62,13 +62,35 @@ function AddProductsApi() {
     };
 
     const toggleSelectAll = (isChecked) => {
-        const updatedServices = servicesApi.map((service) => ({
-            ...service,
-            checked: isChecked, // Update the `checked` status of all services
-        }));
+        // Filtered services based on the search query
+        const filteredServices = servicesApi.filter((service) =>
+            (service.name || service.Title).toLowerCase().includes(query.toLowerCase())
+        );
+    
+        // Update the checked status for filtered services only
+        const updatedServices = servicesApi.map((service) =>
+            filteredServices.includes(service)
+                ? { ...service, checked: isChecked }
+                : service
+        );
+    
         setServicesApi(updatedServices);
-        setServicesSelected(isChecked ? updatedServices : []);
+    
+        // Update selected services based on the updated filtered services
+        if (isChecked) {
+            const selected = filteredServices.map((service) => ({ ...service, checked: true }));
+            setServicesSelected((prevSelected) => [
+                ...prevSelected.filter((s) => !filteredServices.some((fs) => fs._id === s._id)),
+                ...selected,
+            ]);
+        } else {
+            const unselected = filteredServices.map((service) => service._id);
+            setServicesSelected((prevSelected) =>
+                prevSelected.filter((service) => !unselected.includes(service._id))
+            );
+        }
     };
+    
 
     const handleCheckboxChange = (serviceId) => {
         const updatedServices = servicesApi.map((service, index) =>
@@ -77,8 +99,16 @@ function AddProductsApi() {
                 : service
         );
         setServicesApi(updatedServices);
-        setServicesSelected(updatedServices.filter((service) => service.checked));
+
+        // Update the selected services based on checked status
+        const selected = updatedServices.filter((service) => service.checked);
+        setServicesSelected(selected);
     };
+    const filteredServices = useMemo(() => {
+        return servicesApi.filter((service) =>
+            (service.name || service.Title).toLowerCase().includes(query.toLowerCase())
+        );
+    }, [servicesApi, query]);
     const handleSubmit = async () => {
         setSubmit(true);
         setAlert({
@@ -254,6 +284,7 @@ function AddProductsApi() {
                         <input className="input bg-black text-white input-bordered join-item" placeholder="أبحث عن المنتجات"
                             value={query}
                             onChange={(e) => {
+                                if(servicesSelected.length > 0) setServicesSelected([])
                                 setQuery(e.target.value)
                             }} />
                     </div>
@@ -277,8 +308,9 @@ function AddProductsApi() {
                                                 className="checkbox"
                                                 onChange={(e) => toggleSelectAll(e.target.checked)}
                                                 checked={
-                                                    servicesApi.length > 0 &&
-                                                    servicesApi.every((service) => service.checked)
+                                                    servicesApi.filter((service) =>
+                                                        (service.name || service.Title).toLowerCase().includes(query.toLowerCase())
+                                                    ).every((service) => service.checked)
                                                 }
                                             />
                                         </label>
@@ -288,23 +320,21 @@ function AddProductsApi() {
                             </thead>
                             {/* Body */}
                             <tbody className="text-[1rem]">
-                                {servicesApi.map((service, index) => {
-                                    if((service.name || service.Title).toLowerCase().includes(query)) return (
-                                        <tr key={index}>
-                                            <th>
-                                                <label>
-                                                    <input
-                                                        type="checkbox"
-                                                        className="checkbox"
-                                                        checked={service.checked || false}
-                                                        onChange={() => handleCheckboxChange(index)}
-                                                    />
-                                                </label>
-                                            </th>
-                                            <td>{service.name || service.Title}</td>
-                                        </tr>
-                                    )
-                                })}
+                                {filteredServices.map((service, index) => (
+                                    <tr key={index}>
+                                        <th>
+                                            <label>
+                                                <input
+                                                    type="checkbox"
+                                                    className="checkbox"
+                                                    checked={service.checked || false}
+                                                    onChange={() => handleCheckboxChange(index)}
+                                                />
+                                            </label>
+                                        </th>
+                                        <td>{service.name || service.Title}</td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

@@ -26,7 +26,7 @@ function AdminScreen() {
   }, []);
   return (
     <LoadingScreen loading={loading} component={
-      <div dir="rtl" lang="ar" className='fontZain min-h-screen'>
+      <div dir="rtl" lang="ar" data-theme={"myTheme"} className='fontZain min-h-screen'>
         <Outlet context={{accountInfo}}/>
       </div>
     } />
