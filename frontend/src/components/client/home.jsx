@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import largeLogo from "../../images/largeLogo.png";
+import handMoneyImage from "../../images/handMoneyImage.png";
+import boxImage from "../../images/boxImage.png";
+import watchImage from "../../images/watchImage.png";
 import servicesImage1 from "../../images/servicesImage1.png";
 import instagramIcon from "../../images/instagramIcon.svg";
 import { useTranslation } from 'react-i18next';
@@ -54,35 +57,82 @@ function Home() {
 
     return (
         <div className='my-[2rem]'>
-            <div className='container mx-auto sm:p-0 p-[1rem]'>
-                <div data-aos="fade-up" className='mt-[4rem]'>
-
+            <div className='h-full lg:h-[60vh] container mx-auto sm:p-0 p-[1rem]'>
+                <div data-aos="fade-up" className='h-full flex flex-wrap items-stretch justify-between mt-[4rem]'>
+                    <div className='w-72 self-start relative bg-[#B198E9] text-white rounded-[14px] p-[1rem]'>
+                        <h1 className='text-[4rem] font-[900]'>25158218+</h1>
+                        <p className='text-[1.3rem]'>طلب مكتمل</p>
+                        <img src={boxImage} alt="" className='absolute top-10 right-full translate-x-[50%]' />
+                        <img
+                            src={boxImage}
+                            alt=""
+                            className='absolute top-[120%] right-1/2 translate-x-[50%] rotate-y-180'
+                            style={{
+                                transform: 'scaleY(-1)',
+                                opacity: 0.3, // Initial opacity
+                                maskImage: 'linear-gradient(to top, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
+                                WebkitMaskImage: 'linear-gradient(to top, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
+                            }}
+                        />
+                    </div>
+                    <div className='w-72 bg-dark self-center relative text-white rounded-[14px] p-[1rem]'>
+                        <h1 className='text-[1.3rem]'>الاسعار تبدا من</h1>
+                        <p className='text-[2.5rem] font-[900]'>$0.0001/الف</p>
+                        <img src={handMoneyImage} alt="" className='absolute bottom-[-1rem] right-[90%] translate-x-[50%]' />
+                        <img
+                            src={handMoneyImage}
+                            alt=""
+                            className='absolute top-[85%] right-[40%] translate-x-[50%] rotate-y-180'
+                            style={{
+                                transform: 'scaleY(-1)',
+                                opacity: 0.3, // Initial opacity
+                                maskImage: 'linear-gradient(to top, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
+                                WebkitMaskImage: 'linear-gradient(to top, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
+                            }}
+                        />
+                    </div>
+                    <div className='w-72 self-start relative bg-[#FEBD59] text-white rounded-[14px] p-[1rem]'>
+                        <h1 className='text-[1.3rem] '>طلب جديد كل</h1>
+                        <p className='text-[3rem] font-[900]'>ثانية</p>
+                        <img src={watchImage} alt="" className='absolute top-10 right-full translate-x-[50%]' />
+                        <img
+                            src={watchImage}
+                            alt=""
+                            className='absolute top-[190%] right-[52%] translate-x-[50%] rotate-y-180'
+                            style={{
+                                transform: 'scaleY(-1)',
+                                opacity: 0.3, // Initial opacity
+                                maskImage: 'linear-gradient(to top, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
+                                WebkitMaskImage: 'linear-gradient(to top, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 100%)',
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
             <div
                 data-aos="fade-up"
-                className={`w-screen h-screen relative`}
+                className={`w-screen h-full xl:h-screen relative`}
                 style={{
 
                 }}>
-                <img src={`${servicesImage1}`} alt="" className={`absolute z-[-2] w-screen h-screen`} />
-                <div className='z-[-1] absolute bg-[#131736] opacity-[65%] w-screen h-screen'></div>
+                <img src={`${servicesImage1}`} alt="" className={`absolute z-[-2] w-screen h-full object-cover`} />
+                <div className='z-[-1] absolute bg-[#131736] opacity-[65%] w-screen h-full'></div>
                 <div className='py-[2rem]'>
-                    <h1 className='text-white text-center text-[5rem] font-[900]'>اكتشف خدماتنا</h1>
-                    <div className={`mt-[3rem] flex justify-center items-center gap-[3rem] transition-opacity duration-300 ${fadeCards ? "opacity-100" : "opacity-0"}`}>
+                    <h1 className='text-white text-center text-[2rem] sm:text-[5rem] font-[900]'>اكتشف خدماتنا</h1>
+                    <div className={`mt-[3rem] flex flex-wrap justify-center items-center gap-[0.5rem] sm:gap-[1rem] md:gap-[3rem] transition-opacity duration-300 ${fadeCards ? "opacity-100" : "opacity-0"}`}>
                         {activeCards.map((card) => (
                             <div
                                 key={card.id}
-                                className="card w-96 relative cursor-pointer bg-white/10 backdrop-blur-sm text-white pt-[1rem] px-[1rem] shadow-lg"
+                                className="card w-[10rem] xs:w-[12rem] sm:w-[16rem] md:w-[20rem] lg:w-96 relative cursor-pointer bg-white/10 backdrop-blur-sm text-white sm:pt-[1rem] sm:px-[1rem] shadow-lg"
                             >
                                 <figure>
                                     <img src={card.img} alt={card.title} />
                                 </figure>
-                                <div className="card-body">
-                                    <h2 className="card-title font-bold">{card.title}</h2>
-                                    <p className="font-bold">{card.description}</p>
+                                <div className="card-body p-0 gap-0 xs:p-[0.5rem] xs:gap-[0.5rem]">
+                                    <h2 className="card-title font-bold text-[0.8rem] xs:text-[1rem]">{card.title}</h2>
+                                    <p className="font-bold text-[0.8rem] xs:text-[1rem]">{card.description}</p>
                                     <div className="card-actions">
-                                        <button className="text-[1.2rem] btn btn-sm btn-ghost btn-outline text-white h-auto py-[0.5rem] px-[3rem]">دخول</button>
+                                        <button className="sm:text-[1.2rem] btn btn-sm btn-ghost btn-outline text-white h-auto sm:py-[0.5rem] sm:px-[3rem]">دخول</button>
                                     </div>
                                 </div>
                             </div>
